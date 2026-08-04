@@ -100,7 +100,10 @@ export function RecordForm({
   };
 
   const useMyLocation = () => {
-    if (!navigator.geolocation) return toast.error("Geolocation unavailable");
+    if (!navigator.geolocation) {
+      toast.error("Geolocation unavailable");
+      return;
+    }
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         set("latitude", pos.coords.latitude.toFixed(6));
