@@ -12,6 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedCalculatorRouteImport } from './routes/_authenticated/calculator'
+import { Route as AuthenticatedConverterRouteImport } from './routes/_authenticated/converter'
 import { Route as AuthenticatedMapRouteImport } from './routes/_authenticated/map'
 import { Route as AuthenticatedRecordsRouteImport } from './routes/_authenticated/records'
 
@@ -29,6 +31,16 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedCalculatorRoute = AuthenticatedCalculatorRouteImport.update({
+  id: '/calculator',
+  path: '/calculator',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedConverterRoute = AuthenticatedConverterRouteImport.update({
+  id: '/converter',
+  path: '/converter',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedMapRoute = AuthenticatedMapRouteImport.update({
   id: '/map',
   path: '/map',
@@ -43,12 +55,16 @@ const AuthenticatedRecordsRoute = AuthenticatedRecordsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/calculator': typeof AuthenticatedCalculatorRoute
+  '/converter': typeof AuthenticatedConverterRoute
   '/map': typeof AuthenticatedMapRoute
   '/records': typeof AuthenticatedRecordsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/calculator': typeof AuthenticatedCalculatorRoute
+  '/converter': typeof AuthenticatedConverterRoute
   '/map': typeof AuthenticatedMapRoute
   '/records': typeof AuthenticatedRecordsRoute
 }
@@ -57,19 +73,23 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/calculator': typeof AuthenticatedCalculatorRoute
+  '/_authenticated/converter': typeof AuthenticatedConverterRoute
   '/_authenticated/map': typeof AuthenticatedMapRoute
   '/_authenticated/records': typeof AuthenticatedRecordsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/map' | '/records'
+  fullPaths: '/' | '/auth' | '/calculator' | '/converter' | '/map' | '/records'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/map' | '/records'
+  to: '/' | '/auth' | '/calculator' | '/converter' | '/map' | '/records'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/calculator'
+    | '/_authenticated/converter'
     | '/_authenticated/map'
     | '/_authenticated/records'
   fileRoutesById: FileRoutesById
@@ -103,6 +123,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/calculator': {
+      id: '/_authenticated/calculator'
+      path: '/calculator'
+      fullPath: '/calculator'
+      preLoaderRoute: typeof AuthenticatedCalculatorRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/converter': {
+      id: '/_authenticated/converter'
+      path: '/converter'
+      fullPath: '/converter'
+      preLoaderRoute: typeof AuthenticatedConverterRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/map': {
       id: '/_authenticated/map'
       path: '/map'
@@ -121,11 +155,15 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedCalculatorRoute: typeof AuthenticatedCalculatorRoute
+  AuthenticatedConverterRoute: typeof AuthenticatedConverterRoute
   AuthenticatedMapRoute: typeof AuthenticatedMapRoute
   AuthenticatedRecordsRoute: typeof AuthenticatedRecordsRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedCalculatorRoute: AuthenticatedCalculatorRoute,
+  AuthenticatedConverterRoute: AuthenticatedConverterRoute,
   AuthenticatedMapRoute: AuthenticatedMapRoute,
   AuthenticatedRecordsRoute: AuthenticatedRecordsRoute,
 }
