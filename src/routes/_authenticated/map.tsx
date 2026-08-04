@@ -29,7 +29,7 @@ function MapPage() {
 
   return (
     <AppShell title="Universal Map" bare onAdd={() => setFormOpen(true)}>
-      <div className="h-[calc(100dvh-11rem)] w-full overflow-hidden">
+      <div className="h-[calc(100dvh-13rem)] w-full overflow-hidden">
         {isLoading ? (
           <div className="grid h-full place-items-center text-sm text-muted-foreground">
             Loading map…
