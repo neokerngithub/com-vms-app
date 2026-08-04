@@ -1,0 +1,128 @@
+// Nepalese land unit arithmetic engine. Base unit: square feet.
+
+export const AREA_UNITS = [
+  "Dhur",
+  "Kattha",
+  "Bigha",
+  "Ropani",
+  "Aana",
+  "Paisa",
+  "Daam",
+  "Sq. Ft.",
+  "Sq. M.",
+] as const;
+
+export type AreaUnit = (typeof AREA_UNITS)[number];
+
+export const SQFT_PER_SQM = 10.76391041671;
+
+/** Square feet per one of each unit. */
+export const SQFT_PER_UNIT: Record<string, number> = {
+  // Terai system: 1 Bigha = 20 Kattha = 400 Dhur
+  Dhur: 182.25,
+  Kattha: 182.25 * 20,
+  Bigha: 182.25 * 400,
+  Kanwa: 182.25 / 2,
+  // Hilly system: 1 Ropani = 16 Aana = 64 Paisa = 256 Daam
+  Ropani: 5476,
+  Aana: 5476 / 16,
+  Paisa: 5476 / 64,
+  Daam: 5476 / 256,
+  // Metric
+  "Sq. Ft.": 1,
+  "Sq. M.": SQFT_PER_SQM,
+  Hectare: 107639.1041671,
+};
+
+export const UNIT_GROUPS: { label: string; units: string[] }[] = [
+  { label: "Terai", units: ["Bigha", "Kattha", "Dhur", "Kanwa"] },
+  { label: "Hilly", units: ["Ropani", "Aana", "Paisa", "Daam"] },
+  { label: "Metric", units: ["Hectare", "Sq. M.", "Sq. Ft."] },
+];
+
+export function toSqFt(value: number, unit: string): number {
+  return value * (SQFT_PER_UNIT[unit] ?? 1);
+}
+
+export function fromSqFt(sqft: number, unit: string): number {
+  return sqft / (SQFT_PER_UNIT[unit] ?? 1);
+}
+
+export function convert(value: number, from: string, to: string): number {
+  return fromSqFt(toSqFt(value, from), to);
+}
+
+/** Break a sq ft area into a composite reading, e.g. 1-2-3-1 Ropani-Aana-Paisa-Daam */
+export function breakdown(sqft: number, units: string[]): { unit: string; value: number }[] {
+  let rest = sqft;
+  return units.map((unit, i) => {
+    const per = SQFT_PER_UNIT[unit] ?? 1;
+    if (i === units.length - 1) {
+      const value = rest / per;
+      rest = 0;
+      return { unit, value };
+    }
+    const whole = Math.floor(rest / per);
+    rest -= whole * per;
+    return { unit, value: whole };
+  });
+}
+
+export function formatNumber(n: number, digits = 4): string {
+  if (!Number.isFinite(n)) return "0";
+  const rounded = Number(n.toFixed(digits));
+  return rounded.toLocaleString("en-US", { maximumFractionDigits: digits });
+}
+
+export function formatNPR(n: number): string {
+  if (!Number.isFinite(n)) return "Rs. 0";
+  return (
+    "Rs. " +
+    Math.round(n).toLocaleString("en-IN", { maximumFractionDigits: 0 })
+  );
+}
+
+/** Advanced valuation calculator. */
+export interface ValuationInput {
+  area: number;
+  areaUnit: string;
+  govRate: number;
+  govRateUnit: string;
+  marketRate: number;
+  marketRateUnit: string;
+  govSharePct: number;
+  marketSharePct: number;
+  distressPct: number;
+}
+
+export interface ValuationResult {
+  areaSqFt: number;
+  govRatePerSqFt: number;
+  marketRatePerSqFt: number;
+  commercialValue: number;
+  governmentValue: number;
+  fairMarketValue: number;
+  distressValue: number;
+}
+
+export function computeValuation(input: ValuationInput): ValuationResult {
+  const areaSqFt = toSqFt(input.area || 0, input.areaUnit);
+  const govRatePerSqFt = (input.govRate || 0) / (SQFT_PER_UNIT[input.govRateUnit] ?? 1);
+  const marketRatePerSqFt =
+    (input.marketRate || 0) / (SQFT_PER_UNIT[input.marketRateUnit] ?? 1);
+  const commercialValue = areaSqFt * marketRatePerSqFt;
+  const governmentValue = areaSqFt * govRatePerSqFt;
+  const fairMarketValue =
+    governmentValue * (input.govSharePct / 100) +
+    commercialValue * (input.marketSharePct / 100);
+  const distressValue = fairMarketValue * (input.distressPct / 100);
+  return {
+    areaSqFt,
+    govRatePerSqFt,
+    marketRatePerSqFt,
+    commercialValue,
+    governmentValue,
+    fairMarketValue,
+    distressValue,
+  };
+}
