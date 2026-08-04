@@ -14,16 +14,200 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      government_rates: {
+        Row: {
+          created_at: string
+          district_office: string
+          fiscal_year: string
+          id: string
+          pdf_url: string
+        }
+        Insert: {
+          created_at?: string
+          district_office: string
+          fiscal_year: string
+          id?: string
+          pdf_url: string
+        }
+        Update: {
+          created_at?: string
+          district_office?: string
+          fiscal_year?: string
+          id?: string
+          pdf_url?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
+      record_reports: {
+        Row: {
+          created_at: string
+          id: string
+          reason: string
+          record_id: string
+          reported_by: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          reason?: string
+          record_id: string
+          reported_by: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          reason?: string
+          record_id?: string
+          reported_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "record_reports_record_id_fkey"
+            columns: ["record_id"]
+            isOneToOne: false
+            referencedRelation: "records"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      records: {
+        Row: {
+          created_at: string
+          created_by: string
+          data_entry_date: string
+          district: string
+          id: string
+          image_url: string | null
+          latitude: number | null
+          locality: Database["public"]["Enums"]["locality_type"] | null
+          location_in_cadastral_map: string
+          longitude: number | null
+          market_rate: number
+          remarks: string | null
+          reports_count: number
+          road_width: string | null
+          site_visited_by: string
+          type_of_road: Database["public"]["Enums"]["road_type"] | null
+          unit: Database["public"]["Enums"]["area_unit"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          data_entry_date?: string
+          district?: string
+          id?: string
+          image_url?: string | null
+          latitude?: number | null
+          locality?: Database["public"]["Enums"]["locality_type"] | null
+          location_in_cadastral_map?: string
+          longitude?: number | null
+          market_rate?: number
+          remarks?: string | null
+          reports_count?: number
+          road_width?: string | null
+          site_visited_by?: string
+          type_of_road?: Database["public"]["Enums"]["road_type"] | null
+          unit?: Database["public"]["Enums"]["area_unit"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          data_entry_date?: string
+          district?: string
+          id?: string
+          image_url?: string | null
+          latitude?: number | null
+          locality?: Database["public"]["Enums"]["locality_type"] | null
+          location_in_cadastral_map?: string
+          longitude?: number | null
+          market_rate?: number
+          remarks?: string | null
+          reports_count?: number
+          road_width?: string | null
+          site_visited_by?: string
+          type_of_road?: Database["public"]["Enums"]["road_type"] | null
+          unit?: Database["public"]["Enums"]["area_unit"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
+      area_unit:
+        | "Dhur"
+        | "Kattha"
+        | "Bigha"
+        | "Ropani"
+        | "Aana"
+        | "Paisa"
+        | "Daam"
+        | "Sq. Ft."
+        | "Sq. M."
+      locality_type:
+        | "Residential"
+        | "Commercial"
+        | "Commercial / Residential"
+        | "Residential / Agricultural"
+      road_type:
+        | "Pitched road"
+        | "Gravelled road"
+        | "Block / Paved road"
+        | "RCC road"
+        | "Earthen road"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +334,32 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+      area_unit: [
+        "Dhur",
+        "Kattha",
+        "Bigha",
+        "Ropani",
+        "Aana",
+        "Paisa",
+        "Daam",
+        "Sq. Ft.",
+        "Sq. M.",
+      ],
+      locality_type: [
+        "Residential",
+        "Commercial",
+        "Commercial / Residential",
+        "Residential / Agricultural",
+      ],
+      road_type: [
+        "Pitched road",
+        "Gravelled road",
+        "Block / Paved road",
+        "RCC road",
+        "Earthen road",
+      ],
+    },
   },
 } as const
