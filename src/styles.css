@@ -175,3 +175,50 @@
   color: var(--muted-foreground) !important;
   border-color: var(--border) !important;
 }
+
+/* Light theme — opt-in via the Profile screen toggle. */
+html.light {
+  --background: oklch(0.984 0.003 247);
+  --foreground: oklch(0.208 0.042 265);
+  --surface: oklch(1 0 0);
+  --surface-2: oklch(0.968 0.007 247);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.208 0.042 265);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.208 0.042 265);
+  --secondary: oklch(0.968 0.007 247);
+  --secondary-foreground: oklch(0.208 0.042 265);
+  --muted: oklch(0.968 0.007 247);
+  --muted-foreground: oklch(0.554 0.041 257);
+  --border: oklch(0.208 0.042 265 / 12%);
+  --input: oklch(0.208 0.042 265 / 16%);
+  --sidebar: oklch(1 0 0);
+  --sidebar-foreground: oklch(0.208 0.042 265);
+  --sidebar-accent: oklch(0.968 0.007 247);
+  --sidebar-accent-foreground: oklch(0.208 0.042 265);
+  --sidebar-border: oklch(0.208 0.042 265 / 12%);
+  --shadow-elegant: 0 14px 34px -22px oklch(0.208 0.042 265 / 0.35);
+}
+
+/* Live GPS location marker */
+.vms-locate-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 9999px;
+  background: oklch(0.62 0.19 250);
+  border: 2px solid oklch(1 0 0);
+  box-shadow: 0 0 0 0 oklch(0.62 0.19 250 / 0.55);
+  animation: vms-pulse 2s ease-out infinite;
+}
+
+@keyframes vms-pulse {
+  0% {
+    box-shadow: 0 0 0 0 oklch(0.62 0.19 250 / 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 18px oklch(0.62 0.19 250 / 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 oklch(0.62 0.19 250 / 0);
+  }
+}
