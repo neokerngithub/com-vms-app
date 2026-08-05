@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Download, FileText } from "lucide-react";
+import { Download, FileText, Plus, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { AppShell } from "@/components/AppShell";
-import { useGovRates } from "@/hooks/useRecords";
+import { toast } from "sonner";
+import { useAddGovRate, useGovRates } from "@/hooks/useRecords";
+import { FISCAL_YEARS } from "@/lib/vms";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/rates")({
@@ -29,6 +31,28 @@ function RatesPage() {
   const { data = [], isLoading } = useGovRates();
   const [year, setYear] = useState("All");
   const [office, setOffice] = useState("All");
+  const [adding, setAdding] = useState(false);
+  const [fy, setFy] = useState(FISCAL_YEARS[0] as string);
+  const [officeName, setOfficeName] = useState("");
+  const [pdfUrl, setPdfUrl] = useState("");
+  const addRate = useAddGovRate();
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await addRate.mutateAsync({
+        fiscal_year: fy.trim(),
+        district_office: officeName.trim(),
+        pdf_url: pdfUrl.trim(),
+      });
+      toast.success("Publication added to the library.");
+      setAdding(false);
+      setOfficeName("");
+      setPdfUrl("");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not add publication");
+    }
+  };
 
   const years = useMemo(
     () => ["All", ...new Set(data.map((r) => r.fiscal_year))],
@@ -46,8 +70,59 @@ function RatesPage() {
   );
 
   return (
-    <AppShell title="Government Rates" showTabs={false}>
+    <AppShell title="Government Rates" back>
       <div className="space-y-4 pb-8">
+        <button
+          onClick={() => setAdding((v) => !v)}
+          className="tap flex w-full items-center justify-center gap-2 rounded-2xl border border-border bg-surface py-3.5 text-sm font-bold text-foreground"
+        >
+          {adding ? <X className="size-4" /> : <Plus className="size-4" />}
+          {adding ? "Cancel" : "Contribute a publication"}
+        </button>
+
+        {adding && (
+          <form onSubmit={submit} className="surface-card space-y-3 p-4">
+            <Field label="Fiscal year">
+              <input
+                value={fy}
+                onChange={(e) => setFy(e.target.value)}
+                required
+                maxLength={16}
+                placeholder="2082-83"
+                className="h-12 w-full rounded-xl border border-border bg-surface-2 px-4 text-sm text-foreground outline-none ring-ring focus:ring-2"
+              />
+            </Field>
+            <Field label="District / Office">
+              <input
+                value={officeName}
+                onChange={(e) => setOfficeName(e.target.value)}
+                required
+                maxLength={120}
+                placeholder="Land Revenue Office, Morang"
+                className="h-12 w-full rounded-xl border border-border bg-surface-2 px-4 text-sm text-foreground outline-none ring-ring focus:ring-2"
+              />
+            </Field>
+            <Field label="PDF link">
+              <input
+                value={pdfUrl}
+                onChange={(e) => setPdfUrl(e.target.value)}
+                required
+                type="url"
+                maxLength={500}
+                placeholder="https://…/rates.pdf"
+                className="h-12 w-full rounded-xl border border-border bg-surface-2 px-4 text-sm text-foreground outline-none ring-ring focus:ring-2"
+              />
+            </Field>
+            <button
+              type="submit"
+              disabled={addRate.isPending}
+              className="tap gradient-brand w-full rounded-xl py-3.5 text-sm font-bold text-primary-foreground disabled:opacity-60"
+            >
+              {addRate.isPending ? "Checking…" : "Add publication"}
+            </button>
+          </form>
+        )}
+
         <Pills label="Fiscal year" options={years} value={year} onChange={setYear} />
         <Pills label="District / Office" options={offices} value={office} onChange={setOffice} />
 
@@ -121,6 +196,17 @@ function Pills({
           </button>
         ))}
       </div>
+    </div>
+  );
+}
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="space-y-2">
+      <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+        {label}
+      </p>
+      {children}
     </div>
   );
 }
