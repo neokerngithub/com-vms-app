@@ -1,18 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Minus, Plus, X } from "lucide-react";
+import { Minus, Plus, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { AppShell } from "@/components/AppShell";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { UNIT_GROUPS, breakdown, formatNumber, fromSqFt, toSqFt } from "@/lib/units";
+  AREA_UNITS,
+  UNIT_GROUPS,
+  breakdown,
+  convert,
+  formatNumber,
+  parseCombined,
+  formatCombined,
+  toSqFt,
+  fromSqFt,
+} from "@/lib/units";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/converter")({
@@ -23,229 +23,370 @@ export const Route = createFileRoute("/_authenticated/converter")({
       {
         name: "description",
         content:
-          "Convert and add Nepalese land units — Bigha, Kattha, Dhur, Ropani, Aana, Paisa, Daam and metric.",
+          "Convert and add Nepalese land units — Bigha, Kattha, Dhur, Kanwa, Ropani, Aana, Paisa, Daam and metric.",
       },
       { property: "og:title", content: "Land Unit Converter — VMS" },
       {
         property: "og:description",
-        content: "Terai, Hilly and Metric land unit conversion and arithmetic.",
+        content: "Terai and Hilly land unit conversion and arithmetic.",
       },
     ],
   }),
   component: ConverterPage,
 });
 
-const ALL_UNITS = UNIT_GROUPS.flatMap((g) => g.units);
+const MODES = ["Convert", "Combined", "Arithmetic"] as const;
+type Mode = (typeof MODES)[number];
 
-function UnitSelect({
-  value,
-  onChange,
-  className,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  className?: string;
-}) {
-  return (
-    <Select value={value} onValueChange={onChange}>
-      <SelectTrigger
-        className={cn("h-12 rounded-xl border-border bg-surface-2 text-foreground", className)}
-      >
-        <SelectValue />
-      </SelectTrigger>
-      <SelectContent className="rounded-xl border-border bg-popover">
-        {UNIT_GROUPS.map((g) => (
-          <SelectGroup key={g.label}>
-            <SelectLabel className="text-muted-foreground">{g.label}</SelectLabel>
-            {g.units.map((u) => (
-              <SelectItem key={u} value={u}>
-                {u}
-              </SelectItem>
-            ))}
-          </SelectGroup>
-        ))}
-      </SelectContent>
-    </Select>
-  );
-}
+const TERAI = ["Bigha", "Kattha", "Dhur", "Kanwa"];
+const HILLY = ["Ropani", "Aana", "Paisa", "Daam"];
+
+const SINGLE_UNITS = ["Kattha", "Dhur", "Ropani", "Aana", "Sq. Ft.", "Sq. M.", "Bigha"];
+const COMBINED_UNITS = ["B-K-D-K", "R-A-P-D"];
 
 function ConverterPage() {
+  const [mode, setMode] = useState<Mode>("Convert");
+
   return (
     <AppShell title="Converter">
-      <Tabs defaultValue="convert">
-        <TabsList className="grid h-12 w-full grid-cols-2 rounded-2xl border border-border bg-surface p-1">
-          <TabsTrigger
-            value="convert"
-            className="tap rounded-xl text-sm font-bold data-[state=active]:gradient-brand data-[state=active]:text-primary-foreground"
+      <div className="flex rounded-2xl border border-border bg-surface p-1">
+        {MODES.map((m) => (
+          <button
+            key={m}
+            onClick={() => setMode(m)}
+            className={cn(
+              "tap flex-1 rounded-xl py-2.5 text-xs font-bold transition-colors",
+              mode === m ? "gradient-brand text-primary-foreground" : "text-muted-foreground",
+            )}
           >
-            Convert
-          </TabsTrigger>
-          <TabsTrigger
-            value="arithmetic"
-            className="tap rounded-xl text-sm font-bold data-[state=active]:gradient-brand data-[state=active]:text-primary-foreground"
-          >
-            Arithmetic
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value="convert" className="mt-4">
-          <ConvertTab />
-        </TabsContent>
-        <TabsContent value="arithmetic" className="mt-4">
-          <ArithmeticTab />
-        </TabsContent>
-      </Tabs>
+            {m}
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-4 pb-8">
+        {mode === "Convert" && <ConvertMode />}
+        {mode === "Combined" && <CombinedMode />}
+        {mode === "Arithmetic" && <ArithmeticMode />}
+      </div>
     </AppShell>
   );
 }
 
-function ConvertTab() {
-  const [value, setValue] = useState("1");
-  const [unit, setUnit] = useState("Ropani");
-  const sqft = toSqFt(Number(value) || 0, unit);
+/* ------------------------------- Convert -------------------------------- */
+
+const EXAMPLE_VALUE = "5";
+
+function ConvertMode() {
+  const [value, setValue] = useState("");
+  const [from, setFrom] = useState<string>("Kattha");
+  const [to, setTo] = useState<string>("Sq. Ft.");
+
+  const touched = value.trim() !== "";
+  const numeric = Number(touched ? value : EXAMPLE_VALUE);
+  const result = Number.isFinite(numeric) ? convert(numeric, from, to) : 0;
 
   return (
-    <div className="space-y-4">
-      <div className="surface-card grid grid-cols-[minmax(0,1fr)_9.5rem] gap-3 p-4">
+    <div className="space-y-3">
+      <div className="surface-card space-y-3 p-4">
+        <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+          Amount
+        </label>
         <input
-          value={value}
           inputMode="decimal"
+          value={value}
           onChange={(e) => setValue(e.target.value)}
-          className="h-12 w-full min-w-0 rounded-xl border border-border bg-surface-2 px-4 text-lg font-bold text-foreground outline-none ring-ring focus:ring-2"
+          placeholder={EXAMPLE_VALUE}
+          maxLength={16}
+          className="h-14 w-full rounded-xl border border-border bg-surface-2 px-4 text-2xl font-extrabold text-foreground outline-none ring-ring placeholder:text-muted-foreground placeholder:opacity-40 focus:ring-2"
         />
-        <UnitSelect value={unit} onChange={setUnit} />
+        <div className="grid grid-cols-2 gap-3">
+          <UnitSelect label="From" value={from} onChange={setFrom} />
+          <UnitSelect label="To" value={to} onChange={setTo} />
+        </div>
       </div>
 
+      <div className={cn("surface-card p-5 transition-opacity", touched ? "opacity-100" : "opacity-40")}>
+        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+          Result
+        </p>
+        <p className="mt-2 text-3xl font-extrabold">
+          <span className="gradient-text">{formatNumber(result)}</span>
+          <span className="ml-2 text-sm font-semibold text-muted-foreground">{to}</span>
+        </p>
+        {!touched && (
+          <p className="mt-2 text-xs text-muted-foreground">
+            Example shown — type an amount for live values.
+          </p>
+        )}
+      </div>
+
+      <BreakdownCards
+        sqft={toSqFt(numeric || 0, from)}
+        faded={!touched}
+      />
+    </div>
+  );
+}
+
+function UnitSelect({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div className="space-y-2">
+      <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+        {label}
+      </p>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="h-12 w-full rounded-xl border border-border bg-surface-2 px-3 text-sm font-semibold text-foreground outline-none ring-ring focus:ring-2"
+      >
+        {[...AREA_UNITS, "Kanwa", "Hectare"].map((u) => (
+          <option key={u} value={u}>
+            {u}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+/* ------------------------------- Combined ------------------------------- */
+
+const COMBINED_EXAMPLES: Record<"Terai" | "Hilly", string> = {
+  Terai: "1-5-10-2",
+  Hilly: "2-4-1-0",
+};
+
+function CombinedMode() {
+  const [system, setSystem] = useState<"Terai" | "Hilly">("Terai");
+  const [input, setInput] = useState("");
+
+  const touched = input.trim() !== "";
+  const units = system === "Terai" ? TERAI : HILLY;
+  const sqft = parseCombined(touched ? input : COMBINED_EXAMPLES[system], units);
+
+  return (
+    <div className="space-y-3">
+      <div className="surface-card space-y-3 p-4">
+        <div className="flex rounded-xl border border-border bg-surface-2 p-1">
+          {(["Terai", "Hilly"] as const).map((s) => (
+            <button
+              key={s}
+              onClick={() => setSystem(s)}
+              className={cn(
+                "tap flex-1 rounded-lg py-2 text-xs font-bold",
+                system === s ? "gradient-brand text-primary-foreground" : "text-muted-foreground",
+              )}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+          {system === "Terai" ? "Bigha-Kattha-Dhur-Kanwa" : "Ropani-Aana-Paisa-Daam"}
+        </p>
+        <input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder={COMBINED_EXAMPLES[system]}
+          maxLength={32}
+          className="h-14 w-full rounded-xl border border-border bg-surface-2 px-4 text-2xl font-extrabold tracking-wider text-foreground outline-none ring-ring placeholder:text-muted-foreground placeholder:opacity-40 focus:ring-2"
+        />
+        {!touched && (
+          <p className="text-xs text-muted-foreground opacity-70">
+            Example shown — enter a reading like {COMBINED_EXAMPLES[system]}.
+          </p>
+        )}
+      </div>
+
+      <BreakdownCards sqft={sqft} faded={!touched} />
+    </div>
+  );
+}
+
+function BreakdownCards({ sqft, faded }: { sqft: number; faded: boolean }) {
+  return (
+    <div className={cn("space-y-3 transition-opacity", faded ? "opacity-40" : "opacity-100")}>
       {UNIT_GROUPS.map((g) => (
         <div key={g.label} className="surface-card p-4">
           <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
             {g.label}
           </p>
-          <div className="mt-3 space-y-2">
+          {g.label !== "Metric" && (
+            <p className="mt-2 text-xl font-extrabold text-foreground">
+              {formatCombined(sqft, g.units)}
+            </p>
+          )}
+          <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1">
             {g.units.map((u) => (
-              <div key={u} className="flex items-center justify-between gap-3">
-                <span className="min-w-0 truncate text-sm text-muted-foreground">{u}</span>
-                <span className="shrink-0 text-sm font-bold text-foreground">
-                  {formatNumber(fromSqFt(sqft, u))}
+              <div key={u} className="flex items-baseline justify-between gap-2">
+                <span className="truncate text-xs text-muted-foreground">{u}</span>
+                <span className="text-sm font-bold text-foreground">
+                  {formatNumber(fromSqFt(sqft, u), 3)}
                 </span>
               </div>
             ))}
           </div>
-          {g.label !== "Metric" && (
-            <p className="mt-3 border-t border-border pt-3 text-xs text-muted-foreground">
-              {breakdown(
-                sqft,
-                g.label === "Terai"
-                  ? ["Bigha", "Kattha", "Dhur"]
-                  : ["Ropani", "Aana", "Paisa", "Daam"],
-              )
-                .map((b) => `${formatNumber(b.value, 2)} ${b.unit}`)
-                .join(" · ")}
-            </p>
-          )}
         </div>
       ))}
     </div>
   );
 }
 
+/* ------------------------------ Arithmetic ------------------------------ */
+
 interface Row {
-  id: number;
+  id: string;
   op: "+" | "-";
   value: string;
   unit: string;
 }
 
-function ArithmeticTab() {
-  const [rows, setRows] = useState<Row[]>([
-    { id: 1, op: "+", value: "2", unit: "Kattha" },
-    { id: 2, op: "+", value: "10", unit: "Dhur" },
-  ]);
-  const [outUnit, setOutUnit] = useState("Sq. Ft.");
+const ROW_EXAMPLES: Record<string, string> = {
+  "B-K-D-K": "1-5-10-2",
+  "R-A-P-D": "2-4-1-0",
+};
 
-  const totalSqFt = useMemo(
+function newRow(op: "+" | "-" = "+"): Row {
+  return {
+    id: Math.random().toString(36).slice(2),
+    op,
+    value: "",
+    unit: "Kattha",
+  };
+}
+
+function rowSqft(row: Row, useExample: boolean): number {
+  const raw = row.value.trim() || (useExample ? exampleFor(row.unit) : "");
+  if (!raw) return 0;
+  if (row.unit === "B-K-D-K") return parseCombined(raw, TERAI);
+  if (row.unit === "R-A-P-D") return parseCombined(raw, HILLY);
+  const n = Number(raw);
+  return Number.isFinite(n) ? toSqFt(n, row.unit) : 0;
+}
+
+function exampleFor(unit: string): string {
+  return ROW_EXAMPLES[unit] ?? "5";
+}
+
+function ArithmeticMode() {
+  const [rows, setRows] = useState<Row[]>([newRow("+"), newRow("-")]);
+
+  const touched = rows.some((r) => r.value.trim() !== "");
+
+  const total = useMemo(
     () =>
       rows.reduce(
-        (sum, r) =>
-          sum + (r.op === "+" ? 1 : -1) * toSqFt(Number(r.value) || 0, r.unit),
+        (sum, r) => sum + (r.op === "+" ? 1 : -1) * rowSqft(r, !touched),
         0,
       ),
-    [rows],
+    [rows, touched],
   );
 
-  const update = (id: number, patch: Partial<Row>) =>
+  const update = (id: string, patch: Partial<Row>) =>
     setRows((rs) => rs.map((r) => (r.id === id ? { ...r, ...patch } : r)));
 
   return (
     <div className="space-y-3">
-      {rows.map((r) => (
-        <div key={r.id} className="surface-card p-3">
-          <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2">
-            <button
-              onClick={() => update(r.id, { op: r.op === "+" ? "-" : "+" })}
-              aria-label="Toggle add or subtract"
-              className={cn(
-                "tap grid size-11 shrink-0 place-items-center rounded-xl font-bold",
-                r.op === "+"
-                  ? "gradient-brand text-primary-foreground"
-                  : "border border-border bg-surface-2 text-destructive",
-              )}
-            >
-              {r.op === "+" ? <Plus className="size-5" /> : <Minus className="size-5" />}
-            </button>
-            <input
-              value={r.value}
-              inputMode="decimal"
-              onChange={(e) => update(r.id, { value: e.target.value })}
-              className="h-11 w-full min-w-0 rounded-xl border border-border bg-surface-2 px-3 text-base font-semibold text-foreground outline-none ring-ring focus:ring-2"
-            />
-            <button
-              onClick={() => setRows((rs) => rs.filter((x) => x.id !== r.id))}
-              aria-label="Remove row"
-              className="tap grid size-11 shrink-0 place-items-center rounded-xl border border-border bg-surface-2 text-muted-foreground"
-            >
-              <X className="size-4" />
-            </button>
+      {rows.map((row, i) => (
+        <div key={row.id} className="surface-card space-y-3 p-4">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex rounded-xl border border-border bg-surface-2 p-1">
+              {(["+", "-"] as const).map((op) => (
+                <button
+                  key={op}
+                  onClick={() => update(row.id, { op })}
+                  disabled={i === 0}
+                  className={cn(
+                    "tap grid size-9 place-items-center rounded-lg text-sm font-bold disabled:opacity-60",
+                    row.op === op
+                      ? "gradient-brand text-primary-foreground"
+                      : "text-muted-foreground",
+                  )}
+                >
+                  {op === "+" ? <Plus className="size-4" /> : <Minus className="size-4" />}
+                </button>
+              ))}
+            </div>
+            {rows.length > 1 && (
+              <button
+                onClick={() => setRows((rs) => rs.filter((r) => r.id !== row.id))}
+                aria-label="Remove row"
+                className="tap grid size-9 place-items-center rounded-xl border border-border bg-surface-2 text-destructive"
+              >
+                <Trash2 className="size-4" />
+              </button>
+            )}
           </div>
-          <div className="mt-2">
-            <UnitSelect value={r.unit} onChange={(v) => update(r.id, { unit: v })} />
+
+          <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-2">
+            <input
+              inputMode={row.unit.includes("-") ? "text" : "decimal"}
+              value={row.value}
+              onChange={(e) => update(row.id, { value: e.target.value })}
+              placeholder={exampleFor(row.unit)}
+              maxLength={32}
+              className="h-12 w-full rounded-xl border border-border bg-surface-2 px-4 text-base font-bold text-foreground outline-none ring-ring placeholder:text-muted-foreground placeholder:opacity-40 focus:ring-2"
+            />
+            <select
+              value={row.unit}
+              onChange={(e) => update(row.id, { unit: e.target.value })}
+              className="h-12 shrink-0 rounded-xl border border-border bg-surface-2 px-3 text-xs font-bold text-foreground outline-none ring-ring focus:ring-2"
+            >
+              <optgroup label="Single unit">
+                {SINGLE_UNITS.map((u) => (
+                  <option key={u} value={u}>
+                    {u}
+                  </option>
+                ))}
+              </optgroup>
+              <optgroup label="Combined">
+                {COMBINED_UNITS.map((u) => (
+                  <option key={u} value={u}>
+                    {u}
+                  </option>
+                ))}
+              </optgroup>
+            </select>
           </div>
         </div>
       ))}
 
       <button
-        onClick={() =>
-          setRows((rs) => [
-            ...rs,
-            { id: Date.now(), op: "+", value: "", unit: "Sq. Ft." },
-          ])
-        }
-        className="tap w-full rounded-2xl border border-dashed border-border bg-surface py-3 text-sm font-semibold text-muted-foreground"
+        onClick={() => setRows((rs) => [...rs, newRow("+")])}
+        className="tap flex w-full items-center justify-center gap-2 rounded-2xl border border-border bg-surface py-3.5 text-sm font-bold text-foreground"
       >
-        Add another area
+        <Plus className="size-4" />
+        Add land parcel
       </button>
 
-      <div className="surface-card p-5">
-        <div className="grid grid-cols-[minmax(0,1fr)_9.5rem] items-center gap-3">
-          <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-            Total
-          </p>
-          <UnitSelect value={outUnit} onChange={setOutUnit} />
-        </div>
-        <p className="mt-3 text-3xl font-extrabold">
-          <span className="gradient-text">{formatNumber(fromSqFt(totalSqFt, outUnit))}</span>
-          <span className="ml-2 text-sm font-semibold text-muted-foreground">{outUnit}</span>
+      <div className={cn("surface-card p-5 transition-opacity", touched ? "opacity-100" : "opacity-40")}>
+        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+          Total
         </p>
-        <div className="mt-4 grid gap-1 border-t border-border pt-3 text-xs text-muted-foreground">
-          {ALL_UNITS.map((u) => (
-            <div key={u} className="flex items-center justify-between gap-3">
-              <span className="truncate">{u}</span>
-              <span className="shrink-0 font-semibold text-foreground">
-                {formatNumber(fromSqFt(totalSqFt, u), 3)}
-              </span>
-            </div>
-          ))}
-        </div>
+        <p className="mt-2 text-3xl font-extrabold">
+          <span className="gradient-text">{formatNumber(total, 2)}</span>
+          <span className="ml-2 text-sm font-semibold text-muted-foreground">Sq. Ft.</span>
+        </p>
+        {!touched && (
+          <p className="mt-2 text-xs text-muted-foreground">
+            Example values shown — enter a parcel for live totals.
+          </p>
+        )}
       </div>
+
+      <BreakdownCards sqft={total} faded={!touched} />
     </div>
   );
 }
+
+/* keep breakdown import used for tree-shaking clarity */
+void breakdown;
