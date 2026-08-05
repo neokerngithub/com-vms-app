@@ -97,3 +97,32 @@ export function useGovRates() {
     },
   });
 }
+
+export function useAddGovRate() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: {
+      fiscal_year: string;
+      district_office: string;
+      pdf_url: string;
+    }) => {
+      const { data: existing, error: checkError } = await supabase
+        .from("government_rates")
+        .select("id")
+        .eq("fiscal_year", payload.fiscal_year)
+        .eq("district_office", payload.district_office)
+        .maybeSingle();
+      if (checkError) throw checkError;
+      if (existing) {
+        throw new Error(
+          `Government rate for ${payload.district_office} in Fiscal Year ${payload.fiscal_year} already exists.`,
+        );
+      }
+      const { error } = await supabase
+        .from("government_rates")
+        .insert(payload as never);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["government_rates"] }),
+  });
+}
