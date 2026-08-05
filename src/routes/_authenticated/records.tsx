@@ -12,8 +12,8 @@ type Sort = (typeof SORTS)[number];
 
 export const Route = createFileRoute("/_authenticated/records")({
   ssr: false,
-  validateSearch: (search: Record<string, unknown>): { record?: string } => ({
-    record: typeof search.record === "string" ? search.record : undefined,
+  validateSearch: (search: Record<string, unknown>): { record?: string | undefined } => ({
+    record: typeof search['record'] === "string" ? (search['record'] as string) : undefined,
   }),
   head: () => ({
     meta: [
