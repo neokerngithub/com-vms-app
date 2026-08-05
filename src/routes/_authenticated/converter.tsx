@@ -5,7 +5,6 @@ import { AppShell } from "@/components/AppShell";
 import {
   AREA_UNITS,
   UNIT_GROUPS,
-  breakdown,
   convert,
   formatNumber,
   parseCombined,
@@ -387,6 +386,3 @@ function ArithmeticMode() {
     </div>
   );
 }
-
-/* keep breakdown import used for tree-shaking clarity */
-void breakdown;
