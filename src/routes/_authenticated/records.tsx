@@ -72,6 +72,15 @@ function RecordsPage() {
         setFormOpen(true);
       }}
     >
+      {focusId && (
+        <button
+          onClick={() => navigate({ to: "/records", search: {} })}
+          className="tap mb-3 flex w-full items-center justify-between rounded-2xl border border-border bg-surface px-4 py-3 text-xs font-bold text-muted-foreground"
+        >
+          Showing one record from the map
+          <span className="gradient-text">Show all</span>
+        </button>
+      )}
       <div className="relative">
         <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
         <input
@@ -82,6 +91,7 @@ function RecordsPage() {
           className="h-12 w-full rounded-2xl border border-border bg-surface pl-11 pr-4 text-sm text-foreground outline-none ring-ring placeholder:text-muted-foreground focus:ring-2"
         />
       </div>
+
 
       <div className="no-scrollbar -mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-1">
         {SORTS.map((s) => (
