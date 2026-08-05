@@ -12,6 +12,9 @@ type Sort = (typeof SORTS)[number];
 
 export const Route = createFileRoute("/_authenticated/records")({
   ssr: false,
+  validateSearch: (search: Record<string, unknown>): { record?: string } => ({
+    record: typeof search.record === "string" ? search.record : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Universal Records — VMS" },
@@ -28,6 +31,7 @@ export const Route = createFileRoute("/_authenticated/records")({
 
 function RecordsPage() {
   const { data = [], isLoading } = useRecords();
+  const { record: focusId } = Route.useSearch();
   const [q, setQ] = useState("");
   const [sort, setSort] = useState<Sort>("Newest");
   const [formOpen, setFormOpen] = useState(false);
@@ -35,6 +39,7 @@ function RecordsPage() {
   const navigate = useNavigate();
 
   const list = useMemo(() => {
+    if (focusId) return data.filter((r) => r.id === focusId);
     const needle = q.trim().toLowerCase();
     const filtered = needle
       ? data.filter((r) =>
