@@ -105,7 +105,7 @@ function CalculatorPage() {
   );
 
   return (
-    <AppShell title="Advanced Calculator" showTabs={false}>
+    <AppShell title="Advanced Calculator" back>
       <div className="space-y-4 pb-8">
         <section className="surface-card space-y-4 p-4">
           <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
