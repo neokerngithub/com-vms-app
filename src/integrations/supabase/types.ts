@@ -17,6 +17,7 @@ export type Database = {
       government_rates: {
         Row: {
           created_at: string
+          created_by: string | null
           district_office: string
           fiscal_year: string
           id: string
@@ -24,6 +25,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          created_by?: string | null
           district_office: string
           fiscal_year: string
           id?: string
@@ -31,6 +33,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          created_by?: string | null
           district_office?: string
           fiscal_year?: string
           id?: string

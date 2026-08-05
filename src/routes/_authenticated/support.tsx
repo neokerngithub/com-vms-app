@@ -19,19 +19,19 @@ export const Route = createFileRoute("/_authenticated/support")({
 });
 
 const CONTACTS = [
-  { icon: Mail, label: "Email", value: "support@vms.np", href: "mailto:support@vms.np" },
-  { icon: Phone, label: "Phone", value: "+977 21 000000", href: "tel:+97721000000" },
+  { icon: Mail, label: "Email", value: "vms.app.nepal@gmail.com", href: "mailto:vms.app.nepal@gmail.com" },
+  { icon: Phone, label: "Phone", value: "+977-9852059599", href: "tel:+9779852059599" },
   {
     icon: MessageCircle,
     label: "WhatsApp",
-    value: "+977 98 00000000",
-    href: "https://wa.me/9779800000000",
+    value: "+977-9852059599",
+    href: "https://wa.me/9779852059599",
   },
 ];
 
 function SupportPage() {
   return (
-    <AppShell title="Support / Contact" showTabs={false}>
+    <AppShell title="Support / Contact" back>
       <div className="space-y-4 pb-8">
         <div className="surface-card p-5">
           <h2 className="text-lg font-bold text-foreground">We're here to help</h2>

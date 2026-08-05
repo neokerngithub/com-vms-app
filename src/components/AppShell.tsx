@@ -1,5 +1,6 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
+  ArrowLeft,
   Calculator,
   FileText,
   HelpCircle,
@@ -11,7 +12,7 @@ import {
   UserRound,
   Plus,
 } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
@@ -22,6 +23,8 @@ const TABS = [
   { to: "/converter", label: "Converter", icon: Repeat },
 ] as const;
 
+type TabPath = (typeof TABS)[number]["to"];
+
 const DRAWER_LINKS = [
   { to: "/profile", label: "Profile", icon: UserRound },
   { to: "/calculator", label: "Advanced Calculator", icon: Calculator },
@@ -29,23 +32,41 @@ const DRAWER_LINKS = [
   { to: "/support", label: "Support / Contact", icon: HelpCircle },
 ] as const;
 
+const LAST_TAB_KEY = "vms-last-tab";
+
+function readLastTab(): TabPath {
+  if (typeof window === "undefined") return "/map";
+  const v = window.sessionStorage.getItem(LAST_TAB_KEY);
+  return (TABS.some((t) => t.to === v) ? v : "/map") as TabPath;
+}
+
 export function AppShell({
   title,
   children,
   showTabs = true,
   onAdd,
   bare = false,
+  back = false,
 }: {
   title: string;
   children: ReactNode;
   showTabs?: boolean;
   onAdd?: () => void;
   bare?: boolean;
+  /** Secondary drawer screens show a back arrow instead of the hamburger. */
+  back?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const { profile, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (TABS.some((t) => t.to === pathname)) {
+      window.sessionStorage.setItem(LAST_TAB_KEY, pathname);
+    }
+  }, [pathname]);
 
   const handleSignOut = async () => {
     setOpen(false);
@@ -57,61 +78,71 @@ export function AppShell({
     <div className="flex min-h-[100dvh] flex-col bg-background">
       <header className="safe-top sticky top-0 z-30 border-b border-border/70 bg-background/85 backdrop-blur-xl">
         <div className="mx-auto grid w-full max-w-3xl grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 py-3">
-          <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger asChild>
-              <button
-                aria-label="Open menu"
-                className="tap grid size-10 shrink-0 place-items-center rounded-xl border border-border bg-surface text-foreground"
-              >
-                <Menu className="size-5" />
-              </button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-[85vw] max-w-xs border-border bg-sidebar p-0">
-              <div className="safe-top flex h-full flex-col">
-                <div className="border-b border-border px-5 py-6">
-                  <div className="gradient-brand grid size-12 place-items-center rounded-2xl text-lg font-black text-primary-foreground">
-                    V
+          {back ? (
+            <button
+              aria-label="Go back"
+              onClick={() => navigate({ to: readLastTab() })}
+              className="tap grid size-10 shrink-0 place-items-center rounded-xl border border-border bg-surface text-foreground"
+            >
+              <ArrowLeft className="size-5" />
+            </button>
+          ) : (
+            <Sheet open={open} onOpenChange={setOpen}>
+              <SheetTrigger asChild>
+                <button
+                  aria-label="Open menu"
+                  className="tap grid size-10 shrink-0 place-items-center rounded-xl border border-border bg-surface text-foreground"
+                >
+                  <Menu className="size-5" />
+                </button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-[85vw] max-w-xs border-border bg-sidebar p-0">
+                <div className="safe-top flex h-full flex-col">
+                  <div className="border-b border-border px-5 py-6">
+                    <div className="gradient-brand grid size-12 place-items-center rounded-2xl text-lg font-black text-primary-foreground">
+                      V
+                    </div>
+                    <p className="mt-3 truncate text-base font-bold text-foreground">
+                      {profile?.full_name ?? "Valuer"}
+                    </p>
+                    <p className="truncate text-xs text-muted-foreground">
+                      {profile?.email ?? ""}
+                    </p>
+                    {isAdmin && (
+                      <span className="gradient-brand mt-2 inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary-foreground">
+                        Admin
+                      </span>
+                    )}
                   </div>
-                  <p className="mt-3 truncate text-base font-bold text-foreground">
-                    {profile?.full_name ?? "Valuer"}
-                  </p>
-                  <p className="truncate text-xs text-muted-foreground">
-                    {profile?.email ?? ""}
-                  </p>
-                  {isAdmin && (
-                    <span className="gradient-brand mt-2 inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary-foreground">
-                      Admin
-                    </span>
-                  )}
-                </div>
-                <nav className="flex-1 space-y-1 overflow-y-auto p-3">
-                  {DRAWER_LINKS.map((l) => (
-                    <Link
-                      key={l.to}
-                      to={l.to}
-                      onClick={() => setOpen(false)}
-                      className={cn(
-                        "tap flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-muted-foreground hover:bg-surface-2 hover:text-foreground",
-                        pathname === l.to && "bg-surface-2 text-foreground",
-                      )}
+                  <nav className="flex-1 space-y-1 overflow-y-auto p-3">
+                    {DRAWER_LINKS.map((l) => (
+                      <Link
+                        key={l.to}
+                        to={l.to}
+                        onClick={() => setOpen(false)}
+                        className={cn(
+                          "tap flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-muted-foreground hover:bg-surface-2 hover:text-foreground",
+                          pathname === l.to && "bg-surface-2 text-foreground",
+                        )}
+                      >
+                        <l.icon className="size-5 shrink-0" />
+                        <span className="truncate">{l.label}</span>
+                      </Link>
+                    ))}
+                  </nav>
+                  <div className="safe-bottom border-t border-border p-3">
+                    <button
+                      onClick={handleSignOut}
+                      className="tap flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-destructive hover:bg-surface-2"
                     >
-                      <l.icon className="size-5 shrink-0" />
-                      <span className="truncate">{l.label}</span>
-                    </Link>
-                  ))}
-                </nav>
-                <div className="safe-bottom border-t border-border p-3">
-                  <button
-                    onClick={handleSignOut}
-                    className="tap flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-destructive hover:bg-surface-2"
-                  >
-                    <LogOut className="size-5 shrink-0" />
-                    Sign Out
-                  </button>
+                      <LogOut className="size-5 shrink-0" />
+                      Sign Out
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </SheetContent>
-          </Sheet>
+              </SheetContent>
+            </Sheet>
+          )}
 
           <h1 className="truncate text-lg font-bold tracking-tight text-foreground">
             {title}
