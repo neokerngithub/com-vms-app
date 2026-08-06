@@ -140,10 +140,11 @@ export function computeValuation(input: ValuationInput): ValuationResult {
 /* ---------- Combined ("B-K-D-K" / "R-A-P-D") land readings ---------- */
 
 export const TERAI_COMBINED = ["Bigha", "Kattha", "Dhur", "Kanwa"];
-export const HILLY_COMBINED = ["Ropani", "Aana", "Paisa", "Daam"];
+export const HILLY_COMBINED = ["Ropani", "Aana", "Paisa", "Dam"];
 
 export const COMBINED_TERAI_LABEL = "Bigha-Kattha-Dhur-Kanwa";
-export const COMBINED_HILLY_LABEL = "Ropani-Aana-Paisa-Daam";
+export const COMBINED_HILLY_LABEL = "Ropani-Aana-Paisa-Dam";
+
 
 /** Parse "1-5-10-2" against an ordered unit list into square feet. */
 export function parseCombined(input: string, units: string[]): number {
