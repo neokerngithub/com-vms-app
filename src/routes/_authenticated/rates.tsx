@@ -129,8 +129,21 @@ function RatesPage() {
           </form>
         )}
 
-        <Pills label="Fiscal year" options={years} value={year} onChange={setYear} />
+        <Field label="Fiscal year">
+          <select
+            value={year}
+            onChange={(e) => setYear(e.target.value)}
+            className="h-12 w-full rounded-xl border border-border bg-surface px-4 text-sm font-semibold text-foreground outline-none ring-ring focus:ring-2"
+          >
+            {years.map((y) => (
+              <option key={y} value={y}>
+                {y === "All" ? "All fiscal years" : y}
+              </option>
+            ))}
+          </select>
+        </Field>
         <Pills label="District / Office" options={offices} value={office} onChange={setOffice} />
+
 
         <div className="space-y-3">
           {isLoading && <p className="text-sm text-muted-foreground">Loading…</p>}
