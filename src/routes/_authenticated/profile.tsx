@@ -1,9 +1,22 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { LogOut, ShieldCheck, FileText, Moon, Sun } from "lucide-react";
+import {
+  LogOut,
+  ShieldCheck,
+  FileText,
+  Moon,
+  Sun,
+  Camera,
+  BadgeCheck,
+  Loader2,
+} from "lucide-react";
+import { useRef, useState } from "react";
+import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
 import { useAuth } from "@/hooks/useAuth";
 import { useRecords } from "@/hooks/useRecords";
 import { useTheme } from "@/hooks/useTheme";
+import { supabase } from "@/integrations/supabase/client";
+import { initialsOf, useAvatarUrl } from "@/lib/avatar";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/profile")({
@@ -23,30 +36,95 @@ export const Route = createFileRoute("/_authenticated/profile")({
 });
 
 function ProfilePage() {
-  const { profile, user, isAdmin, signOut } = useAuth();
+  const { profile, user, isAdmin, signOut, refreshProfile } = useAuth();
   const { data = [] } = useRecords();
   const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
   const mine = data.filter((r) => r.created_by === user?.id);
+  const avatarUrl = useAvatarUrl(profile?.avatar_url);
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+
+  const handleUpload = async (file: File) => {
+    if (!user) return;
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop() ?? "jpg";
+      const path = `${user.id}/avatar-${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage
+        .from("avatars")
+        .upload(path, file, { upsert: true, contentType: file.type });
+      if (upErr) throw upErr;
+      const { error: dbErr } = await supabase
+        .from("profiles")
+        .update({ avatar_url: path })
+        .eq("id", user.id);
+      if (dbErr) throw dbErr;
+      await refreshProfile();
+      toast.success("Profile photo updated");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Could not upload photo");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   return (
     <AppShell title="Profile" back>
       <div className="space-y-4 pb-8">
         <div className="surface-card flex items-center gap-4 p-5">
-          <div className="gradient-brand grid size-16 shrink-0 place-items-center rounded-2xl text-2xl font-black text-primary-foreground">
-            {(profile?.full_name ?? "V").charAt(0).toUpperCase()}
-          </div>
+          <button
+            onClick={() => fileRef.current?.click()}
+            aria-label="Upload profile photo"
+            className="tap gradient-brand relative grid size-16 shrink-0 place-items-center overflow-hidden rounded-2xl text-2xl font-black text-primary-foreground"
+          >
+            {avatarUrl ? (
+              <img
+                src={avatarUrl}
+                alt={profile?.full_name ?? "Profile photo"}
+                className="size-full object-cover"
+              />
+            ) : (
+              initialsOf(profile?.full_name, profile?.email)
+            )}
+            <span className="absolute inset-x-0 bottom-0 grid h-5 place-items-center bg-background/70">
+              {uploading ? (
+                <Loader2 className="size-3.5 animate-spin text-foreground" />
+              ) : (
+                <Camera className="size-3.5 text-foreground" />
+              )}
+            </span>
+          </button>
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            hidden
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) void handleUpload(f);
+              e.target.value = "";
+            }}
+          />
           <div className="min-w-0">
             <p className="truncate text-lg font-bold text-foreground">
               {profile?.full_name ?? "Valuer"}
             </p>
             <p className="truncate text-sm text-muted-foreground">{profile?.email}</p>
-            <span className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-border bg-surface-2 px-2.5 py-1 text-[11px] font-bold text-muted-foreground">
-              <ShieldCheck className="size-3.5" />
-              {isAdmin ? "Admin" : "Valuer"}
-            </span>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface-2 px-2.5 py-1 text-[11px] font-bold text-muted-foreground">
+                <ShieldCheck className="size-3.5" />
+                {isAdmin ? "Admin" : "Valuer"}
+              </span>
+              {profile?.is_verified && (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-success/15 px-2.5 py-1 text-[11px] font-bold text-success">
+                  <BadgeCheck className="size-3.5" /> Verified Valuator
+                </span>
+              )}
+            </div>
           </div>
         </div>
+
 
         <div className="surface-card p-4">
           <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
