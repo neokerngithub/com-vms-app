@@ -29,10 +29,11 @@ export const Route = createFileRoute("/_authenticated/rates")({
 
 function RatesPage() {
   const { data = [], isLoading } = useGovRates();
-  const [year, setYear] = useState("All");
+  const [year, setYear] = useState<string>(DEFAULT_FISCAL_YEAR);
   const [office, setOffice] = useState("All");
   const [adding, setAdding] = useState(false);
-  const [fy, setFy] = useState(FISCAL_YEARS[0] as string);
+  const [fy, setFy] = useState<string>(DEFAULT_FISCAL_YEAR);
+
   const [officeName, setOfficeName] = useState("");
   const [pdfUrl, setPdfUrl] = useState("");
   const addRate = useAddGovRate();
