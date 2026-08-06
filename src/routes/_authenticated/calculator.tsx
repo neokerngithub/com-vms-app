@@ -104,13 +104,33 @@ function CalculatorPage() {
     [area, areaUnit, govRate, govRateUnit, marketRate, marketRateUnit, govShare, distress],
   );
 
+  const reset = () => {
+    setArea("1");
+    setAreaUnit("Kattha");
+    setGovRate("500000");
+    setGovRateUnit("Kattha");
+    setMarketRate("900000");
+    setMarketRateUnit("Kattha");
+    setGovShare(50);
+    setDistress(85);
+  };
+
   return (
     <AppShell title="Advanced Calculator" back>
       <div className="space-y-4 pb-8">
         <section className="surface-card space-y-4 p-4">
-          <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-            Property area
-          </p>
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+              Property area
+            </p>
+            <button
+              onClick={reset}
+              aria-label="Reset form"
+              className="tap grid size-11 shrink-0 place-items-center rounded-xl border border-border bg-surface-2 text-muted-foreground"
+            >
+              <RotateCcw className="size-4" />
+            </button>
+          </div>
           <div className="grid grid-cols-[minmax(0,1fr)_9.5rem] gap-3">
             <NumberField label="Area" value={area} onChange={setArea} />
             <div className="space-y-2">
@@ -119,9 +139,10 @@ function CalculatorPage() {
             </div>
           </div>
           <p className="text-xs text-muted-foreground">
-            = {formatNumber(result.areaSqFt, 2)} Sq. Ft.
+            = {formatNumber(result.areaSqFt)} Sq. Ft.
           </p>
         </section>
+
 
         <section className="surface-card space-y-4 p-4">
           <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
