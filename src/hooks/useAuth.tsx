@@ -6,6 +6,8 @@ interface Profile {
   id: string;
   full_name: string | null;
   email: string | null;
+  avatar_url: string | null;
+  is_verified: boolean;
 }
 
 interface AuthState {
@@ -15,6 +17,7 @@ interface AuthState {
   isAdmin: boolean;
   loading: boolean;
   signOut: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthState>({
@@ -24,7 +27,9 @@ const AuthContext = createContext<AuthState>({
   isAdmin: false,
   loading: true,
   signOut: async () => {},
+  refreshProfile: async () => {},
 });
+
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
