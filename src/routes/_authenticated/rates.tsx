@@ -83,15 +83,20 @@ function RatesPage() {
         {adding && (
           <form onSubmit={submit} className="surface-card space-y-3 p-4">
             <Field label="Fiscal year">
-              <input
+              <select
                 value={fy}
                 onChange={(e) => setFy(e.target.value)}
                 required
-                maxLength={16}
-                placeholder="2082-83"
                 className="h-12 w-full rounded-xl border border-border bg-surface-2 px-4 text-sm text-foreground outline-none ring-ring focus:ring-2"
-              />
+              >
+                {FISCAL_YEARS.map((y) => (
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
+                ))}
+              </select>
             </Field>
+
             <Field label="District / Office">
               <input
                 value={officeName}
