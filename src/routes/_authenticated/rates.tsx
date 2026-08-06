@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { toast } from "sonner";
 import { useAddGovRate, useGovRates } from "@/hooks/useRecords";
-import { FISCAL_YEARS } from "@/lib/vms";
+import { DEFAULT_FISCAL_YEAR, FISCAL_YEARS } from "@/lib/vms";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/rates")({
