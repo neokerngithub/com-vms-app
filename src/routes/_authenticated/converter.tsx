@@ -1,11 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Minus, Plus, Trash2 } from "lucide-react";
+import { Minus, Plus, RotateCcw, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import {
-  AREA_UNITS,
+  UNIT_ORDER,
   UNIT_GROUPS,
-  convert,
   formatNumber,
   parseCombined,
   formatCombined,
@@ -22,7 +21,7 @@ export const Route = createFileRoute("/_authenticated/converter")({
       {
         name: "description",
         content:
-          "Convert and add Nepalese land units — Bigha, Kattha, Dhur, Kanwa, Ropani, Aana, Paisa, Daam and metric.",
+          "Convert and add Nepalese land units — Bigha, Kattha, Dhur, Kanwa, Ropani, Aana, Paisa, Dam and metric.",
       },
       { property: "og:title", content: "Land Unit Converter — VMS" },
       {
@@ -38,9 +37,8 @@ const MODES = ["Convert", "Combined", "Arithmetic"] as const;
 type Mode = (typeof MODES)[number];
 
 const TERAI = ["Bigha", "Kattha", "Dhur", "Kanwa"];
-const HILLY = ["Ropani", "Aana", "Paisa", "Daam"];
+const HILLY = ["Ropani", "Aana", "Paisa", "Dam"];
 
-const SINGLE_UNITS = ["Kattha", "Dhur", "Ropani", "Aana", "Sq. Ft.", "Sq. M.", "Bigha"];
 const COMBINED_UNITS = ["B-K-D-K", "R-A-P-D"];
 
 function ConverterPage() {
@@ -72,25 +70,45 @@ function ConverterPage() {
   );
 }
 
+function ResetButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      aria-label="Reset form"
+      className="tap grid size-11 shrink-0 place-items-center rounded-xl border border-border bg-surface-2 text-muted-foreground"
+    >
+      <RotateCcw className="size-4" />
+    </button>
+  );
+}
+
 /* ------------------------------- Convert -------------------------------- */
 
 const EXAMPLE_VALUE = "5";
+const DEFAULT_UNIT = "Kattha";
 
 function ConvertMode() {
   const [value, setValue] = useState("");
-  const [from, setFrom] = useState<string>("Kattha");
-  const [to, setTo] = useState<string>("Sq. Ft.");
+  const [unit, setUnit] = useState<string>(DEFAULT_UNIT);
 
   const touched = value.trim() !== "";
   const numeric = Number(touched ? value : EXAMPLE_VALUE);
-  const result = Number.isFinite(numeric) ? convert(numeric, from, to) : 0;
+  const sqft = Number.isFinite(numeric) ? toSqFt(numeric, unit) : 0;
+
+  const reset = () => {
+    setValue("");
+    setUnit(DEFAULT_UNIT);
+  };
 
   return (
     <div className="space-y-3">
       <div className="surface-card space-y-3 p-4">
-        <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-          Amount
-        </label>
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+            Area
+          </p>
+          <ResetButton onClick={reset} />
+        </div>
         <input
           inputMode="decimal"
           value={value}
@@ -99,31 +117,30 @@ function ConvertMode() {
           maxLength={16}
           className="h-14 w-full rounded-xl border border-border bg-surface-2 px-4 text-2xl font-extrabold text-foreground outline-none ring-ring placeholder:text-muted-foreground placeholder:opacity-40 focus:ring-2"
         />
-        <div className="grid grid-cols-2 gap-3">
-          <UnitSelect label="From" value={from} onChange={setFrom} />
-          <UnitSelect label="To" value={to} onChange={setTo} />
-        </div>
+        <UnitSelect label="Unit" value={unit} onChange={setUnit} />
       </div>
 
-      <div className={cn("surface-card p-5 transition-opacity", touched ? "opacity-100" : "opacity-40")}>
+      <div
+        className={cn(
+          "surface-card p-5 transition-opacity",
+          touched ? "opacity-100" : "opacity-40",
+        )}
+      >
         <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-          Result
+          Total area
         </p>
         <p className="mt-2 text-3xl font-extrabold">
-          <span className="gradient-text">{formatNumber(result)}</span>
-          <span className="ml-2 text-sm font-semibold text-muted-foreground">{to}</span>
+          <span className="gradient-text">{formatNumber(sqft)}</span>
+          <span className="ml-2 text-sm font-semibold text-muted-foreground">Sq. Ft.</span>
         </p>
         {!touched && (
           <p className="mt-2 text-xs text-muted-foreground">
-            Example shown — type an amount for live values.
+            Example shown — type an area for live values.
           </p>
         )}
       </div>
 
-      <BreakdownCards
-        sqft={toSqFt(numeric || 0, from)}
-        faded={!touched}
-      />
+      <BreakdownCards sqft={sqft} faded={!touched} />
     </div>
   );
 }
@@ -147,7 +164,7 @@ function UnitSelect({
         onChange={(e) => onChange(e.target.value)}
         className="h-12 w-full rounded-xl border border-border bg-surface-2 px-3 text-sm font-semibold text-foreground outline-none ring-ring focus:ring-2"
       >
-        {[...AREA_UNITS, "Kanwa", "Hectare"].map((u) => (
+        {UNIT_ORDER.map((u) => (
           <option key={u} value={u}>
             {u}
           </option>
@@ -175,22 +192,30 @@ function CombinedMode() {
   return (
     <div className="space-y-3">
       <div className="surface-card space-y-3 p-4">
-        <div className="flex rounded-xl border border-border bg-surface-2 p-1">
-          {(["Terai", "Hilly"] as const).map((s) => (
-            <button
-              key={s}
-              onClick={() => setSystem(s)}
-              className={cn(
-                "tap flex-1 rounded-lg py-2 text-xs font-bold",
-                system === s ? "gradient-brand text-primary-foreground" : "text-muted-foreground",
-              )}
-            >
-              {s}
-            </button>
-          ))}
+        <div className="flex items-center gap-3">
+          <div className="flex flex-1 rounded-xl border border-border bg-surface-2 p-1">
+            {(["Terai", "Hilly"] as const).map((s) => (
+              <button
+                key={s}
+                onClick={() => setSystem(s)}
+                className={cn(
+                  "tap flex-1 rounded-lg py-2 text-xs font-bold",
+                  system === s ? "gradient-brand text-primary-foreground" : "text-muted-foreground",
+                )}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+          <ResetButton
+            onClick={() => {
+              setInput("");
+              setSystem("Terai");
+            }}
+          />
         </div>
         <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-          {system === "Terai" ? "Bigha-Kattha-Dhur-Kanwa" : "Ropani-Aana-Paisa-Daam"}
+          {system === "Terai" ? "Bigha-Kattha-Dhur-Kanwa" : "Ropani-Aana-Paisa-Dam"}
         </p>
         <input
           value={input}
@@ -229,7 +254,7 @@ function BreakdownCards({ sqft, faded }: { sqft: number; faded: boolean }) {
               <div key={u} className="flex items-baseline justify-between gap-2">
                 <span className="truncate text-xs text-muted-foreground">{u}</span>
                 <span className="text-sm font-bold text-foreground">
-                  {formatNumber(fromSqFt(sqft, u), 3)}
+                  {formatNumber(fromSqFt(sqft, u))}
                 </span>
               </div>
             ))}
@@ -295,6 +320,16 @@ function ArithmeticMode() {
 
   return (
     <div className="space-y-3">
+      <div className="surface-card flex items-center justify-between gap-3 p-4">
+        <div className="min-w-0">
+          <p className="text-sm font-bold text-foreground">Land Arithmetic</p>
+          <p className="text-xs text-muted-foreground">
+            Add or subtract parcels across single and combined units.
+          </p>
+        </div>
+        <ResetButton onClick={() => setRows([newRow("+"), newRow("-")])} />
+      </div>
+
       {rows.map((row, i) => (
         <div key={row.id} className="surface-card space-y-3 p-4">
           <div className="flex items-center justify-between gap-2">
@@ -304,8 +339,9 @@ function ArithmeticMode() {
                   key={op}
                   onClick={() => update(row.id, { op })}
                   disabled={i === 0}
+                  aria-label={op === "+" ? "Add parcel" : "Subtract parcel"}
                   className={cn(
-                    "tap grid size-9 place-items-center rounded-lg text-sm font-bold disabled:opacity-60",
+                    "tap grid size-11 place-items-center rounded-lg text-sm font-bold disabled:opacity-60",
                     row.op === op
                       ? "gradient-brand text-primary-foreground"
                       : "text-muted-foreground",
@@ -319,7 +355,7 @@ function ArithmeticMode() {
               <button
                 onClick={() => setRows((rs) => rs.filter((r) => r.id !== row.id))}
                 aria-label="Remove row"
-                className="tap grid size-9 place-items-center rounded-xl border border-border bg-surface-2 text-destructive"
+                className="tap grid size-11 place-items-center rounded-xl border border-border bg-surface-2 text-destructive"
               >
                 <Trash2 className="size-4" />
               </button>
@@ -341,7 +377,7 @@ function ArithmeticMode() {
               className="h-12 shrink-0 rounded-xl border border-border bg-surface-2 px-3 text-xs font-bold text-foreground outline-none ring-ring focus:ring-2"
             >
               <optgroup label="Single unit">
-                {SINGLE_UNITS.map((u) => (
+                {UNIT_ORDER.map((u) => (
                   <option key={u} value={u}>
                     {u}
                   </option>
@@ -356,6 +392,21 @@ function ArithmeticMode() {
               </optgroup>
             </select>
           </div>
+
+          <div
+            className={cn(
+              "flex items-baseline justify-between gap-2 border-t border-border pt-2 transition-opacity",
+              row.value.trim() ? "opacity-100" : "opacity-40",
+            )}
+          >
+            <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+              Sub-total
+            </span>
+            <span className="text-sm font-bold text-foreground">
+              {row.op === "-" ? "−" : ""}
+              {formatNumber(rowSqft(row, !touched))} Sq. Ft.
+            </span>
+          </div>
         </div>
       ))}
 
@@ -367,12 +418,17 @@ function ArithmeticMode() {
         Add land parcel
       </button>
 
-      <div className={cn("surface-card p-5 transition-opacity", touched ? "opacity-100" : "opacity-40")}>
+      <div
+        className={cn(
+          "surface-card p-5 transition-opacity",
+          touched ? "opacity-100" : "opacity-40",
+        )}
+      >
         <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
           Total
         </p>
         <p className="mt-2 text-3xl font-extrabold">
-          <span className="gradient-text">{formatNumber(total, 2)}</span>
+          <span className="gradient-text">{formatNumber(total)}</span>
           <span className="ml-2 text-sm font-semibold text-muted-foreground">Sq. Ft.</span>
         </p>
         {!touched && (

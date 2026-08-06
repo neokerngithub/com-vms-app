@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { toast } from "sonner";
 import { useAddGovRate, useGovRates } from "@/hooks/useRecords";
-import { FISCAL_YEARS } from "@/lib/vms";
+import { DEFAULT_FISCAL_YEAR, FISCAL_YEARS } from "@/lib/vms";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/rates")({
@@ -29,10 +29,11 @@ export const Route = createFileRoute("/_authenticated/rates")({
 
 function RatesPage() {
   const { data = [], isLoading } = useGovRates();
-  const [year, setYear] = useState("All");
+  const [year, setYear] = useState<string>(DEFAULT_FISCAL_YEAR);
   const [office, setOffice] = useState("All");
   const [adding, setAdding] = useState(false);
-  const [fy, setFy] = useState(FISCAL_YEARS[0] as string);
+  const [fy, setFy] = useState<string>(DEFAULT_FISCAL_YEAR);
+
   const [officeName, setOfficeName] = useState("");
   const [pdfUrl, setPdfUrl] = useState("");
   const addRate = useAddGovRate();
@@ -55,9 +56,10 @@ function RatesPage() {
   };
 
   const years = useMemo(
-    () => ["All", ...new Set(data.map((r) => r.fiscal_year))],
+    () => ["All", ...new Set([...FISCAL_YEARS, ...data.map((r) => r.fiscal_year)])],
     [data],
   );
+
   const offices = useMemo(
     () => ["All", ...new Set(data.map((r) => r.district_office))],
     [data],
@@ -83,15 +85,20 @@ function RatesPage() {
         {adding && (
           <form onSubmit={submit} className="surface-card space-y-3 p-4">
             <Field label="Fiscal year">
-              <input
+              <select
                 value={fy}
                 onChange={(e) => setFy(e.target.value)}
                 required
-                maxLength={16}
-                placeholder="2082-83"
                 className="h-12 w-full rounded-xl border border-border bg-surface-2 px-4 text-sm text-foreground outline-none ring-ring focus:ring-2"
-              />
+              >
+                {FISCAL_YEARS.map((y) => (
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
+                ))}
+              </select>
             </Field>
+
             <Field label="District / Office">
               <input
                 value={officeName}
@@ -123,8 +130,21 @@ function RatesPage() {
           </form>
         )}
 
-        <Pills label="Fiscal year" options={years} value={year} onChange={setYear} />
+        <Field label="Fiscal year">
+          <select
+            value={year}
+            onChange={(e) => setYear(e.target.value)}
+            className="h-12 w-full rounded-xl border border-border bg-surface px-4 text-sm font-semibold text-foreground outline-none ring-ring focus:ring-2"
+          >
+            {years.map((y) => (
+              <option key={y} value={y}>
+                {y === "All" ? "All fiscal years" : y}
+              </option>
+            ))}
+          </select>
+        </Field>
         <Pills label="District / Office" options={offices} value={office} onChange={setOffice} />
+
 
         <div className="space-y-3">
           {isLoading && <p className="text-sm text-muted-foreground">Loading…</p>}

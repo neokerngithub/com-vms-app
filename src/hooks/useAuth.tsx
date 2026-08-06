@@ -6,6 +6,8 @@ interface Profile {
   id: string;
   full_name: string | null;
   email: string | null;
+  avatar_url: string | null;
+  is_verified: boolean;
 }
 
 interface AuthState {
@@ -15,6 +17,7 @@ interface AuthState {
   isAdmin: boolean;
   loading: boolean;
   signOut: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthState>({
@@ -24,7 +27,9 @@ const AuthContext = createContext<AuthState>({
   isAdmin: false,
   loading: true,
   signOut: async () => {},
+  refreshProfile: async () => {},
 });
+
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
@@ -49,22 +54,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const userId = session?.user?.id;
 
+  const loadProfile = async (id: string) => {
+    const { data: p } = await supabase
+      .from("profiles")
+      .select("id, full_name, email, avatar_url, is_verified")
+      .eq("id", id)
+      .maybeSingle();
+    return (p as Profile) ?? null;
+  };
+
   useEffect(() => {
     if (!userId) return;
     let active = true;
     (async () => {
-      const [{ data: p }, { data: roles }] = await Promise.all([
-        supabase.from("profiles").select("id, full_name, email").eq("id", userId).maybeSingle(),
+      const [p, { data: roles }] = await Promise.all([
+        loadProfile(userId),
         supabase.from("user_roles").select("role").eq("user_id", userId),
       ]);
       if (!active) return;
-      setProfile((p as Profile) ?? null);
+      setProfile(p);
       setIsAdmin(Boolean(roles?.some((r: { role: string }) => r.role === "admin")));
     })();
     return () => {
       active = false;
     };
   }, [userId]);
+
+  const refreshProfile = async () => {
+    if (!userId) return;
+    setProfile(await loadProfile(userId));
+  };
 
   const signOut = async () => {
     await supabase.auth.signOut();
@@ -79,8 +98,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isAdmin,
         loading,
         signOut,
+        refreshProfile,
       }}
     >
+
       {children}
     </AuthContext.Provider>
   );
