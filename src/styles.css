@@ -142,6 +142,7 @@
 }
 
 @utility tap {
+  min-height: 44px;
   transition:
     transform 150ms ease,
     background-color 150ms ease,
@@ -150,6 +151,7 @@
     transform: scale(0.95);
   }
 }
+
 
 @utility safe-bottom {
   padding-bottom: env(safe-area-inset-bottom);
