@@ -163,7 +163,7 @@ export function parseCombined(input: string, units: string[]): number {
 export function formatCombined(sqft: number, units: string[]): string {
   const negative = sqft < 0;
   const parts = breakdown(Math.abs(sqft), units).map((b, i) =>
-    i === units.length - 1 ? formatNumber(b.value, 2) : String(b.value),
+    i === units.length - 1 ? formatNumber(b.value, 4) : String(b.value),
   );
   return (negative ? "-" : "") + parts.join("-");
 }
