@@ -56,9 +56,10 @@ function RatesPage() {
   };
 
   const years = useMemo(
-    () => ["All", ...new Set(data.map((r) => r.fiscal_year))],
+    () => ["All", ...new Set([...FISCAL_YEARS, ...data.map((r) => r.fiscal_year)])],
     [data],
   );
+
   const offices = useMemo(
     () => ["All", ...new Set(data.map((r) => r.district_office))],
     [data],
