@@ -84,12 +84,13 @@ export function formatNumber(n: number, digits = 4): string {
 
 
 export function formatNPR(n: number): string {
-  if (!Number.isFinite(n)) return "Rs. 0";
+  if (!Number.isFinite(n)) return "Rs. 0.0000";
   return (
     "Rs. " +
-    Math.round(n).toLocaleString("en-IN", { maximumFractionDigits: 0 })
+    n.toLocaleString("en-IN", { minimumFractionDigits: 4, maximumFractionDigits: 4 })
   );
 }
+
 
 /** Advanced valuation calculator. */
 export interface ValuationInput {
