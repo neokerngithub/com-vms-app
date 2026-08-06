@@ -13,7 +13,21 @@ export const LOCALITIES = [
   "Residential / Agricultural",
 ] as const;
 
-export const FISCAL_YEARS = ["2082-83", "2081-82", "2080-81"] as const;
+export const FISCAL_YEARS = [
+  "2089/90",
+  "2088/89",
+  "2087/88",
+  "2086/87",
+  "2085/86",
+  "2084/85",
+  "2083/84",
+  "2082/83",
+  "2081/82",
+  "2080/81",
+] as const;
+
+export const DEFAULT_FISCAL_YEAR = "2083/84";
+
 
 export interface VmsRecord {
   id: string;
