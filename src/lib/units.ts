@@ -83,11 +83,12 @@ export function formatNumber(n: number, digits = 4): string {
 }
 
 
+/** Currency is always shown with exactly 2 decimals. */
 export function formatNPR(n: number): string {
-  if (!Number.isFinite(n)) return "Rs. 0.0000";
+  if (!Number.isFinite(n)) return "Rs. 0.00";
   return (
     "Rs. " +
-    n.toLocaleString("en-IN", { minimumFractionDigits: 4, maximumFractionDigits: 4 })
+    n.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
   );
 }
 
@@ -163,7 +164,7 @@ export function parseCombined(input: string, units: string[]): number {
 export function formatCombined(sqft: number, units: string[]): string {
   const negative = sqft < 0;
   const parts = breakdown(Math.abs(sqft), units).map((b, i) =>
-    i === units.length - 1 ? formatNumber(b.value, 4) : String(b.value),
+    i === units.length - 1 ? String(Math.round(b.value)) : String(b.value),
   );
   return (negative ? "-" : "") + parts.join("-");
 }
