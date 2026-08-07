@@ -4,6 +4,7 @@ import type { GovRate, VmsRecord } from "@/lib/vms";
 
 export interface RecordWithCreator extends VmsRecord {
   creator_name: string;
+  creator_verified: boolean;
 }
 
 export function useRecords() {
@@ -18,16 +19,24 @@ export function useRecords() {
       const rows = (data ?? []) as unknown as VmsRecord[];
       const ids = [...new Set(rows.map((r) => r.created_by))];
       const names = new Map<string, string>();
+      const verified = new Map<string, boolean>();
       if (ids.length) {
         const { data: profiles } = await supabase
           .from("profiles")
-          .select("id, full_name")
+          .select("id, full_name, is_verified")
           .in("id", ids);
-        (profiles ?? []).forEach((p: { id: string; full_name: string | null }) =>
-          names.set(p.id, p.full_name ?? "Unknown"),
+        (profiles ?? []).forEach(
+          (p: { id: string; full_name: string | null; is_verified: boolean | null }) => {
+            names.set(p.id, p.full_name ?? "Unknown");
+            verified.set(p.id, Boolean(p.is_verified));
+          },
         );
       }
-      return rows.map((r) => ({ ...r, creator_name: names.get(r.created_by) ?? "Unknown" }));
+      return rows.map((r) => ({
+        ...r,
+        creator_name: names.get(r.created_by) ?? "Unknown",
+        creator_verified: verified.get(r.created_by) ?? false,
+      }));
     },
   });
 }
