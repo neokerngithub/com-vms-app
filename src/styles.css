@@ -29,6 +29,7 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-brand-pink: var(--brand-pink);
   --color-brand-indigo: var(--brand-indigo);
+  --color-brand-indigo-soft: var(--brand-indigo-soft);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
@@ -57,43 +58,49 @@
 :root {
   --radius: 1rem;
   /* Midnight Emerald & Slate */
-  --background: #0b0e14;
+  --background: #10151e;
   --foreground: #f0f6fc;
-  --surface: #161b22;
-  --surface-2: #1c232c;
-  --card: #161b22;
+  --surface: #1a2029;
+  --surface-2: #232b36;
+  --card: #1a2029;
   --card-foreground: #f0f6fc;
-  --popover: #161b22;
+  --popover: #1a2029;
   --popover-foreground: #f0f6fc;
-  --primary: #10b981;
-  --primary-foreground: #04140e;
-  --brand-pink: #059669;
-  --brand-indigo: #0ea5e9;
-  --secondary: #1c232c;
+  --primary: #dc143c;
+  --primary-foreground: #fff5f7;
+  --brand-pink: #dc143c;
+  --brand-indigo: #003893;
+  --brand-indigo-soft: #4b83e8;
+  --secondary: #232b36;
   --secondary-foreground: #f0f6fc;
-  --muted: #1c232c;
+  --muted: #232b36;
   --muted-foreground: #8b949e;
-  --accent: #0ea5e9;
-  --accent-foreground: #04140e;
+  --accent: #4b83e8;
+  --accent-foreground: #06101f;
   --destructive: #f0553d;
   --destructive-foreground: #fff5f3;
   --success: #10b981;
-  --border: #21262d;
-  --input: #2a313a;
-  --ring: #10b981;
-  --sidebar: #161b22;
+  --border: #2a323d;
+  --input: #333c48;
+  --ring: #dc143c;
+  --sidebar: #1a2029;
   --sidebar-foreground: #f0f6fc;
-  --sidebar-primary: #10b981;
-  --sidebar-primary-foreground: #04140e;
-  --sidebar-accent: #1c232c;
+  --sidebar-primary: #dc143c;
+  --sidebar-primary-foreground: #fff5f7;
+  --sidebar-accent: #232b36;
   --sidebar-accent-foreground: #f0f6fc;
-  --sidebar-border: #21262d;
-  --sidebar-ring: #10b981;
+  --sidebar-border: #2a323d;
+  --sidebar-ring: #dc143c;
 
   --gradient-brand: linear-gradient(
     135deg,
     var(--brand-pink) 0%,
     var(--brand-indigo) 100%
+  );
+  --gradient-brand-text: linear-gradient(
+    135deg,
+    var(--brand-pink) 0%,
+    var(--brand-indigo-soft) 100%
   );
   --shadow-elegant: 0 18px 40px -20px oklch(0 0 0 / 0.75);
   --shadow-glow: 0 8px 30px -12px color-mix(in oklab, var(--brand-pink) 55%, transparent);
@@ -129,7 +136,7 @@
 }
 
 @utility gradient-text {
-  background-image: var(--gradient-brand);
+  background-image: var(--gradient-brand-text);
   background-clip: text;
   color: transparent;
 }

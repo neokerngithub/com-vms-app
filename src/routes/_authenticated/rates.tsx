@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Download, FileText, Plus, X } from "lucide-react";
+import { Eye, FileText, Plus, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { AppShell } from "@/components/AppShell";
+import { DocViewerModal } from "@/components/DocViewerModal";
 import { toast } from "sonner";
 import { useAddGovRate, useGovRates } from "@/hooks/useRecords";
 import { DEFAULT_FISCAL_YEAR, FISCAL_YEARS } from "@/lib/vms";
@@ -37,6 +38,7 @@ function RatesPage() {
   const [officeName, setOfficeName] = useState("");
   const [pdfUrl, setPdfUrl] = useState("");
   const addRate = useAddGovRate();
+  const [viewing, setViewing] = useState<{ url: string; title: string } | null>(null);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,10 +57,7 @@ function RatesPage() {
     }
   };
 
-  const years = useMemo(
-    () => ["All", ...new Set([...FISCAL_YEARS, ...data.map((r) => r.fiscal_year)])],
-    [data],
-  );
+  const years = useMemo(() => ["All", ...FISCAL_YEARS], []);
 
   const offices = useMemo(
     () => ["All", ...new Set(data.map((r) => r.district_office))],
@@ -109,14 +108,14 @@ function RatesPage() {
                 className="h-12 w-full rounded-xl border border-border bg-surface-2 px-4 text-sm text-foreground outline-none ring-ring focus:ring-2"
               />
             </Field>
-            <Field label="PDF link">
+            <Field label="PDF or Google Drive link">
               <input
                 value={pdfUrl}
                 onChange={(e) => setPdfUrl(e.target.value)}
                 required
                 type="url"
                 maxLength={500}
-                placeholder="https://…/rates.pdf"
+                placeholder="https://…/rates.pdf or Google Drive link"
                 className="h-12 w-full rounded-xl border border-border bg-surface-2 px-4 text-sm text-foreground outline-none ring-ring focus:ring-2"
               />
             </Field>
@@ -167,19 +166,25 @@ function RatesPage() {
                 </p>
                 <p className="text-xs text-muted-foreground">FY {r.fiscal_year}</p>
               </div>
-              <a
-                href={r.pdf_url}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={() =>
+                  setViewing({ url: r.pdf_url, title: `${r.district_office} · FY ${r.fiscal_year}` })
+                }
                 className="tap gradient-brand flex shrink-0 items-center gap-2 rounded-xl px-3.5 py-2.5 text-xs font-bold text-primary-foreground"
               >
-                <Download className="size-4" />
-                PDF
-              </a>
+                <Eye className="size-4" />
+                View
+              </button>
             </div>
           ))}
         </div>
       </div>
+
+      <DocViewerModal
+        url={viewing?.url ?? null}
+        title={viewing?.title ?? "Publication"}
+        onOpenChange={(o) => !o && setViewing(null)}
+      />
     </AppShell>
   );
 }

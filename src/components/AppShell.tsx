@@ -2,32 +2,21 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
   ArrowLeft,
   Calculator,
+  ChevronDown,
   FileText,
   HelpCircle,
-  Info,
-  LogOut,
   Map as MapIcon,
   Menu,
   Repeat,
   Landmark,
   ShieldCheck,
   Settings,
-  UserRound,
   Plus,
-  BadgeCheck,
-  ScrollText,
-  Lock,
 } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { LegalModal, type LegalDoc } from "@/components/LegalModal";
+import { ProfileModal } from "@/components/ProfileModal";
 import { useAuth } from "@/hooks/useAuth";
 import { initialsOf, useAvatarUrl } from "@/lib/avatar";
 import { cn } from "@/lib/utils";
@@ -46,14 +35,15 @@ const MAIN_LINKS = [
 ] as const;
 
 const SETTINGS_LINKS = [
-  { to: "/profile", label: "App Preferences", icon: Settings },
-  { to: "/support", label: "Support & Contact", icon: HelpCircle },
+  { to: "/settings", hash: "preferences", label: "App Preferences", icon: Settings },
+  { to: "/support", hash: "", label: "Support & Contact", icon: HelpCircle },
+  { to: "/settings", hash: "permissions", label: "Permissions", icon: ShieldCheck },
 ] as const;
 
-const LEGAL_LINKS: { doc: LegalDoc; label: string; icon: typeof Info }[] = [
-  { doc: "terms", label: "Terms of Service", icon: ScrollText },
-  { doc: "privacy", label: "Privacy Policy", icon: Lock },
-  { doc: "about", label: "About VMS", icon: Info },
+const LEGAL_LINKS: { doc: LegalDoc; label: string }[] = [
+  { doc: "terms", label: "Terms of Service" },
+  { doc: "privacy", label: "Privacy Policy" },
+  { doc: "about", label: "About VMS" },
 ];
 
 const LAST_TAB_KEY = "vms-last-tab";
@@ -82,7 +72,9 @@ export function AppShell({
 }) {
   const [open, setOpen] = useState(false);
   const [legal, setLegal] = useState<LegalDoc | null>(null);
-  const { profile, isAdmin, signOut } = useAuth();
+  const [settingsOpen, setSettingsOpen] = useState(true);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const { profile } = useAuth();
   const avatarUrl = useAvatarUrl(profile?.avatar_url);
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -93,12 +85,6 @@ export function AppShell({
       window.sessionStorage.setItem(LAST_TAB_KEY, pathname);
     }
   }, [pathname]);
-
-  const handleSignOut = async () => {
-    setOpen(false);
-    await signOut();
-    navigate({ to: "/auth", replace: true });
-  };
 
   return (
     <div className="flex min-h-[100dvh] flex-col bg-background">
@@ -150,43 +136,55 @@ export function AppShell({
                       </Link>
                     ))}
 
-                    <p className="px-3 pb-1 pt-5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-                      Settings
-                    </p>
-                    {SETTINGS_LINKS.map((l) => (
-                      <Link
-                        key={l.to}
-                        to={l.to}
-                        onClick={() => setOpen(false)}
+                    <button
+                      onClick={() => setSettingsOpen((v) => !v)}
+                      aria-expanded={settingsOpen}
+                      className="tap flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-muted-foreground hover:bg-surface-2 hover:text-foreground"
+                    >
+                      <Settings className="size-5 shrink-0" />
+                      <span className="flex-1 truncate text-left">Settings</span>
+                      <ChevronDown
                         className={cn(
-                          "tap flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-muted-foreground hover:bg-surface-2 hover:text-foreground",
-                          pathname === l.to && "bg-surface-2 text-foreground",
+                          "size-4 shrink-0 transition-transform duration-200",
+                          settingsOpen && "rotate-180",
                         )}
-                      >
-                        <l.icon className="size-5 shrink-0" />
-                        <span className="truncate">{l.label}</span>
-                      </Link>
-                    ))}
+                      />
+                    </button>
+                    {settingsOpen && (
+                      <div className="space-y-1 border-l border-border pl-3 ml-5">
+                        {SETTINGS_LINKS.map((l) => (
+                          <Link
+                            key={l.label}
+                            to={l.to}
+                            {...(l.hash ? { hash: l.hash } : {})}
+                            onClick={() => setOpen(false)}
+                            className="tap flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-surface-2 hover:text-foreground"
+                          >
+                            <l.icon className="size-4 shrink-0" />
+                            <span className="truncate">{l.label}</span>
+                          </Link>
+                        ))}
+                      </div>
+                    )}
                   </nav>
 
-                  <div className="safe-bottom border-t border-border p-3">
-                    {LEGAL_LINKS.map((l) => (
-                      <button
-                        key={l.doc}
-                        onClick={() => {
-                          setOpen(false);
-                          setLegal(l.doc);
-                        }}
-                        className="tap flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-surface-2 hover:text-foreground"
-                      >
-                        <l.icon className="size-4 shrink-0" />
-                        <span className="truncate">{l.label}</span>
-                      </button>
-                    ))}
-                    <p className="px-3 pt-3 text-[11px] leading-relaxed text-muted-foreground">
+                  <div className="safe-bottom border-t border-border px-4 py-4">
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                      {LEGAL_LINKS.map((l) => (
+                        <button
+                          key={l.doc}
+                          onClick={() => {
+                            setOpen(false);
+                            setLegal(l.doc);
+                          }}
+                          className="text-[11px] font-medium text-muted-foreground/70 underline-offset-2 hover:text-foreground hover:underline"
+                        >
+                          {l.label}
+                        </button>
+                      ))}
+                    </div>
+                    <p className="pt-2 text-[11px] text-muted-foreground/70">
                       VMS v1.2.0 (Build 2026.08)
-                      <br />
-                      Package: com.vmsnepal.app
                     </p>
                   </div>
                 </div>
@@ -198,80 +196,23 @@ export function AppShell({
             {title}
           </h1>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button
-                aria-label="Open profile menu"
-                className="tap grid size-11 shrink-0 place-items-center rounded-full"
-              >
-                <span className="gradient-brand grid size-10 place-items-center overflow-hidden rounded-full text-xs font-black text-primary-foreground ring-2 ring-border">
-                  {avatarUrl ? (
-                    <img
-                      src={avatarUrl}
-                      alt={profile?.full_name ?? "Profile photo"}
-                      className="size-full object-cover"
-                    />
-                  ) : (
-                    initialsOf(profile?.full_name, profile?.email)
-                  )}
-                </span>
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              className="w-64 rounded-2xl border-border bg-popover p-2"
-            >
-              <div className="flex items-center gap-3 px-2 py-2.5">
-                <span className="gradient-brand grid size-11 shrink-0 place-items-center overflow-hidden rounded-full text-xs font-black text-primary-foreground">
-                  {avatarUrl ? (
-                    <img
-                      src={avatarUrl}
-                      alt={profile?.full_name ?? "Profile photo"}
-                      className="size-full object-cover"
-                    />
-                  ) : (
-                    initialsOf(profile?.full_name, profile?.email)
-                  )}
-                </span>
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-bold text-foreground">
-                    {profile?.full_name ?? "Valuator"}
-                  </p>
-                  <p className="truncate text-xs text-muted-foreground">
-                    {profile?.email ?? ""}
-                  </p>
-                </div>
-              </div>
-              <div className="px-2 pb-2">
-                {profile?.is_verified ? (
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-success/15 px-2.5 py-1 text-[11px] font-bold text-success">
-                    <BadgeCheck className="size-3.5" /> Verified Valuator
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-surface-2 px-2.5 py-1 text-[11px] font-semibold text-muted-foreground">
-                    <ShieldCheck className="size-3.5" /> Unverified Valuator
-                  </span>
-                )}
-                {isAdmin && (
-                  <span className="gradient-brand ml-2 inline-block rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-primary-foreground">
-                    Admin
-                  </span>
-                )}
-              </div>
-              <DropdownMenuSeparator className="bg-border" />
-              <DropdownMenuItem asChild className="min-h-11 rounded-xl">
-                <Link to="/profile" className="flex items-center gap-3 text-sm font-medium">
-                  <UserRound className="size-4" /> Edit profile photo
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onSelect={handleSignOut}
-                className="min-h-11 rounded-xl text-sm font-semibold text-destructive focus:text-destructive"
-              >
-                <LogOut className="size-4" /> Sign Out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <button
+            aria-label="Open profile"
+            onClick={() => setProfileOpen(true)}
+            className="tap grid size-11 shrink-0 place-items-center rounded-full"
+          >
+            <span className="gradient-brand grid size-10 place-items-center overflow-hidden rounded-full text-xs font-black text-primary-foreground ring-2 ring-border">
+              {avatarUrl ? (
+                <img
+                  src={avatarUrl}
+                  alt={profile?.full_name ?? "Profile photo"}
+                  className="size-full object-cover"
+                />
+              ) : (
+                initialsOf(profile?.full_name, profile?.email)
+              )}
+            </span>
+          </button>
         </div>
       </header>
 
@@ -321,6 +262,7 @@ export function AppShell({
         </nav>
       )}
 
+      <ProfileModal open={profileOpen} onOpenChange={setProfileOpen} />
       <LegalModal doc={legal} onOpenChange={(o) => !o && setLegal(null)} />
     </div>
   );

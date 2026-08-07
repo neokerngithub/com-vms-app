@@ -62,10 +62,12 @@ function NumberField({
   label,
   value,
   onChange,
+  placeholder,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
+  placeholder?: string;
 }) {
   return (
     <div className="space-y-2">
@@ -73,6 +75,7 @@ function NumberField({
       <input
         value={value}
         inputMode="decimal"
+        placeholder={placeholder ?? ""}
         onChange={(e) => onChange(e.target.value)}
         className="h-12 w-full min-w-0 rounded-xl border border-border bg-surface-2 px-4 text-base font-semibold text-foreground outline-none ring-ring focus:ring-2"
       />
@@ -81,11 +84,11 @@ function NumberField({
 }
 
 function CalculatorPage() {
-  const [area, setArea] = useState("1");
+  const [area, setArea] = useState("");
   const [areaUnit, setAreaUnit] = useState("Kattha");
-  const [govRate, setGovRate] = useState("500000");
+  const [govRate, setGovRate] = useState("");
   const [govRateUnit, setGovRateUnit] = useState("Kattha");
-  const [marketRate, setMarketRate] = useState("900000");
+  const [marketRate, setMarketRate] = useState("");
   const [marketRateUnit, setMarketRateUnit] = useState("Kattha");
   const [govShare, setGovShare] = useState(50);
   const [distress, setDistress] = useState(85);
@@ -93,11 +96,11 @@ function CalculatorPage() {
   const result = useMemo(
     () =>
       computeValuation({
-        area: Number(area) || 0,
+        area: Number(area) || (area === "" ? 1 : 0),
         areaUnit,
-        govRate: Number(govRate) || 0,
+        govRate: Number(govRate) || (govRate === "" ? 500000 : 0),
         govRateUnit,
-        marketRate: Number(marketRate) || 0,
+        marketRate: Number(marketRate) || (marketRate === "" ? 900000 : 0),
         marketRateUnit,
         govSharePct: govShare,
         marketSharePct: 100 - govShare,
@@ -106,12 +109,14 @@ function CalculatorPage() {
     [area, areaUnit, govRate, govRateUnit, marketRate, marketRateUnit, govShare, distress],
   );
 
+  const touched = area !== "" || govRate !== "" || marketRate !== "";
+
   const reset = () => {
-    setArea("1");
+    setArea("");
     setAreaUnit("Kattha");
-    setGovRate("500000");
+    setGovRate("");
     setGovRateUnit("Kattha");
-    setMarketRate("900000");
+    setMarketRate("");
     setMarketRateUnit("Kattha");
     setGovShare(50);
     setDistress(85);
@@ -134,13 +139,13 @@ function CalculatorPage() {
             </button>
           </div>
           <div className="grid grid-cols-[minmax(0,1fr)_9.5rem] gap-3">
-            <NumberField label="Area" value={area} onChange={setArea} />
+            <NumberField label="Area" value={area} onChange={setArea} placeholder="1" />
             <div className="space-y-2">
               <Label className="text-muted-foreground">Unit</Label>
               <UnitSelect value={areaUnit} onChange={setAreaUnit} />
             </div>
           </div>
-          <p className="text-xs text-muted-foreground">
+          <p className={touched ? "text-xs text-muted-foreground" : "text-xs text-muted-foreground opacity-40"}>
             = {formatNumber(result.areaSqFt)} Sq. Ft.
           </p>
         </section>
@@ -151,20 +156,35 @@ function CalculatorPage() {
             Rates
           </p>
           <div className="grid grid-cols-[minmax(0,1fr)_9.5rem] gap-3">
-            <NumberField label="Government rate (Rs.)" value={govRate} onChange={setGovRate} />
+            <NumberField
+              label="Government rate (Rs.)"
+              value={govRate}
+              onChange={setGovRate}
+              placeholder="500000"
+            />
             <div className="space-y-2">
               <Label className="text-muted-foreground">Per</Label>
               <UnitSelect value={govRateUnit} onChange={setGovRateUnit} />
             </div>
           </div>
           <div className="grid grid-cols-[minmax(0,1fr)_9.5rem] gap-3">
-            <NumberField label="Market rate (Rs.)" value={marketRate} onChange={setMarketRate} />
+            <NumberField
+              label="Market rate (Rs.)"
+              value={marketRate}
+              onChange={setMarketRate}
+              placeholder="900000"
+            />
             <div className="space-y-2">
               <Label className="text-muted-foreground">Per</Label>
               <UnitSelect value={marketRateUnit} onChange={setMarketRateUnit} />
             </div>
           </div>
-          <div className="grid gap-1 border-t border-border pt-3 text-xs text-muted-foreground">
+          <div
+            className={
+              "grid gap-1 border-t border-border pt-3 text-xs text-muted-foreground" +
+              (touched ? "" : " opacity-40")
+            }
+          >
             <div className="flex justify-between gap-3">
               <span>Gov. rate / Sq. Ft.</span>
               <span className="font-semibold text-foreground">
@@ -218,7 +238,7 @@ function CalculatorPage() {
           </div>
         </section>
 
-        <section className="surface-card overflow-hidden p-0">
+        <section className={"surface-card overflow-hidden p-0" + (touched ? "" : " opacity-40")}>
           <div className="gradient-brand px-5 py-4">
             <p className="text-xs font-bold uppercase tracking-widest text-primary-foreground/80">
               Fair market value
