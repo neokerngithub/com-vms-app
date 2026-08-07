@@ -3,7 +3,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import type { RecordWithCreator } from "@/hooks/useRecords";
 import { useAuth } from "@/hooks/useAuth";
-import { useDeleteRecord, useReportRecord } from "@/hooks/useRecords";
+import { useDeleteRecord } from "@/hooks/useRecords";
 import { formatNPR } from "@/lib/units";
 import {
   AlertDialog,
@@ -23,14 +23,17 @@ function IconButton({
   tone = "default",
 }: {
   label: string;
-  onClick: () => void;
+  onClick: (e: React.MouseEvent) => void;
   children: React.ReactNode;
   tone?: "default" | "danger";
 }) {
   return (
     <button
       aria-label={label}
-      onClick={onClick}
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick(e);
+      }}
       className={`tap grid size-9 place-items-center rounded-xl border border-border bg-surface-2 ${
         tone === "danger" ? "text-destructive" : "text-muted-foreground"
       }`}
@@ -44,37 +47,33 @@ export function RecordCard({
   record,
   onEdit,
   onLocate,
+  onOpen,
+  onReport,
 }: {
   record: RecordWithCreator;
   onEdit: (r: RecordWithCreator) => void;
   onLocate?: (r: RecordWithCreator) => void;
+  onOpen?: (r: RecordWithCreator) => void;
+  onReport?: (r: RecordWithCreator) => void;
 }) {
   const { user, isAdmin } = useAuth();
   const isOwner = user?.id === record.created_by;
   const del = useDeleteRecord();
-  const report = useReportRecord();
   const [confirmDelete, setConfirmDelete] = useState(false);
 
-  const handleReport = async () => {
-    if (!user) return;
-    try {
-      await report.mutateAsync({
-        recordId: record.id,
-        reason: "Inaccurate data",
-        userId: user.id,
-      });
-      toast.success("Report submitted. Thank you.");
-    } catch (e) {
-      toast.error(
-        e instanceof Error && e.message.includes("duplicate")
-          ? "You already reported this record."
-          : "Could not submit the report.",
-      );
-    }
-  };
-
   return (
-    <article className="surface-card tap overflow-hidden p-4">
+    <article
+      onClick={() => onOpen?.(record)}
+      role={onOpen ? "button" : undefined}
+      tabIndex={onOpen ? 0 : undefined}
+      onKeyDown={(e) => {
+        if (onOpen && (e.key === "Enter" || e.key === " ")) {
+          e.preventDefault();
+          onOpen(record);
+        }
+      }}
+      className="surface-card tap overflow-hidden p-4"
+    >
       <div className="flex gap-4">
         <div className="size-16 shrink-0 overflow-hidden rounded-2xl border border-border bg-surface-2">
           {record.image_url ? (
@@ -137,7 +136,7 @@ export function RecordCard({
               <Pencil className="size-4" />
             </IconButton>
           ) : (
-            <IconButton label="Report record" onClick={handleReport}>
+            <IconButton label="Report record" onClick={() => onReport?.(record)}>
               <Flag className="size-4" />
             </IconButton>
           )}

@@ -16,7 +16,6 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthenticatedCalculatorRouteImport } from './routes/_authenticated/calculator'
 import { Route as AuthenticatedConverterRouteImport } from './routes/_authenticated/converter'
 import { Route as AuthenticatedMapRouteImport } from './routes/_authenticated/map'
-import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedRatesRouteImport } from './routes/_authenticated/rates'
 import { Route as AuthenticatedRecordsRouteImport } from './routes/_authenticated/records'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
@@ -56,11 +55,6 @@ const AuthenticatedMapRoute = AuthenticatedMapRouteImport.update({
   path: '/map',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedRatesRoute = AuthenticatedRatesRouteImport.update({
   id: '/rates',
   path: '/rates',
@@ -89,7 +83,6 @@ export interface FileRoutesByFullPath {
   '/calculator': typeof AuthenticatedCalculatorRoute
   '/converter': typeof AuthenticatedConverterRoute
   '/map': typeof AuthenticatedMapRoute
-  '/profile': typeof AuthenticatedProfileRoute
   '/rates': typeof AuthenticatedRatesRoute
   '/records': typeof AuthenticatedRecordsRoute
   '/settings': typeof AuthenticatedSettingsRoute
@@ -102,7 +95,6 @@ export interface FileRoutesByTo {
   '/calculator': typeof AuthenticatedCalculatorRoute
   '/converter': typeof AuthenticatedConverterRoute
   '/map': typeof AuthenticatedMapRoute
-  '/profile': typeof AuthenticatedProfileRoute
   '/rates': typeof AuthenticatedRatesRoute
   '/records': typeof AuthenticatedRecordsRoute
   '/settings': typeof AuthenticatedSettingsRoute
@@ -117,7 +109,6 @@ export interface FileRoutesById {
   '/_authenticated/calculator': typeof AuthenticatedCalculatorRoute
   '/_authenticated/converter': typeof AuthenticatedConverterRoute
   '/_authenticated/map': typeof AuthenticatedMapRoute
-  '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/rates': typeof AuthenticatedRatesRoute
   '/_authenticated/records': typeof AuthenticatedRecordsRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
@@ -132,7 +123,6 @@ export interface FileRouteTypes {
     | '/calculator'
     | '/converter'
     | '/map'
-    | '/profile'
     | '/rates'
     | '/records'
     | '/settings'
@@ -145,7 +135,6 @@ export interface FileRouteTypes {
     | '/calculator'
     | '/converter'
     | '/map'
-    | '/profile'
     | '/rates'
     | '/records'
     | '/settings'
@@ -159,7 +148,6 @@ export interface FileRouteTypes {
     | '/_authenticated/calculator'
     | '/_authenticated/converter'
     | '/_authenticated/map'
-    | '/_authenticated/profile'
     | '/_authenticated/rates'
     | '/_authenticated/records'
     | '/_authenticated/settings'
@@ -224,13 +212,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMapRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/profile': {
-      id: '/_authenticated/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof AuthenticatedProfileRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/rates': {
       id: '/_authenticated/rates'
       path: '/rates'
@@ -266,7 +247,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCalculatorRoute: typeof AuthenticatedCalculatorRoute
   AuthenticatedConverterRoute: typeof AuthenticatedConverterRoute
   AuthenticatedMapRoute: typeof AuthenticatedMapRoute
-  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedRatesRoute: typeof AuthenticatedRatesRoute
   AuthenticatedRecordsRoute: typeof AuthenticatedRecordsRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
@@ -277,7 +257,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCalculatorRoute: AuthenticatedCalculatorRoute,
   AuthenticatedConverterRoute: AuthenticatedConverterRoute,
   AuthenticatedMapRoute: AuthenticatedMapRoute,
-  AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedRatesRoute: AuthenticatedRatesRoute,
   AuthenticatedRecordsRoute: AuthenticatedRecordsRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
