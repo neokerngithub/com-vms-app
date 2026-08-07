@@ -156,7 +156,7 @@ export function AppShell({
                           <Link
                             key={l.label}
                             to={l.to}
-                            hash={l.hash || undefined}
+                            {...(l.hash ? { hash: l.hash } : {})}
                             onClick={() => setOpen(false)}
                             className="tap flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-surface-2 hover:text-foreground"
                           >
