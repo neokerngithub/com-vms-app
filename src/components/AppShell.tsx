@@ -18,7 +18,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { LegalModal, type LegalDoc } from "@/components/LegalModal";
 import { ProfileModal } from "@/components/ProfileModal";
 import { useAuth } from "@/hooks/useAuth";
-import { initialsOf, useAvatarUrl } from "@/lib/avatar";
+import { useAvatarUrl } from "@/lib/avatar";
 import { cn } from "@/lib/utils";
 
 const TABS = [
@@ -88,8 +88,8 @@ export function AppShell({
 
   return (
     <div className="flex min-h-[100dvh] flex-col bg-background">
-      <header className="safe-top sticky top-0 z-30 border-b border-border/70 bg-background/85 backdrop-blur-xl">
-        <div className="mx-auto grid w-full max-w-3xl grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 py-3">
+      <header className="safe-top gradient-flag-vertical sticky top-0 z-30 border-b border-border/70">
+        <div className="mx-auto grid w-full max-w-3xl grid-cols-[auto_auto_minmax(0,1fr)_auto] items-center gap-3 px-4 py-3">
           {back ? (
             <button
               aria-label="Go back"
@@ -110,14 +110,16 @@ export function AppShell({
               </SheetTrigger>
               <SheetContent side="left" className="w-[85vw] max-w-xs border-border bg-sidebar p-0">
                 <div className="safe-top flex h-full flex-col">
-                  <div className="border-b border-border px-5 py-6">
-                    <div className="gradient-brand grid size-12 place-items-center rounded-2xl text-lg font-black text-primary-foreground">
-                      V
-                    </div>
-                    <p className="mt-3 text-base font-bold text-foreground">
+                  <div className="gradient-flag-vertical border-b border-border px-5 py-6">
+                    <img
+                      src="/branding/vms-emblem-white.png"
+                      alt="VMS emblem"
+                      className="h-12 w-auto"
+                    />
+                    <p className="mt-3 text-base font-bold text-white drop-shadow">
                       Valuation Management System
                     </p>
-                    <p className="text-xs text-muted-foreground">Nepal land valuation toolkit</p>
+                    <p className="text-xs text-white/80">Nepal land valuation toolkit</p>
                   </div>
 
                   <nav className="flex-1 space-y-1 overflow-y-auto p-3">
@@ -192,7 +194,13 @@ export function AppShell({
             </Sheet>
           )}
 
-          <h1 className="truncate text-lg font-bold tracking-tight text-foreground">
+          <img
+            src="/branding/vms-emblem-white.png"
+            alt="VMS emblem"
+            className="h-7 w-auto shrink-0"
+          />
+
+          <h1 className="truncate text-lg font-bold tracking-tight text-white drop-shadow">
             {title}
           </h1>
 
@@ -201,16 +209,12 @@ export function AppShell({
             onClick={() => setProfileOpen(true)}
             className="tap grid size-11 shrink-0 place-items-center rounded-full"
           >
-            <span className="gradient-brand grid size-10 place-items-center overflow-hidden rounded-full text-xs font-black text-primary-foreground ring-2 ring-border">
-              {avatarUrl ? (
-                <img
-                  src={avatarUrl}
-                  alt={profile?.full_name ?? "Profile photo"}
-                  className="size-full object-cover"
-                />
-              ) : (
-                initialsOf(profile?.full_name, profile?.email)
-              )}
+            <span className="grid size-10 place-items-center overflow-hidden rounded-full bg-surface ring-2 ring-white/40">
+              <img
+                src={avatarUrl ?? "/branding/Round_Logo.png"}
+                alt={profile?.full_name ?? "Profile photo"}
+                className="size-full object-cover"
+              />
             </span>
           </button>
         </div>
