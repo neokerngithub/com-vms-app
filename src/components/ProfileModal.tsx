@@ -5,7 +5,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { initialsOf, useAvatarUrl } from "@/lib/avatar";
+import { useAvatarUrl } from "@/lib/avatar";
 
 /** The single unified profile surface — opened from the top-right avatar only. */
 export function ProfileModal({

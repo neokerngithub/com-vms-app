@@ -18,7 +18,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { LegalModal, type LegalDoc } from "@/components/LegalModal";
 import { ProfileModal } from "@/components/ProfileModal";
 import { useAuth } from "@/hooks/useAuth";
-import { initialsOf, useAvatarUrl } from "@/lib/avatar";
+import { useAvatarUrl } from "@/lib/avatar";
 import { cn } from "@/lib/utils";
 
 const TABS = [
