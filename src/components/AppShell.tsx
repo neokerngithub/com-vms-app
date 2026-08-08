@@ -192,7 +192,13 @@ export function AppShell({
             </Sheet>
           )}
 
-          <h1 className="truncate text-lg font-bold tracking-tight text-foreground">
+          <img
+            src="/branding/vms-emblem-white.png"
+            alt="VMS emblem"
+            className="h-7 w-auto shrink-0"
+          />
+
+          <h1 className="truncate text-lg font-bold tracking-tight text-white drop-shadow">
             {title}
           </h1>
 
