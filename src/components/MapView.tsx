@@ -145,7 +145,7 @@ export default function MapView({
       </MapContainer>
 
       {/* Layer switcher */}
-      <div className="absolute right-3 top-3 z-[500] flex flex-col gap-1 rounded-2xl border border-border bg-background/90 p-1 backdrop-blur-xl">
+      <div className="absolute right-3 top-3 z-[500] flex flex-col gap-1 rounded-2xl border border-border bg-background p-1">
         {(Object.keys(LAYERS) as LayerKey[]).map((k) => (
           <button
             key={k}
@@ -175,7 +175,7 @@ export default function MapView({
             );
           }
         }}
-        className="tap absolute bottom-4 right-3 z-[500] grid size-12 place-items-center rounded-full border border-border bg-background/90 text-primary shadow-[var(--shadow-elegant)] backdrop-blur-xl"
+        className="tap absolute bottom-4 right-3 z-[500] grid size-12 place-items-center rounded-full border border-border bg-background text-primary shadow-[var(--shadow-elegant)]"
       >
         <LocateFixed className="size-5" />
       </button>
@@ -183,7 +183,7 @@ export default function MapView({
       {/* Pin bottom sheet */}
       {selected && (
         <div className="absolute inset-0 z-[600] flex items-end" onClick={() => setSelected(null)}>
-          <div className="absolute inset-0 bg-background/50 backdrop-blur-[2px]" />
+          <div className="absolute inset-0 bg-background/70" />
           <div
             onClick={(e) => e.stopPropagation()}
             className="surface-card animate-in slide-in-from-bottom relative m-2 w-full rounded-3xl p-4 duration-200"
