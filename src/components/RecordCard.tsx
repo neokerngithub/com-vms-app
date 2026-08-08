@@ -58,6 +58,7 @@ export function RecordCard({
   onReport?: (r: RecordWithCreator) => void;
 }) {
   const { user, isAdmin } = useAuth();
+  const photoUrl = usePhotoUrl(record.image_url);
   const isOwner = user?.id === record.created_by;
   const del = useDeleteRecord();
   const [confirmDelete, setConfirmDelete] = useState(false);
