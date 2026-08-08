@@ -153,7 +153,7 @@ export function RecordDetailSheet({
           {photoUrl && (
             <img
               src={photoUrl}
-              alt={`Site at ${record.location_in_cadastral_map}`}
+              alt={`Site at ${record?.location_in_cadastral_map ?? "property"}`}
               className="max-h-[80dvh] w-full rounded-2xl object-contain"
             />
           )}
