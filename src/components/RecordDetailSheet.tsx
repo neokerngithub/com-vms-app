@@ -5,6 +5,7 @@ import { useState } from "react";
 import type { RecordWithCreator } from "@/hooks/useRecords";
 import { useAuth } from "@/hooks/useAuth";
 import { formatNPR } from "@/lib/units";
+import { usePhotoUrl } from "@/lib/photos";
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
@@ -32,6 +33,7 @@ export function RecordDetailSheet({
 }) {
   const { user } = useAuth();
   const [zoom, setZoom] = useState(false);
+  const photoUrl = usePhotoUrl(record?.image_url ?? null);
   const photoUrl = usePhotoUrl(record?.image_url ?? null);
   const isOwner = record ? user?.id === record.created_by : false;
 

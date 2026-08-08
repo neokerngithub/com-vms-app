@@ -5,6 +5,7 @@ import { Layers, LocateFixed, X } from "lucide-react";
 import type { RecordWithCreator } from "@/hooks/useRecords";
 import { formatNPR } from "@/lib/units";
 import { cn } from "@/lib/utils";
+import { usePhotoUrl } from "@/lib/photos";
 
 const pinIcon = L.divIcon({
   className: "",
@@ -100,6 +101,7 @@ export default function MapView({
   const [me, setMe] = useState<{ coords: [number, number]; accuracy: number } | null>(null);
   const [target, setTarget] = useState<[number, number] | null>(focus);
   const [selected, setSelected] = useState<RecordWithCreator | null>(null);
+  const selectedPhoto = usePhotoUrl(selected?.image_url ?? null);
 
   useEffect(() => {
     if (focus) setTarget(focus);
