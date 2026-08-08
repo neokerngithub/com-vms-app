@@ -92,11 +92,7 @@
   --sidebar-border: #2a323d;
   --sidebar-ring: #dc143c;
 
-  --gradient-brand: linear-gradient(
-    135deg,
-    var(--brand-pink) 0%,
-    var(--brand-indigo) 100%
-  );
+  --gradient-brand: linear-gradient(135deg, #c8102e 0%, #002b7f 100%);
   --gradient-brand-text: linear-gradient(
     135deg,
     var(--brand-pink) 0%,
