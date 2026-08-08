@@ -209,16 +209,12 @@ export function AppShell({
             onClick={() => setProfileOpen(true)}
             className="tap grid size-11 shrink-0 place-items-center rounded-full"
           >
-            <span className="gradient-brand grid size-10 place-items-center overflow-hidden rounded-full text-xs font-black text-primary-foreground ring-2 ring-border">
-              {avatarUrl ? (
-                <img
-                  src={avatarUrl}
-                  alt={profile?.full_name ?? "Profile photo"}
-                  className="size-full object-cover"
-                />
-              ) : (
-                initialsOf(profile?.full_name, profile?.email)
-              )}
+            <span className="grid size-10 place-items-center overflow-hidden rounded-full bg-surface ring-2 ring-white/40">
+              <img
+                src={avatarUrl ?? "/branding/Round_Logo.png"}
+                alt={profile?.full_name ?? "Profile photo"}
+                className="size-full object-cover"
+              />
             </span>
           </button>
         </div>
