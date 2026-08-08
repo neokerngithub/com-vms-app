@@ -88,8 +88,8 @@ export function AppShell({
 
   return (
     <div className="flex min-h-[100dvh] flex-col bg-background">
-      <header className="safe-top sticky top-0 z-30 border-b border-border/70 bg-background/85 backdrop-blur-xl">
-        <div className="mx-auto grid w-full max-w-3xl grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 py-3">
+      <header className="safe-top gradient-flag-vertical sticky top-0 z-30 border-b border-border/70">
+        <div className="mx-auto grid w-full max-w-3xl grid-cols-[auto_auto_minmax(0,1fr)_auto] items-center gap-3 px-4 py-3">
           {back ? (
             <button
               aria-label="Go back"
