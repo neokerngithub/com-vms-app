@@ -110,14 +110,16 @@ export function AppShell({
               </SheetTrigger>
               <SheetContent side="left" className="w-[85vw] max-w-xs border-border bg-sidebar p-0">
                 <div className="safe-top flex h-full flex-col">
-                  <div className="border-b border-border px-5 py-6">
-                    <div className="gradient-brand grid size-12 place-items-center rounded-2xl text-lg font-black text-primary-foreground">
-                      V
-                    </div>
-                    <p className="mt-3 text-base font-bold text-foreground">
+                  <div className="gradient-flag-vertical border-b border-border px-5 py-6">
+                    <img
+                      src="/branding/vms-emblem-white.png"
+                      alt="VMS emblem"
+                      className="h-12 w-auto"
+                    />
+                    <p className="mt-3 text-base font-bold text-white drop-shadow">
                       Valuation Management System
                     </p>
-                    <p className="text-xs text-muted-foreground">Nepal land valuation toolkit</p>
+                    <p className="text-xs text-white/80">Nepal land valuation toolkit</p>
                   </div>
 
                   <nav className="flex-1 space-y-1 overflow-y-auto p-3">
