@@ -34,7 +34,6 @@ export function RecordDetailSheet({
   const { user } = useAuth();
   const [zoom, setZoom] = useState(false);
   const photoUrl = usePhotoUrl(record?.image_url ?? null);
-  const photoUrl = usePhotoUrl(record?.image_url ?? null);
   const isOwner = record ? user?.id === record.created_by : false;
 
   return (
