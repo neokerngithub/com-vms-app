@@ -5,6 +5,7 @@ import { useState } from "react";
 import type { RecordWithCreator } from "@/hooks/useRecords";
 import { useAuth } from "@/hooks/useAuth";
 import { formatNPR } from "@/lib/units";
+import { usePhotoUrl } from "@/lib/photos";
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
@@ -32,6 +33,7 @@ export function RecordDetailSheet({
 }) {
   const { user } = useAuth();
   const [zoom, setZoom] = useState(false);
+  const photoUrl = usePhotoUrl(record?.image_url ?? null);
   const isOwner = record ? user?.id === record.created_by : false;
 
   return (
@@ -55,13 +57,13 @@ export function RecordDetailSheet({
               </SheetHeader>
 
               <button
-                onClick={() => record.image_url && setZoom(true)}
+                onClick={() => photoUrl && setZoom(true)}
                 aria-label="Open property photo"
                 className="tap mt-4 grid h-48 w-full place-items-center overflow-hidden rounded-2xl border border-border bg-surface-2"
               >
-                {record.image_url ? (
+                {photoUrl ? (
                   <img
-                    src={record.image_url}
+                    src={photoUrl}
                     alt={`Site at ${record.location_in_cadastral_map}`}
                     className="size-full object-cover"
                   />
@@ -148,10 +150,10 @@ export function RecordDetailSheet({
       <Dialog open={zoom} onOpenChange={setZoom}>
         <DialogContent className="max-w-3xl border-none bg-transparent p-0 shadow-none">
           <DialogTitle className="sr-only">Property photo</DialogTitle>
-          {record?.image_url && (
+          {photoUrl && (
             <img
-              src={record.image_url}
-              alt={`Site at ${record.location_in_cadastral_map}`}
+              src={photoUrl}
+              alt={`Site at ${record?.location_in_cadastral_map ?? "property"}`}
               className="max-h-[80dvh] w-full rounded-2xl object-contain"
             />
           )}
