@@ -67,17 +67,13 @@ export function ProfileModal({
             <button
               onClick={() => fileRef.current?.click()}
               aria-label="Edit profile photo"
-              className="tap gradient-brand relative grid size-24 place-items-center overflow-hidden rounded-full text-2xl font-black text-primary-foreground ring-4 ring-border"
+              className="tap relative grid size-24 place-items-center overflow-hidden rounded-full bg-surface-2 ring-4 ring-border"
             >
-              {avatarUrl ? (
-                <img
-                  src={avatarUrl}
-                  alt={profile?.full_name ?? "Profile photo"}
-                  className="size-full object-cover"
-                />
-              ) : (
-                initialsOf(profile?.full_name, profile?.email)
-              )}
+              <img
+                src={avatarUrl ?? "/branding/Round_Logo.png"}
+                alt={profile?.full_name ?? "Profile photo"}
+                className="size-full object-cover"
+              />
               <span className="absolute inset-x-0 bottom-0 grid h-7 place-items-center bg-background/75">
                 {uploading ? (
                   <Loader2 className="size-4 animate-spin text-foreground" />
