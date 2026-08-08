@@ -197,9 +197,9 @@ export default function MapView({
             </button>
             <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-3">
               <div className="size-16 shrink-0 overflow-hidden rounded-2xl border border-border bg-surface-2">
-                {selected.image_url ? (
+                {selectedPhoto ? (
                   <img
-                    src={selected.image_url}
+                    src={selectedPhoto}
                     alt={selected.location_in_cadastral_map || "Property"}
                     className="size-full object-cover"
                     loading="lazy"

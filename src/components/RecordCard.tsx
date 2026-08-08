@@ -5,6 +5,7 @@ import type { RecordWithCreator } from "@/hooks/useRecords";
 import { useAuth } from "@/hooks/useAuth";
 import { useDeleteRecord } from "@/hooks/useRecords";
 import { formatNPR } from "@/lib/units";
+import { usePhotoUrl } from "@/lib/photos";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -76,9 +77,9 @@ export function RecordCard({
     >
       <div className="flex gap-4">
         <div className="size-16 shrink-0 overflow-hidden rounded-2xl border border-border bg-surface-2">
-          {record.image_url ? (
+          {photoUrl ? (
             <img
-              src={record.image_url}
+              src={photoUrl}
               alt={`Site at ${record.location_in_cadastral_map}`}
               loading="lazy"
               className="size-full object-cover"
