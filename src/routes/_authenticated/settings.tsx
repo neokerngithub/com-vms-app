@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
-  FileText,
   LifeBuoy,
   Mail,
   MessageCircle,
@@ -26,8 +25,6 @@ const CONTACTS = [
   },
 ] as const;
 import { AppShell } from "@/components/AppShell";
-import { useAuth } from "@/hooks/useAuth";
-import { useRecords } from "@/hooks/useRecords";
 import { useTheme } from "@/hooks/useTheme";
 import { cn } from "@/lib/utils";
 
@@ -38,7 +35,7 @@ export const Route = createFileRoute("/_authenticated/settings")({
       { title: "Settings — VMS" },
       {
         name: "description",
-        content: "App preferences, contribution summary and record permission rules in VMS.",
+        content: "App preferences and record permission rules in VMS.",
       },
       { property: "og:title", content: "Settings — VMS" },
       { property: "og:description", content: "App preferences and permissions for VMS." },
@@ -48,10 +45,7 @@ export const Route = createFileRoute("/_authenticated/settings")({
 });
 
 function SettingsPage() {
-  const { user } = useAuth();
-  const { data = [] } = useRecords();
   const { theme, setTheme } = useTheme();
-  const mine = data.filter((r) => r.created_by === user?.id);
 
   return (
     <AppShell title="Settings" back>
@@ -90,19 +84,6 @@ function SettingsPage() {
                 </button>
               ))}
             </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <div className="surface-card p-4">
-            <FileText className="size-5 text-primary" />
-            <p className="mt-3 text-2xl font-extrabold text-foreground">{mine.length}</p>
-            <p className="text-xs text-muted-foreground">My records</p>
-          </div>
-          <div className="surface-card p-4">
-            <FileText className="size-5 text-accent" />
-            <p className="mt-3 text-2xl font-extrabold text-foreground">{data.length}</p>
-            <p className="text-xs text-muted-foreground">Total records</p>
           </div>
         </div>
 
