@@ -234,3 +234,11 @@ html.light {
 @utility gradient-flag-vertical {
   background-image: linear-gradient(180deg, #C8102E 0%, #002B7F 50%, #E2E8F0 100%);
 }
+
+/* VMS emblem visibility — white asset inverts to dark in light mode */
+.logo-adaptive {
+  filter: none;
+}
+html.light .logo-adaptive {
+  filter: invert(1) brightness(0.35) contrast(1.4);
+}
