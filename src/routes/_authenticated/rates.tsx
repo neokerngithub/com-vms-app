@@ -37,23 +37,70 @@ function RatesPage() {
 
   const [officeName, setOfficeName] = useState("");
   const [pdfUrl, setPdfUrl] = useState("");
+  const [mode, setMode] = useState<"pdf" | "link">("pdf");
+  const [file, setFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
   const addRate = useAddGovRate();
   const [viewing, setViewing] = useState<{ url: string; title: string } | null>(null);
+
+  const openDoc = async (r: { pdf_url: string; district_office: string; fiscal_year: string }) => {
+    const title = `${r.district_office} · FY ${r.fiscal_year}`;
+    try {
+      if (/^https?:\/\//i.test(r.pdf_url)) {
+        setViewing({ url: r.pdf_url, title });
+        return;
+      }
+      const { data: signed, error } = await supabase.storage
+        .from(RATES_BUCKET)
+        .createSignedUrl(r.pdf_url, 60 * 60);
+      if (error) throw error;
+      setViewing({ url: signed.signedUrl, title });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not open the document");
+    }
+  };
+
+  const resetForm = () => {
+    setAdding(false);
+    setOfficeName("");
+    setPdfUrl("");
+    setFile(null);
+    setMode("pdf");
+  };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      let location = pdfUrl.trim();
+
+      if (mode === "pdf") {
+        if (!file) throw new Error("Choose a PDF file to upload.");
+        setUploading(true);
+        const { data: auth } = await supabase.auth.getUser();
+        const userId = auth.user?.id;
+        if (!userId) throw new Error("You must be signed in to upload.");
+        const path = `${userId}/${Date.now()}-${file.name.replace(/[^\w.\-]+/g, "_")}`;
+        const { error: upErr } = await supabase.storage
+          .from(RATES_BUCKET)
+          .upload(path, file, { contentType: file.type || "application/pdf" });
+        if (upErr) throw upErr;
+        location = path;
+      } else if (!location) {
+        throw new Error("Enter a document link.");
+      }
+
       await addRate.mutateAsync({
         fiscal_year: fy.trim(),
         district_office: officeName.trim(),
-        pdf_url: pdfUrl.trim(),
+        pdf_url: location,
       });
       toast.success("Publication added to the library.");
-      setAdding(false);
-      setOfficeName("");
-      setPdfUrl("");
+      resetForm();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not add publication");
+    } finally {
+      setUploading(false);
     }
   };
 
