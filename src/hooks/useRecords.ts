@@ -127,9 +127,12 @@ export function useAddGovRate() {
           `Government rate for ${payload.district_office} in Fiscal Year ${payload.fiscal_year} already exists.`,
         );
       }
+      const { data: auth } = await supabase.auth.getUser();
+      const userId = auth.user?.id;
+      if (!userId) throw new Error("You must be signed in to add a publication.");
       const { error } = await supabase
         .from("government_rates")
-        .insert(payload as never);
+        .insert({ ...payload, created_by: userId } as never);
       if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["government_rates"] }),
