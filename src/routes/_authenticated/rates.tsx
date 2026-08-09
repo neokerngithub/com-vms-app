@@ -1,11 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Eye, FileText, Plus, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { Eye, FileText, Link2, Plus, Upload, X } from "lucide-react";
+import { useMemo, useRef, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
 import { DocViewerModal } from "@/components/DocViewerModal";
 import { toast } from "sonner";
 import { useAddGovRate, useGovRates } from "@/hooks/useRecords";
 import { DEFAULT_FISCAL_YEAR, FISCAL_YEARS } from "@/lib/vms";
+
+const RATES_BUCKET = "rates";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/rates")({
@@ -155,23 +158,80 @@ function RatesPage() {
                 className="h-12 w-full rounded-xl border border-border bg-surface-2 px-4 text-sm text-foreground outline-none ring-ring focus:ring-2"
               />
             </Field>
-            <Field label="PDF or Google Drive link">
+            <Field label="Document">
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMode("pdf");
+                    fileRef.current?.click();
+                  }}
+                  className={cn(
+                    "tap flex min-h-11 items-center justify-center gap-2 rounded-xl border px-3 py-2.5 text-xs font-bold",
+                    mode === "pdf"
+                      ? "gradient-brand border-transparent text-primary-foreground"
+                      : "border-border bg-surface-2 text-muted-foreground",
+                  )}
+                >
+                  <Upload className="size-4" /> Add PDF
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMode("link");
+                    setFile(null);
+                  }}
+                  className={cn(
+                    "tap flex min-h-11 items-center justify-center gap-2 rounded-xl border px-3 py-2.5 text-xs font-bold",
+                    mode === "link"
+                      ? "gradient-brand border-transparent text-primary-foreground"
+                      : "border-border bg-surface-2 text-muted-foreground",
+                  )}
+                >
+                  <Link2 className="size-4" /> Add Link
+                </button>
+              </div>
               <input
-                value={pdfUrl}
-                onChange={(e) => setPdfUrl(e.target.value)}
-                required
-                type="url"
-                maxLength={500}
-                placeholder="https://…/rates.pdf or Google Drive link"
-                className="h-12 w-full rounded-xl border border-border bg-surface-2 px-4 text-sm text-foreground outline-none ring-ring focus:ring-2"
+                ref={fileRef}
+                type="file"
+                accept="application/pdf,.pdf"
+                className="hidden"
+                onChange={(e) => setFile(e.target.files?.[0] ?? null)}
               />
+              {mode === "pdf" && file && (
+                <div className="flex items-center gap-2 rounded-xl border border-border bg-surface-2 px-3 py-2.5">
+                  <FileText className="size-4 shrink-0 text-primary" />
+                  <span className="min-w-0 flex-1 truncate text-xs text-foreground">
+                    {file.name}
+                  </span>
+                  <button
+                    type="button"
+                    aria-label="Remove file"
+                    onClick={() => setFile(null)}
+                    className="tap grid size-8 place-items-center rounded-lg text-muted-foreground"
+                  >
+                    <X className="size-4" />
+                  </button>
+                </div>
+              )}
+              {mode === "link" && (
+                <input
+                  value={pdfUrl}
+                  onChange={(e) => setPdfUrl(e.target.value)}
+                  required
+                  type="url"
+                  maxLength={500}
+                  placeholder="https://…/rates.pdf or Google Drive link"
+                  className="h-12 w-full rounded-xl border border-border bg-surface-2 px-4 text-sm text-foreground outline-none ring-ring focus:ring-2"
+                />
+              )}
             </Field>
             <button
               type="submit"
-              disabled={addRate.isPending}
+              disabled={addRate.isPending || uploading}
               className="tap gradient-brand w-full rounded-xl py-3.5 text-sm font-bold text-primary-foreground disabled:opacity-60"
             >
-              {addRate.isPending ? "Checking…" : "Add publication"}
+              {uploading ? "Uploading…" : addRate.isPending ? "Checking…" : "Add publication"}
             </button>
           </form>
         )}
@@ -214,9 +274,7 @@ function RatesPage() {
                 <p className="text-xs text-muted-foreground">FY {r.fiscal_year}</p>
               </div>
               <button
-                onClick={() =>
-                  setViewing({ url: r.pdf_url, title: `${r.district_office} · FY ${r.fiscal_year}` })
-                }
+                onClick={() => openDoc(r)}
                 className="tap gradient-brand flex shrink-0 items-center gap-2 rounded-xl px-3.5 py-2.5 text-xs font-bold text-primary-foreground"
               >
                 <Eye className="size-4" />
