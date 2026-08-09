@@ -31,13 +31,8 @@ type TabPath = (typeof TABS)[number]["to"];
 
 const MAIN_LINKS = [
   { to: "/calculator", label: "Advanced Calculator", icon: Calculator },
-  { to: "/rates", label: "Government Rates Library", icon: Landmark },
-] as const;
-
-const SETTINGS_LINKS = [
-  { to: "/settings", hash: "preferences", label: "App Preferences", icon: Settings },
-  { to: "/support", hash: "", label: "Support & Contact", icon: HelpCircle },
-  { to: "/settings", hash: "permissions", label: "Permissions", icon: ShieldCheck },
+  { to: "/rates", label: "Government Rates", icon: Landmark },
+  { to: "/settings", label: "Settings", icon: Settings },
 ] as const;
 
 const LEGAL_LINKS: { doc: LegalDoc; label: string }[] = [
