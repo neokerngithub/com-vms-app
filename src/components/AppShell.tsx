@@ -64,7 +64,6 @@ export function AppShell({
 }) {
   const [open, setOpen] = useState(false);
   const [legal, setLegal] = useState<LegalDoc | null>(null);
-  const [settingsOpen, setSettingsOpen] = useState(true);
   const [profileOpen, setProfileOpen] = useState(false);
   const { profile } = useAuth();
   const avatarUrl = useAvatarUrl(profile?.avatar_url);
@@ -80,7 +79,7 @@ export function AppShell({
 
   return (
     <div className="flex min-h-[100dvh] flex-col bg-background">
-      <header className="safe-top gradient-flag-vertical sticky top-0 z-30 border-b border-border/70">
+      <header className="safe-top sticky top-0 z-30 border-b border-border bg-surface">
         <div className="mx-auto grid w-full max-w-3xl grid-cols-[auto_auto_minmax(0,1fr)_auto] items-center gap-3 px-4 py-3">
           {back ? (
             <button
@@ -161,7 +160,7 @@ export function AppShell({
             className="h-7 w-auto shrink-0"
           />
 
-          <h1 className="truncate text-lg font-bold tracking-tight text-white drop-shadow">
+          <h1 className="truncate text-lg font-bold tracking-tight text-foreground">
             {title}
           </h1>
 
@@ -170,7 +169,7 @@ export function AppShell({
             onClick={() => setProfileOpen(true)}
             className="tap grid size-11 shrink-0 place-items-center rounded-full"
           >
-            <span className="grid size-10 place-items-center overflow-hidden rounded-full bg-surface ring-2 ring-white/40">
+            <span className="grid size-10 place-items-center overflow-hidden rounded-full bg-surface-2 ring-2 ring-border">
               <img
                 src={avatarUrl ?? "/branding/Round_Logo.png"}
                 alt={profile?.full_name ?? "Profile photo"}
