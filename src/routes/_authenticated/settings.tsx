@@ -81,9 +81,32 @@ function SettingsPage() {
           </div>
         </div>
 
+        <div id="support" className="surface-card scroll-mt-24 p-4">
+          <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
+            <LifeBuoy className="size-4" /> Support & Contact
+          </p>
+          <div className="mt-3 space-y-2">
+            {CONTACTS.map((c) => (
+              <a
+                key={c.label}
+                href={c.href}
+                className="tap grid min-h-11 grid-cols-[auto_minmax(0,1fr)] items-center gap-3 rounded-xl border border-border bg-surface-2 px-3 py-2.5"
+              >
+                <c.icon className="size-4 shrink-0 text-primary" />
+                <span className="min-w-0">
+                  <span className="block text-[11px] text-muted-foreground">{c.label}</span>
+                  <span className="block truncate text-sm font-bold text-foreground">
+                    {c.value}
+                  </span>
+                </span>
+              </a>
+            ))}
+          </div>
+        </div>
+
         <div id="permissions" className="surface-card scroll-mt-24 p-4">
           <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
-            <ShieldCheck className="size-4" /> Permissions
+            <ShieldCheck className="size-4" /> Permissions & Reporting
           </p>
           <p className="mt-2 text-sm font-bold text-foreground">
             Secure Data Governance — Creator-managed edits with admin moderation
@@ -94,6 +117,10 @@ function SettingsPage() {
             <li>• Inaccurate records from others can be reported with a description.</li>
             <li>• Only admins can delete records.</li>
           </ul>
+          <p className="mt-3 border-t border-border pt-3 text-sm text-muted-foreground">
+            Use the flag icon on any record you did not create and describe the issue in at
+            least 10 characters. Flagged records are reviewed by administrators.
+          </p>
         </div>
       </div>
     </AppShell>
