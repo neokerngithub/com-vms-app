@@ -2,14 +2,11 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
   ArrowLeft,
   Calculator,
-  ChevronDown,
   FileText,
-  HelpCircle,
   Map as MapIcon,
   Menu,
   Repeat,
   Landmark,
-  ShieldCheck,
   Settings,
   Plus,
 } from "lucide-react";
