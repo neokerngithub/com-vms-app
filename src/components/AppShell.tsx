@@ -105,16 +105,16 @@ export function AppShell({
               </SheetTrigger>
               <SheetContent side="left" className="w-[85vw] max-w-xs border-border bg-sidebar p-0">
                 <div className="safe-top flex h-full flex-col">
-                  <div className="gradient-flag-vertical border-b border-border px-5 py-6">
+                  <div className="border-b border-border bg-surface px-5 py-6">
                     <img
                       src="/branding/vms-emblem-white.png"
                       alt="VMS emblem"
                       className="h-12 w-auto"
                     />
-                    <p className="mt-3 text-base font-bold text-white drop-shadow">
+                    <p className="mt-3 text-base font-bold text-foreground">
                       Valuation Management System
                     </p>
-                    <p className="text-xs text-white/80">Nepal land valuation toolkit</p>
+                    <p className="text-xs text-muted-foreground">Nepal land valuation toolkit</p>
                   </div>
 
                   <nav className="flex-1 space-y-1 overflow-y-auto p-3">
@@ -132,41 +132,10 @@ export function AppShell({
                         <span className="truncate">{l.label}</span>
                       </Link>
                     ))}
-
-                    <button
-                      onClick={() => setSettingsOpen((v) => !v)}
-                      aria-expanded={settingsOpen}
-                      className="tap flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-muted-foreground hover:bg-surface-2 hover:text-foreground"
-                    >
-                      <Settings className="size-5 shrink-0" />
-                      <span className="flex-1 truncate text-left">Settings</span>
-                      <ChevronDown
-                        className={cn(
-                          "size-4 shrink-0 transition-transform duration-200",
-                          settingsOpen && "rotate-180",
-                        )}
-                      />
-                    </button>
-                    {settingsOpen && (
-                      <div className="space-y-1 border-l border-border pl-3 ml-5">
-                        {SETTINGS_LINKS.map((l) => (
-                          <Link
-                            key={l.label}
-                            to={l.to}
-                            {...(l.hash ? { hash: l.hash } : {})}
-                            onClick={() => setOpen(false)}
-                            className="tap flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-surface-2 hover:text-foreground"
-                          >
-                            <l.icon className="size-4 shrink-0" />
-                            <span className="truncate">{l.label}</span>
-                          </Link>
-                        ))}
-                      </div>
-                    )}
                   </nav>
 
-                  <div className="safe-bottom border-t border-border px-4 py-4">
-                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                  <div className="safe-bottom border-t border-border px-4 py-4 text-center">
+                    <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
                       {LEGAL_LINKS.map((l) => (
                         <button
                           key={l.doc}
@@ -180,7 +149,7 @@ export function AppShell({
                         </button>
                       ))}
                     </div>
-                    <p className="pt-2 text-[11px] text-muted-foreground/70">
+                    <p className="pt-2 text-center text-[11px] text-muted-foreground/70">
                       VMS v1.2.0 (Build 2026.08)
                     </p>
                   </div>
