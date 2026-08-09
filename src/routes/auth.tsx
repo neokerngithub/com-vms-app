@@ -57,20 +57,19 @@ function AuthPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (session) {
-      navigate({ to: "/map", replace: true });
-    }
+    if (session) navigate({ to: "/map", replace: true });
   }, [session, navigate]);
 
   const google = async () => {
     setBusy(true);
     try {
       const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: `${window.location.origin}/map`,
+        redirect_uri: window.location.origin,
       });
       if (result.error) throw result.error;
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Google sign-in failed");
+    } finally {
       setBusy(false);
     }
   };
@@ -91,7 +90,7 @@ function AuthPage() {
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/map`,
+            emailRedirectTo: window.location.origin,
             data: { full_name: fullName },
           },
         });
