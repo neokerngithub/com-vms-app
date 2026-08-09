@@ -1,5 +1,30 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { FileText, Moon, ShieldCheck, Sun } from "lucide-react";
+import {
+  FileText,
+  LifeBuoy,
+  Mail,
+  MessageCircle,
+  Moon,
+  Phone,
+  ShieldCheck,
+  Sun,
+} from "lucide-react";
+
+const CONTACTS = [
+  {
+    icon: Mail,
+    label: "Email",
+    value: "vms.app.nepal@gmail.com",
+    href: "mailto:vms.app.nepal@gmail.com",
+  },
+  { icon: Phone, label: "Phone", value: "+977-9852059599", href: "tel:+9779852059599" },
+  {
+    icon: MessageCircle,
+    label: "WhatsApp",
+    value: "+977-9852059599",
+    href: "https://wa.me/9779852059599",
+  },
+] as const;
 import { AppShell } from "@/components/AppShell";
 import { useAuth } from "@/hooks/useAuth";
 import { useRecords } from "@/hooks/useRecords";
