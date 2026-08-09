@@ -105,7 +105,7 @@ export function AppShell({
                     <img
                       src="/branding/vms-emblem-white.png"
                       alt="VMS emblem"
-                      className="h-12 w-auto"
+                      className="logo-adaptive h-12 w-auto"
                     />
                     <p className="mt-3 text-base font-bold text-foreground">
                       Valuation Management System
@@ -157,7 +157,7 @@ export function AppShell({
           <img
             src="/branding/vms-emblem-white.png"
             alt="VMS emblem"
-            className="h-7 w-auto shrink-0"
+            className="logo-adaptive h-7 w-auto shrink-0"
           />
 
           <h1 className="truncate text-lg font-bold tracking-tight text-foreground">
