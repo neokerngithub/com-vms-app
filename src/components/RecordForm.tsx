@@ -39,10 +39,12 @@ export function RecordForm({
   open,
   onOpenChange,
   editing,
+  prefill,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
   editing: RecordWithCreator | null;
+  prefill?: { latitude: number; longitude: number } | null;
 }) {
   const { user, profile } = useAuth();
   const save = useSaveRecord();
@@ -69,9 +71,14 @@ export function RecordForm({
         image_url: editing.image_url ?? "",
       });
     } else {
-      setForm({ ...empty, site_visited_by: profile?.full_name ?? "" });
+      setForm({
+        ...empty,
+        site_visited_by: profile?.full_name ?? "",
+        latitude: prefill ? prefill.latitude.toFixed(6) : "",
+        longitude: prefill ? prefill.longitude.toFixed(6) : "",
+      });
     }
-  }, [open, editing, profile]);
+  }, [open, editing, profile, prefill]);
 
   const set = (k: keyof typeof empty, v: string) => setForm((f) => ({ ...f, [k]: v }));
 

@@ -78,8 +78,8 @@ export function AppShell({
   }, [pathname]);
 
   return (
-    <div className="flex min-h-[100dvh] flex-col bg-background">
-      <header className="safe-top sticky top-0 z-30 border-b border-border bg-surface">
+    <div className={cn("flex flex-col bg-background", bare ? "h-[100dvh] overflow-hidden" : "min-h-[100dvh]")}>
+      <header className="safe-top sticky top-0 z-50 border-b border-border bg-surface">
         <div className="mx-auto grid w-full max-w-3xl grid-cols-[auto_auto_minmax(0,1fr)_auto] items-center gap-3 px-4 py-3">
           {back ? (
             <button
@@ -183,8 +183,14 @@ export function AppShell({
       <main
         className={cn(
           "mx-auto w-full max-w-3xl flex-1",
-          bare ? "" : "px-4 pt-4",
-          showTabs ? "pb-32" : "pb-10",
+          bare ? "min-h-0" : "px-4 pt-4",
+          bare
+            ? showTabs
+              ? "pb-[calc(4.5rem+env(safe-area-inset-bottom))]"
+              : ""
+            : showTabs
+              ? "pb-32"
+              : "pb-10",
         )}
       >
         {children}
@@ -202,7 +208,7 @@ export function AppShell({
       )}
 
       {showTabs && (
-        <nav className="safe-bottom fixed inset-x-0 bottom-0 z-40 border-t border-border/70 bg-background">
+        <nav className="safe-bottom fixed inset-x-0 bottom-0 z-50 border-t border-border/70 bg-background">
           <div className="mx-auto flex w-full max-w-3xl items-center justify-around gap-2 px-4 py-2">
             {TABS.map((t) => {
               const active = pathname === t.to;
