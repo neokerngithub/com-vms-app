@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useRef, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { RecordForm } from "@/components/RecordForm";
 import { useRecords, type RecordWithCreator } from "@/hooks/useRecords";
