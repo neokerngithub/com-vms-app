@@ -32,7 +32,7 @@ function MapPage() {
 
   return (
     <AppShell title="Map" bare onAdd={() => setFormOpen(true)}>
-      <div className="h-full w-full overflow-hidden">
+      <div className="relative flex-1 w-full h-full overflow-hidden">
         {isLoading ? (
           <div className="grid h-full place-items-center text-sm text-muted-foreground">
             Loading map…
