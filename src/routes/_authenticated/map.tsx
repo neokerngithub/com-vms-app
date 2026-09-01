@@ -26,11 +26,13 @@ function MapPage() {
   const { data = [], isLoading } = useRecords();
   const [formOpen, setFormOpen] = useState(false);
   const [editing] = useState<RecordWithCreator | null>(null);
+  const [prefill, setPrefill] = useState<{ latitude: number; longitude: number } | null>(null);
+  const clearPinRef = useRef<(() => void) | null>(null);
   const navigate = useNavigate();
 
   return (
     <AppShell title="Map" bare onAdd={() => setFormOpen(true)}>
-      <div className="h-[calc(100dvh-13rem)] w-full overflow-hidden">
+      <div className="h-full w-full overflow-hidden">
         {isLoading ? (
           <div className="grid h-full place-items-center text-sm text-muted-foreground">
             Loading map…
@@ -47,11 +49,29 @@ function MapPage() {
               records={data}
               focus={null}
               onViewRecord={(r) => navigate({ to: "/records", search: { record: r.id } })}
+              onDropPin={(coords, clear) => {
+                clearPinRef.current = clear;
+                setPrefill({ latitude: coords[0], longitude: coords[1] });
+                setFormOpen(true);
+              }}
             />
           </Suspense>
         )}
       </div>
-      <RecordForm open={formOpen} onOpenChange={setFormOpen} editing={editing} />
+      <RecordForm
+        open={formOpen}
+        onOpenChange={(o) => {
+          setFormOpen(o);
+          if (!o) {
+            clearPinRef.current?.();
+            clearPinRef.current = null;
+            setPrefill(null);
+          }
+        }}
+        editing={editing}
+        prefill={prefill}
+      />
     </AppShell>
   );
 }
+
