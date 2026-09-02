@@ -9,6 +9,7 @@ import {
   Landmark,
   Settings,
   Plus,
+  ShieldCheck,
 } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
