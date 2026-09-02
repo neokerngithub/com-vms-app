@@ -79,7 +79,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       ]);
       if (!active) return;
       setProfile(p);
-      setIsAdmin(Boolean(roles?.some((r: { role: string }) => r.role === "admin")));
+      setIsAdmin(
+        Boolean(roles?.some((r: { role: string }) => r.role === "admin")) ||
+          isSuperAdminEmail(p?.email ?? session?.user?.email),
+      );
     })();
     return () => {
       active = false;
