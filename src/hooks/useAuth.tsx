@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { canPublish as canPublishRule, isSuperAdminEmail } from "@/lib/permissions";
 
 interface Profile {
   id: string;
@@ -8,6 +9,7 @@ interface Profile {
   email: string | null;
   avatar_url: string | null;
   is_verified: boolean;
+  nec_number?: string | null;
 }
 
 interface AuthState {
@@ -15,6 +17,8 @@ interface AuthState {
   user: User | null;
   profile: Profile | null;
   isAdmin: boolean;
+  isVerified: boolean;
+  canPublish: boolean;
   loading: boolean;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
@@ -25,6 +29,8 @@ const AuthContext = createContext<AuthState>({
   user: null,
   profile: null,
   isAdmin: false,
+  isVerified: false,
+  canPublish: false,
   loading: true,
   signOut: async () => {},
   refreshProfile: async () => {},
