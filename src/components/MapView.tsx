@@ -138,6 +138,15 @@ function LongPress({ onLongPress }: { onLongPress: (p: [number, number]) => void
   return null;
 }
 
+function MapResizer() {
+  const map = useMap();
+  useEffect(() => {
+    const t = setTimeout(() => map.invalidateSize(), 0);
+    return () => clearTimeout(t);
+  }, [map]);
+  return null;
+}
+
 export default function MapView({
   records,
   focus,
@@ -236,36 +245,42 @@ export default function MapView({
 
   return (
     <div className="relative h-full w-full">
-      <MapContainer
-        center={center}
-        zoom={11}
-        scrollWheelZoom
-        zoomControl={false}
-        style={{ height: "100%", width: "100%" }}
-      >
-        <TileLayer key={layer} attribution={active.attribution} url={active.url} />
-        <Recenter focus={target} />
-        <LiveLocation onPosition={setMe} />
-        <LongPress onLongPress={longPress} />
-        {me && (
-          <>
-            <AccuracyAura center={me.coords} accuracy={me.accuracy} />
-            <Marker position={me.coords} icon={meIcon} />
-          </>
-        )}
-        {temp && <Marker position={temp} icon={tempIcon} />}
-        {pinned.map((r) => (
-          <Marker
-            key={r.id}
-            position={[r.latitude as number, r.longitude as number]}
-            icon={pinIcon}
-            eventHandlers={{ click: () => setSelected(r) }}
-          />
-        ))}
-      </MapContainer>
+      <div className="relative z-0 h-full w-full">
+        <MapContainer
+          center={center}
+          zoom={11}
+          minZoom={3}
+          maxBounds={[[-90, -180], [90, 180]]}
+          maxBoundsViscosity={1}
+          scrollWheelZoom
+          zoomControl={false}
+          style={{ height: "100%", width: "100%" }}
+        >
+          <TileLayer key={layer} attribution={active.attribution} url={active.url} />
+          <MapResizer />
+          <Recenter focus={target} />
+          <LiveLocation onPosition={setMe} />
+          <LongPress onLongPress={longPress} />
+          {me && (
+            <>
+              <AccuracyAura center={me.coords} accuracy={me.accuracy} />
+              <Marker position={me.coords} icon={meIcon} />
+            </>
+          )}
+          {temp && <Marker position={temp} icon={tempIcon} />}
+          {pinned.map((r) => (
+            <Marker
+              key={r.id}
+              position={[r.latitude as number, r.longitude as number]}
+              icon={pinIcon}
+              eventHandlers={{ click: () => setSelected(r) }}
+            />
+          ))}
+        </MapContainer>
+      </div>
 
       {/* Floating search bar */}
-      <div className="pointer-events-none absolute inset-x-0 top-3 z-[60] flex justify-center px-3">
+      <div className="pointer-events-none absolute inset-x-0 top-3 z-[500] flex justify-center px-3">
         <div className="pointer-events-auto w-full max-w-md">
           <div className="flex items-center gap-2 rounded-2xl border border-border bg-background px-3 shadow-[var(--shadow-elegant)]">
             {searching ? (
@@ -317,7 +332,7 @@ export default function MapView({
       </div>
 
       {/* Layer switcher */}
-      <div className="absolute right-3 top-20 z-[55] flex flex-col items-end gap-1">
+      <div className="absolute right-3 top-20 z-[500] flex flex-col items-end gap-1">
         <button
           aria-label="Map layers"
           onClick={() => setLayerOpen((v) => !v)}
@@ -349,6 +364,7 @@ export default function MapView({
       {/* GPS target */}
       <button
         aria-label="Center on my location"
+        className="tap absolute bottom-4 right-3 z-[500] grid size-12 place-items-center rounded-full border border-border bg-background text-primary shadow-[var(--shadow-elegant)]"
         onClick={() => {
           if (me) {
             setTarget([me.coords[0] + Math.random() * 1e-9, me.coords[1]]);
@@ -360,14 +376,13 @@ export default function MapView({
             );
           }
         }}
-        className="tap absolute bottom-4 right-3 z-[55] grid size-12 place-items-center rounded-full border border-border bg-background text-primary shadow-[var(--shadow-elegant)]"
       >
         <LocateFixed className="size-5" />
       </button>
 
       {/* Pin bottom sheet */}
       {selected && (
-        <div className="absolute inset-0 z-[70] flex items-end" onClick={() => setSelected(null)}>
+        <div className="absolute inset-0 z-[600] flex items-end" onClick={() => setSelected(null)}>
           <div className="absolute inset-0 bg-black/60" />
           <div
             onClick={(e) => e.stopPropagation()}
