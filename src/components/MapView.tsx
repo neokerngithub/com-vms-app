@@ -376,7 +376,6 @@ export default function MapView({
             );
           }
         }}
-        className="tap absolute bottom-4 right-3 z-[55] grid size-12 place-items-center rounded-full border border-border bg-background text-primary shadow-[var(--shadow-elegant)]"
       >
         <LocateFixed className="size-5" />
       </button>
