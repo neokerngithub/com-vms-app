@@ -105,6 +105,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user: session?.user ?? null,
         profile,
         isAdmin,
+        isVerified: Boolean(profile?.is_verified) || isAdmin,
+        canPublish: canPublishRule(isAdmin, profile?.is_verified),
         loading,
         signOut,
         refreshProfile,
