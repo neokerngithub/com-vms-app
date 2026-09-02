@@ -91,7 +91,12 @@ function AuthPage() {
           password,
           options: {
             emailRedirectTo: window.location.origin,
-            data: { full_name: fullName },
+            data: {
+              full_name: fullName,
+              role: "valuator",
+              nec_number: null,
+              is_verified: false,
+            },
           },
         });
         if (error) throw error;
