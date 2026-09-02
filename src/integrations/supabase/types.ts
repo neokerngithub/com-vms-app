@@ -49,6 +49,7 @@ export type Database = {
           full_name: string | null
           id: string
           is_verified: boolean
+          nec_number: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -57,6 +58,7 @@ export type Database = {
           full_name?: string | null
           id: string
           is_verified?: boolean
+          nec_number?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -65,6 +67,7 @@ export type Database = {
           full_name?: string | null
           id?: string
           is_verified?: boolean
+          nec_number?: string | null
         }
         Relationships: []
       }
@@ -193,6 +196,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_super_admin_email: { Args: { _email: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "user"

@@ -9,6 +9,7 @@ import {
   Landmark,
   Settings,
   Plus,
+  ShieldCheck,
 } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -31,6 +32,12 @@ const MAIN_LINKS = [
   { to: "/rates", label: "Government Rates", icon: Landmark },
   { to: "/settings", label: "Settings", icon: Settings },
 ] as const;
+
+const ADMIN_LINK = {
+  to: "/admin",
+  label: "Admin Management Console",
+  icon: ShieldCheck,
+} as const;
 
 const LEGAL_LINKS: { doc: LegalDoc; label: string }[] = [
   { doc: "terms", label: "Terms of Service" },
