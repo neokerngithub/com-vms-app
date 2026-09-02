@@ -33,6 +33,12 @@ const MAIN_LINKS = [
   { to: "/settings", label: "Settings", icon: Settings },
 ] as const;
 
+const ADMIN_LINK = {
+  to: "/admin",
+  label: "Admin Management Console",
+  icon: ShieldCheck,
+} as const;
+
 const LEGAL_LINKS: { doc: LegalDoc; label: string }[] = [
   { doc: "terms", label: "Terms of Service" },
   { doc: "privacy", label: "Privacy Policy" },
