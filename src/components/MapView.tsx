@@ -310,8 +310,9 @@ export default function MapView({
       </div>
 
       {/* Floating search bar */}
-      <div className="pointer-events-none absolute inset-x-0 top-3 z-[500] flex justify-center px-3">
+      <div className="pointer-events-none absolute inset-x-0 top-3 z-10 flex justify-center px-3">
         <div className="pointer-events-auto w-full max-w-md">
+
           <div className="flex items-center gap-2 rounded-2xl border border-border bg-background px-3 shadow-[var(--shadow-elegant)]">
             {searching ? (
               <Loader2 className="size-4 shrink-0 animate-spin text-muted-foreground" />
