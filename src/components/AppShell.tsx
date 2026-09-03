@@ -135,6 +135,19 @@ export function AppShell({
                         <span className="truncate">{l.label}</span>
                       </Link>
                     ))}
+                    {isAdmin && (
+                      <Link
+                        to={ADMIN_LINK.to}
+                        onClick={() => setOpen(false)}
+                        className={cn(
+                          "tap flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-muted-foreground hover:bg-surface-2 hover:text-foreground",
+                          pathname === ADMIN_LINK.to && "bg-surface-2 text-foreground",
+                        )}
+                      >
+                        <ADMIN_LINK.icon className="size-5 shrink-0" />
+                        <span className="truncate">{ADMIN_LINK.label}</span>
+                      </Link>
+                    )}
                   </nav>
 
                   <div className="safe-bottom border-t border-border px-4 py-4 text-center">
