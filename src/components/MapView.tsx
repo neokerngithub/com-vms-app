@@ -331,9 +331,9 @@ export default function MapView({
         </div>
       </div>
 
-      {/* Layer switcher */}
-      <div className="absolute right-3 top-20 z-[500] flex flex-col items-end gap-1">
-      <button
+      {/* Map controls: current location + layer switcher */}
+      <div className="absolute right-3 top-20 z-[500] flex flex-col items-end gap-2">
+        <button
         aria-label="Center on my location"
         className="tap grid size-12 place-items-center rounded-2xl border border-border bg-background text-primary shadow-[var(--shadow-elegant)]"
         onClick={() => {
