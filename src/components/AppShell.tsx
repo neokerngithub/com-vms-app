@@ -72,7 +72,7 @@ export function AppShell({
   const [open, setOpen] = useState(false);
   const [legal, setLegal] = useState<LegalDoc | null>(null);
   const [profileOpen, setProfileOpen] = useState(false);
-  const { profile } = useAuth();
+  const { profile, isAdmin } = useAuth();
   const avatarUrl = useAvatarUrl(profile?.avatar_url);
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
