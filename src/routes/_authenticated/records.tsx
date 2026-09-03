@@ -81,10 +81,14 @@ function RecordsPage() {
   return (
     <AppShell
       title="Records"
-      onAdd={() => {
-        setEditing(null);
-        setFormOpen(true);
-      }}
+      {...(canPublish
+        ? {
+            onAdd: () => {
+              setEditing(null);
+              setFormOpen(true);
+            },
+          }
+        : {})}
     >
       {focusId && (
         <button
