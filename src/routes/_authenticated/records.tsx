@@ -37,7 +37,7 @@ export const Route = createFileRoute("/_authenticated/records")({
 
 function RecordsPage() {
   const { data = [], isLoading } = useRecords();
-  const { user } = useAuth();
+  const { user, canPublish } = useAuth();
   const { record: focusId } = Route.useSearch();
   const [q, setQ] = useState("");
   const [sort, setSort] = useState<Sort>("Newest");
@@ -81,10 +81,14 @@ function RecordsPage() {
   return (
     <AppShell
       title="Records"
-      onAdd={() => {
-        setEditing(null);
-        setFormOpen(true);
-      }}
+      {...(canPublish
+        ? {
+            onAdd: () => {
+              setEditing(null);
+              setFormOpen(true);
+            },
+          }
+        : {})}
     >
       {focusId && (
         <button
