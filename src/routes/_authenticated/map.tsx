@@ -24,6 +24,7 @@ export const Route = createFileRoute("/_authenticated/map")({
 
 function MapPage() {
   const { data = [], isLoading } = useRecords();
+  const { canPublish } = useAuth();
   const [formOpen, setFormOpen] = useState(false);
   const [editing] = useState<RecordWithCreator | null>(null);
   const [prefill, setPrefill] = useState<{ latitude: number; longitude: number } | null>(null);
