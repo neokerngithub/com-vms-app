@@ -334,23 +334,23 @@ export default function MapView({
       {/* Map controls: current location + layer switcher */}
       <div className="absolute right-3 top-20 z-[500] flex flex-col items-end gap-2">
         <button
-        aria-label="Center on my location"
-        className="tap grid size-12 place-items-center rounded-2xl border border-border bg-background text-primary shadow-[var(--shadow-elegant)]"
-        onClick={() => {
-          if (typeof navigator !== "undefined" && navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-              (pos) => setTarget([pos.coords.latitude, pos.coords.longitude]),
-              () => {
-                if (me) setTarget([me.coords[0] + Math.random() * 1e-9, me.coords[1]]);
-                else toast("Weak GPS signal. Using last known location.");
-              },
-              { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 },
-            );
-          }
-        }}
-      >
-        <LocateFixed className="size-5" />
-      </button>
+          aria-label="Center on my location"
+          className="tap grid size-12 place-items-center rounded-2xl border border-border bg-background text-primary shadow-[var(--shadow-elegant)]"
+          onClick={() => {
+            if (typeof navigator !== "undefined" && navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(
+                (pos) => setTarget([pos.coords.latitude, pos.coords.longitude]),
+                () => {
+                  if (me) setTarget([me.coords[0] + Math.random() * 1e-9, me.coords[1]]);
+                  else toast("Weak GPS signal. Using last known location.");
+                },
+                { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 },
+              );
+            }
+          }}
+        >
+          <LocateFixed className="size-5" />
+        </button>
 
         <button
           aria-label="Map layers"
