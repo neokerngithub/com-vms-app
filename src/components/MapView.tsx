@@ -147,6 +147,36 @@ function MapResizer() {
   return null;
 }
 
+export function MapLocateButton({
+  onLocate,
+  className,
+}: {
+  onLocate: (coords: [number, number]) => void;
+  className?: string;
+}) {
+  return (
+    <button
+      aria-label="Center on my location"
+      onClick={() => {
+        if (typeof navigator !== "undefined" && navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (pos) => onLocate([pos.coords.latitude, pos.coords.longitude]),
+            () => toast("Weak GPS signal. Using last known location."),
+            { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 },
+          );
+        }
+      }}
+      className={cn(
+        "tap fixed bottom-40 right-4 z-10 grid size-12 place-items-center rounded-2xl border border-border bg-background text-primary shadow-[var(--shadow-elegant)] sm:right-[max(1rem,calc(50vw-22rem))]",
+        className,
+      )}
+    >
+      <LocateFixed className="size-5" />
+    </button>
+  );
+}
+
+
 export default function MapView({
   records,
   focus,
@@ -280,8 +310,9 @@ export default function MapView({
       </div>
 
       {/* Floating search bar */}
-      <div className="pointer-events-none absolute inset-x-0 top-3 z-[500] flex justify-center px-3">
+      <div className="pointer-events-none absolute inset-x-0 top-3 z-10 flex justify-center px-3">
         <div className="pointer-events-auto w-full max-w-md">
+
           <div className="flex items-center gap-2 rounded-2xl border border-border bg-background px-3 shadow-[var(--shadow-elegant)]">
             {searching ? (
               <Loader2 className="size-4 shrink-0 animate-spin text-muted-foreground" />
@@ -331,27 +362,8 @@ export default function MapView({
         </div>
       </div>
 
-      {/* Map controls: current location + layer switcher */}
-      <div className="absolute right-3 top-20 z-[500] flex flex-col items-end gap-2">
-        <button
-          aria-label="Center on my location"
-          className="tap grid size-12 place-items-center rounded-2xl border border-border bg-background text-primary shadow-[var(--shadow-elegant)]"
-          onClick={() => {
-            if (typeof navigator !== "undefined" && navigator.geolocation) {
-              navigator.geolocation.getCurrentPosition(
-                (pos) => setTarget([pos.coords.latitude, pos.coords.longitude]),
-                () => {
-                  if (me) setTarget([me.coords[0] + Math.random() * 1e-9, me.coords[1]]);
-                  else toast("Weak GPS signal. Using last known location.");
-                },
-                { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 },
-              );
-            }
-          }}
-        >
-          <LocateFixed className="size-5" />
-        </button>
-
+      {/* Map layer switcher */}
+      <div className="absolute right-3 top-20 z-10 flex flex-col items-end gap-2">
         <button
           aria-label="Map layers"
           onClick={() => setLayerOpen((v) => !v)}
@@ -379,6 +391,7 @@ export default function MapView({
           </div>
         )}
       </div>
+
 
       {/* Pin bottom sheet */}
       {selected && (
