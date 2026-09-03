@@ -147,6 +147,36 @@ function MapResizer() {
   return null;
 }
 
+export function MapLocateButton({
+  onLocate,
+  className,
+}: {
+  onLocate: (coords: [number, number]) => void;
+  className?: string;
+}) {
+  return (
+    <button
+      aria-label="Center on my location"
+      onClick={() => {
+        if (typeof navigator !== "undefined" && navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (pos) => onLocate([pos.coords.latitude, pos.coords.longitude]),
+            () => toast("Weak GPS signal. Using last known location."),
+            { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 },
+          );
+        }
+      }}
+      className={cn(
+        "tap fixed bottom-40 right-4 z-10 grid size-12 place-items-center rounded-2xl border border-border bg-background text-primary shadow-[var(--shadow-elegant)] sm:right-[max(1rem,calc(50vw-22rem))]",
+        className,
+      )}
+    >
+      <LocateFixed className="size-5" />
+    </button>
+  );
+}
+
+
 export default function MapView({
   records,
   focus,
