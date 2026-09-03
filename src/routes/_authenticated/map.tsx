@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { lazy, Suspense, useRef, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { RecordForm } from "@/components/RecordForm";
+import { useAuth } from "@/hooks/useAuth";
 import { useRecords, type RecordWithCreator } from "@/hooks/useRecords";
 
 const MapView = lazy(() => import("@/components/MapView"));
@@ -32,7 +33,7 @@ function MapPage() {
   const navigate = useNavigate();
 
   return (
-    <AppShell title="Map" bare onAdd={() => setFormOpen(true)}>
+    <AppShell title="Map" bare {...(canPublish ? { onAdd: () => setFormOpen(true) } : {})}>
       <div className="relative flex-1 w-full h-full overflow-hidden">
         {isLoading ? (
           <div className="grid h-full place-items-center text-sm text-muted-foreground">
@@ -51,6 +52,10 @@ function MapPage() {
               focus={null}
               onViewRecord={(r) => navigate({ to: "/records", search: { record: r.id } })}
               onDropPin={(coords, clear) => {
+                if (!canPublish) {
+                  clear();
+                  return;
+                }
                 clearPinRef.current = clear;
                 setPrefill({ latitude: coords[0], longitude: coords[1] });
                 setFormOpen(true);
