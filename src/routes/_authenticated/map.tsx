@@ -1,13 +1,13 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { lazy, Suspense, useRef, useState } from "react";
+import { Suspense, useRef, useState } from "react";
 import { AppShell } from "@/components/AppShell";
+import MapView, { MapLocateButton } from "@/components/MapView";
 import { RecordForm } from "@/components/RecordForm";
 import { useAuth } from "@/hooks/useAuth";
 import { useRecords, type RecordWithCreator } from "@/hooks/useRecords";
 
-const MapView = lazy(() => import("@/components/MapView"));
-
 export const Route = createFileRoute("/_authenticated/map")({
+
   ssr: false,
   head: () => ({
     meta: [
@@ -29,11 +29,18 @@ function MapPage() {
   const [formOpen, setFormOpen] = useState(false);
   const [editing] = useState<RecordWithCreator | null>(null);
   const [prefill, setPrefill] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [focus, setFocus] = useState<[number, number] | null>(null);
   const clearPinRef = useRef<(() => void) | null>(null);
   const navigate = useNavigate();
 
   return (
-    <AppShell title="Map" bare {...(canPublish ? { onAdd: () => setFormOpen(true) } : {})}>
+    <AppShell
+      title="Map"
+      bare
+      {...(canPublish ? { onAdd: () => setFormOpen(true) } : {})}
+      extraFloatingActions={<MapLocateButton onLocate={setFocus} />}
+    >
+
       <div className="relative flex-1 w-full h-full overflow-hidden">
         {isLoading ? (
           <div className="grid h-full place-items-center text-sm text-muted-foreground">
@@ -49,8 +56,9 @@ function MapPage() {
           >
             <MapView
               records={data}
-              focus={null}
+              focus={focus}
               onViewRecord={(r) => navigate({ to: "/records", search: { record: r.id } })}
+
               onDropPin={(coords, clear) => {
                 if (!canPublish) {
                   clear();

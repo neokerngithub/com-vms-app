@@ -58,6 +58,7 @@ export function AppShell({
   children,
   showTabs = true,
   onAdd,
+  extraFloatingActions,
   bare = false,
   back = false,
 }: {
@@ -65,10 +66,12 @@ export function AppShell({
   children: ReactNode;
   showTabs?: boolean;
   onAdd?: () => void;
+  extraFloatingActions?: ReactNode;
   bare?: boolean;
   /** Secondary drawer screens show a back arrow instead of the hamburger. */
   back?: boolean;
 }) {
+
   const [open, setOpen] = useState(false);
   const [legal, setLegal] = useState<LegalDoc | null>(null);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -86,7 +89,7 @@ export function AppShell({
 
   return (
     <div className={cn("flex flex-col bg-background", bare ? "h-[100dvh] overflow-hidden" : "min-h-[100dvh]")}>
-      <header className="safe-top sticky top-0 z-[1000] border-b border-border bg-surface">
+      <header className="safe-top sticky top-0 z-40 border-b border-border bg-surface">
         <div className="mx-auto grid w-full max-w-3xl grid-cols-[auto_auto_minmax(0,1fr)_auto] items-center gap-3 px-4 py-3">
           {back ? (
             <button
@@ -214,15 +217,18 @@ export function AppShell({
         <button
           onClick={onAdd}
           aria-label="Add Record"
-          className="tap gradient-brand fixed bottom-24 right-4 z-[500] flex items-center gap-2 rounded-full px-5 py-3.5 text-sm font-bold text-primary-foreground shadow-[var(--shadow-glow)] sm:right-[max(1rem,calc(50vw-22rem))]"
+          className="tap gradient-brand fixed bottom-24 right-4 z-10 flex items-center gap-2 rounded-full px-5 py-3.5 text-sm font-bold text-primary-foreground shadow-[var(--shadow-glow)] sm:right-[max(1rem,calc(50vw-22rem))]"
         >
           <Plus className="size-5" />
           Add Record
         </button>
       )}
 
+      {extraFloatingActions}
+
+
       {showTabs && (
-        <nav className="safe-bottom fixed inset-x-0 bottom-0 z-[1000] border-t border-border/70 bg-background">
+        <nav className="safe-bottom fixed inset-x-0 bottom-0 z-40 border-t border-border/70 bg-background">
           <div className="mx-auto flex w-full max-w-3xl items-center justify-around gap-2 px-4 py-2">
             {TABS.map((t) => {
               const active = pathname === t.to;
