@@ -58,6 +58,7 @@ export function AppShell({
   children,
   showTabs = true,
   onAdd,
+  extraFloatingActions,
   bare = false,
   back = false,
 }: {
@@ -65,10 +66,12 @@ export function AppShell({
   children: ReactNode;
   showTabs?: boolean;
   onAdd?: () => void;
+  extraFloatingActions?: ReactNode;
   bare?: boolean;
   /** Secondary drawer screens show a back arrow instead of the hamburger. */
   back?: boolean;
 }) {
+
   const [open, setOpen] = useState(false);
   const [legal, setLegal] = useState<LegalDoc | null>(null);
   const [profileOpen, setProfileOpen] = useState(false);
