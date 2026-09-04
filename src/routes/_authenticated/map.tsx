@@ -56,8 +56,9 @@ function MapPage() {
           >
             <MapView
               records={data}
-              focus={null}
+              focus={focus}
               onViewRecord={(r) => navigate({ to: "/records", search: { record: r.id } })}
+
               onDropPin={(coords, clear) => {
                 if (!canPublish) {
                   clear();
