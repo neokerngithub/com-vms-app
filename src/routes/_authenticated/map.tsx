@@ -29,11 +29,18 @@ function MapPage() {
   const [formOpen, setFormOpen] = useState(false);
   const [editing] = useState<RecordWithCreator | null>(null);
   const [prefill, setPrefill] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [focus, setFocus] = useState<[number, number] | null>(null);
   const clearPinRef = useRef<(() => void) | null>(null);
   const navigate = useNavigate();
 
   return (
-    <AppShell title="Map" bare {...(canPublish ? { onAdd: () => setFormOpen(true) } : {})}>
+    <AppShell
+      title="Map"
+      bare
+      {...(canPublish ? { onAdd: () => setFormOpen(true) } : {})}
+      extraFloatingActions={<MapLocateButton onLocate={setFocus} />}
+    >
+
       <div className="relative flex-1 w-full h-full overflow-hidden">
         {isLoading ? (
           <div className="grid h-full place-items-center text-sm text-muted-foreground">
