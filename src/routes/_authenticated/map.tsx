@@ -1,13 +1,13 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { lazy, Suspense, useRef, useState } from "react";
+import { Suspense, useRef, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import MapView, { MapLocateButton } from "@/components/MapView";
 import { RecordForm } from "@/components/RecordForm";
 import { useAuth } from "@/hooks/useAuth";
 import { useRecords, type RecordWithCreator } from "@/hooks/useRecords";
 
-
 export const Route = createFileRoute("/_authenticated/map")({
+
   ssr: false,
   head: () => ({
     meta: [
