@@ -395,7 +395,8 @@ export default function MapView({
 
       {/* Pin bottom sheet */}
       {selected && (
-        <div className="absolute inset-0 z-[600] flex items-end" onClick={() => setSelected(null)}>
+        <div className="absolute inset-0 z-30 flex items-end" onClick={() => setSelected(null)}>
+
           <div className="absolute inset-0 bg-black/60" />
           <div
             onClick={(e) => e.stopPropagation()}
