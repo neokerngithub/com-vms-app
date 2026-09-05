@@ -117,7 +117,7 @@ export function AppShell({
           {back ? (
             <button
               aria-label="Go back"
-              onClick={() => navigate({ to: readLastTab() })}
+              onClick={handleBack}
               className="tap grid size-11 shrink-0 place-items-center rounded-xl border border-border bg-surface text-foreground"
             >
               <ArrowLeft className="size-5" />
