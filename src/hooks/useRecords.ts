@@ -138,3 +138,36 @@ export function useAddGovRate() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["government_rates"] }),
   });
 }
+
+export function useUpdateGovRate() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      id,
+      ...patch
+    }: {
+      id: string;
+      fiscal_year?: string;
+      district_office?: string;
+      pdf_url?: string;
+    }) => {
+      const { error } = await supabase
+        .from("government_rates")
+        .update(patch as never)
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["government_rates"] }),
+  });
+}
+
+export function useDeleteGovRate() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("government_rates").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["government_rates"] }),
+  });
+}
