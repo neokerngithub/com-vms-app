@@ -46,6 +46,8 @@ const LEGAL_LINKS: { doc: LegalDoc; label: string }[] = [
 ];
 
 const LAST_TAB_KEY = "vms-last-tab";
+/** Set when a screen was opened from the drawer, so Back reopens the drawer. */
+const REOPEN_DRAWER_KEY = "vms-reopen-drawer";
 
 function readLastTab(): TabPath {
   if (typeof window === "undefined") return "/map";
@@ -87,6 +89,27 @@ export function AppShell({
     }
   }, [pathname]);
 
+  // Returning from a drawer screen reopens the drawer where the user left off.
+  useEffect(() => {
+    if (typeof window === "undefined" || back) return;
+    if (window.sessionStorage.getItem(REOPEN_DRAWER_KEY) === "1") {
+      window.sessionStorage.removeItem(REOPEN_DRAWER_KEY);
+      setOpen(true);
+    }
+  }, [back, pathname]);
+
+  const handleBack = () => {
+    if (typeof window !== "undefined") {
+      window.sessionStorage.setItem(REOPEN_DRAWER_KEY, "1");
+      if (window.history.length > 1) {
+        window.history.back();
+        return;
+      }
+    }
+    navigate({ to: readLastTab() });
+  };
+
+
   return (
     <div className={cn("flex flex-col bg-background", bare ? "h-[100dvh] overflow-hidden" : "min-h-[100dvh]")}>
       <header className="safe-top sticky top-0 z-40 border-b border-border bg-surface">
@@ -94,7 +117,7 @@ export function AppShell({
           {back ? (
             <button
               aria-label="Go back"
-              onClick={() => navigate({ to: readLastTab() })}
+              onClick={handleBack}
               className="tap grid size-11 shrink-0 place-items-center rounded-xl border border-border bg-surface text-foreground"
             >
               <ArrowLeft className="size-5" />
