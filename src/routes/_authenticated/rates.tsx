@@ -5,7 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
 import { DocViewerModal } from "@/components/DocViewerModal";
 import { toast } from "sonner";
-import { useAddGovRate, useGovRates } from "@/hooks/useRecords";
+import { useAddGovRate, useDeleteGovRate, useGovRates, useUpdateGovRate } from "@/hooks/useRecords";
+import { useAuth } from "@/hooks/useAuth";
 import { DEFAULT_FISCAL_YEAR, FISCAL_YEARS } from "@/lib/vms";
 
 const RATES_BUCKET = "rates";
@@ -45,6 +46,12 @@ function RatesPage() {
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const addRate = useAddGovRate();
+  const updateRate = useUpdateGovRate();
+  const deleteRate = useDeleteGovRate();
+  const { isAdmin } = useAuth();
+  const [editing, setEditing] = useState<string | null>(null);
+  const [editFy, setEditFy] = useState<string>(DEFAULT_FISCAL_YEAR);
+  const [editOffice, setEditOffice] = useState("");
   const [viewing, setViewing] = useState<{ url: string; title: string } | null>(null);
 
   const openDoc = async (r: { pdf_url: string; district_office: string; fiscal_year: string }) => {
