@@ -21,7 +21,7 @@ export function DocViewerModal({
 }) {
   return (
     <Dialog open={Boolean(url)} onOpenChange={onOpenChange}>
-      <DialogContent className="h-[88dvh] max-w-4xl overflow-hidden rounded-3xl border-border bg-popover p-0 sm:max-w-4xl">
+      <DialogContent className="top-2 flex h-[97dvh] max-h-[97dvh] max-w-4xl translate-y-0 flex-col overflow-hidden rounded-3xl border-border bg-popover p-0 sm:max-w-4xl">
         <DialogTitle className="border-b border-border px-5 py-4 text-base font-bold text-foreground">
           {title}
         </DialogTitle>
