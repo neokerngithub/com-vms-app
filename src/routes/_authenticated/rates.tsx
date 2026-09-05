@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Eye, FileText, Link2, Plus, Upload, X } from "lucide-react";
+import { Eye, FileText, Link2, Pencil, Plus, Trash2, Upload, X } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
@@ -273,13 +273,96 @@ function RatesPage() {
                 </p>
                 <p className="text-xs text-muted-foreground">FY {r.fiscal_year}</p>
               </div>
-              <button
-                onClick={() => openDoc(r)}
-                className="tap gradient-brand flex shrink-0 items-center gap-2 rounded-xl px-3.5 py-2.5 text-xs font-bold text-primary-foreground"
-              >
-                <Eye className="size-4" />
-                View
-              </button>
+              <div className="flex shrink-0 items-center gap-2">
+                <button
+                  onClick={() => openDoc(r)}
+                  className="tap gradient-brand flex shrink-0 items-center gap-2 rounded-xl px-3.5 py-2.5 text-xs font-bold text-primary-foreground"
+                >
+                  <Eye className="size-4" />
+                  View
+                </button>
+                {isAdmin && (
+                  <>
+                    <button
+                      aria-label="Edit publication"
+                      onClick={() => {
+                        setEditing(r.id);
+                        setEditFy(r.fiscal_year);
+                        setEditOffice(r.district_office);
+                      }}
+                      className="tap grid size-11 shrink-0 place-items-center rounded-xl border border-border bg-surface-2 text-muted-foreground"
+                    >
+                      <Pencil className="size-4" />
+                    </button>
+                    <button
+                      aria-label="Delete publication"
+                      onClick={async () => {
+                        if (!window.confirm("Delete this publication?")) return;
+                        try {
+                          await deleteRate.mutateAsync(r.id);
+                          toast.success("Publication deleted.");
+                        } catch (err) {
+                          toast.error(
+                            err instanceof Error ? err.message : "Could not delete",
+                          );
+                        }
+                      }}
+                      className="tap grid size-11 shrink-0 place-items-center rounded-xl border border-destructive/40 bg-surface-2 text-destructive"
+                    >
+                      <Trash2 className="size-4" />
+                    </button>
+                  </>
+                )}
+              </div>
+              {isAdmin && editing === r.id && (
+                <div className="col-span-3 space-y-2">
+                  <select
+                    value={editFy}
+                    onChange={(e) => setEditFy(e.target.value)}
+                    className="h-12 w-full rounded-xl border border-border bg-surface-2 px-4 text-sm text-foreground outline-none ring-ring focus:ring-2"
+                  >
+                    {FISCAL_YEARS.map((y) => (
+                      <option key={y} value={y}>
+                        {y}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    value={editOffice}
+                    onChange={(e) => setEditOffice(e.target.value)}
+                    maxLength={120}
+                    className="h-12 w-full rounded-xl border border-border bg-surface-2 px-4 text-sm text-foreground outline-none ring-ring focus:ring-2"
+                  />
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => setEditing(null)}
+                      className="tap rounded-xl border border-border bg-surface-2 py-3 text-xs font-bold text-muted-foreground"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={async () => {
+                        try {
+                          await updateRate.mutateAsync({
+                            id: r.id,
+                            fiscal_year: editFy.trim(),
+                            district_office: editOffice.trim(),
+                          });
+                          toast.success("Publication updated.");
+                          setEditing(null);
+                        } catch (err) {
+                          toast.error(
+                            err instanceof Error ? err.message : "Could not update",
+                          );
+                        }
+                      }}
+                      className="tap gradient-brand rounded-xl py-3 text-xs font-bold text-primary-foreground"
+                    >
+                      Save changes
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           ))}
         </div>
