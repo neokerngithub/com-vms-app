@@ -46,6 +46,8 @@ const LEGAL_LINKS: { doc: LegalDoc; label: string }[] = [
 ];
 
 const LAST_TAB_KEY = "vms-last-tab";
+/** Set when a screen was opened from the drawer, so Back reopens the drawer. */
+const REOPEN_DRAWER_KEY = "vms-reopen-drawer";
 
 function readLastTab(): TabPath {
   if (typeof window === "undefined") return "/map";
