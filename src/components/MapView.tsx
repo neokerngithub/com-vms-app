@@ -337,8 +337,6 @@ export default function MapView({
         </MapContainer>
       </div>
 
-      </div>
-
       {/* Floating search bar */}
       <div className="pointer-events-none absolute inset-x-0 top-3 z-10 flex justify-center px-3">
         <div className="pointer-events-auto w-full max-w-md">
