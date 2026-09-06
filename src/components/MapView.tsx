@@ -141,11 +141,24 @@ function LongPress({ onLongPress }: { onLongPress: (p: [number, number]) => void
 function MapResizer() {
   const map = useMap();
   useEffect(() => {
-    const t = setTimeout(() => map.invalidateSize(), 0);
-    return () => clearTimeout(t);
+    const invalidate = () => map.invalidateSize();
+    const t = setTimeout(invalidate, 0);
+    window.addEventListener("resize", invalidate);
+    window.addEventListener("orientationchange", invalidate);
+    const container = map.getContainer();
+    const ro =
+      typeof ResizeObserver !== "undefined" ? new ResizeObserver(() => invalidate()) : null;
+    ro?.observe(container);
+    return () => {
+      clearTimeout(t);
+      window.removeEventListener("resize", invalidate);
+      window.removeEventListener("orientationchange", invalidate);
+      ro?.disconnect();
+    };
   }, [map]);
   return null;
 }
+
 
 export function MapLocateButton({
   onLocate,
