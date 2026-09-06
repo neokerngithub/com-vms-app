@@ -286,6 +286,21 @@ export default function MapView({
     [onDropPin],
   );
 
+  const selectRecord = useCallback((r: RecordWithCreator) => setSelected(r), []);
+
+  const markers = useMemo(
+    () =>
+      pinned.map((r) => (
+        <Marker
+          key={r.id}
+          position={[r.latitude as number, r.longitude as number]}
+          icon={pinIcon}
+          eventHandlers={{ click: () => selectRecord(r) }}
+        />
+      )),
+    [pinned, selectRecord],
+  );
+
   return (
     <div className="relative h-full w-full">
       <div className="relative z-0 h-full w-full">
@@ -293,13 +308,20 @@ export default function MapView({
           center={center}
           zoom={11}
           minZoom={3}
+          maxZoom={22}
           maxBounds={[[-90, -180], [90, 180]]}
           maxBoundsViscosity={1}
           scrollWheelZoom
           zoomControl={false}
           style={{ height: "100%", width: "100%" }}
         >
-          <TileLayer key={layer} attribution={active.attribution} url={active.url} />
+          <TileLayer
+            key={layer}
+            attribution={active.attribution}
+            url={active.url}
+            maxZoom={22}
+            maxNativeZoom={19}
+          />
           <MapResizer />
           <Recenter focus={target} />
           <LiveLocation onPosition={setMe} />
@@ -311,15 +333,10 @@ export default function MapView({
             </>
           )}
           {temp && <Marker position={temp} icon={tempIcon} />}
-          {pinned.map((r) => (
-            <Marker
-              key={r.id}
-              position={[r.latitude as number, r.longitude as number]}
-              icon={pinIcon}
-              eventHandlers={{ click: () => setSelected(r) }}
-            />
-          ))}
+          {markers}
         </MapContainer>
+      </div>
+
       </div>
 
       {/* Floating search bar */}
