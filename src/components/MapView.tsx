@@ -141,11 +141,24 @@ function LongPress({ onLongPress }: { onLongPress: (p: [number, number]) => void
 function MapResizer() {
   const map = useMap();
   useEffect(() => {
-    const t = setTimeout(() => map.invalidateSize(), 0);
-    return () => clearTimeout(t);
+    const invalidate = () => map.invalidateSize();
+    const t = setTimeout(invalidate, 0);
+    window.addEventListener("resize", invalidate);
+    window.addEventListener("orientationchange", invalidate);
+    const container = map.getContainer();
+    const ro =
+      typeof ResizeObserver !== "undefined" ? new ResizeObserver(() => invalidate()) : null;
+    ro?.observe(container);
+    return () => {
+      clearTimeout(t);
+      window.removeEventListener("resize", invalidate);
+      window.removeEventListener("orientationchange", invalidate);
+      ro?.disconnect();
+    };
   }, [map]);
   return null;
 }
+
 
 export function MapLocateButton({
   onLocate,
@@ -273,6 +286,21 @@ export default function MapView({
     [onDropPin],
   );
 
+  const selectRecord = useCallback((r: RecordWithCreator) => setSelected(r), []);
+
+  const markers = useMemo(
+    () =>
+      pinned.map((r) => (
+        <Marker
+          key={r.id}
+          position={[r.latitude as number, r.longitude as number]}
+          icon={pinIcon}
+          eventHandlers={{ click: () => selectRecord(r) }}
+        />
+      )),
+    [pinned, selectRecord],
+  );
+
   return (
     <div className="relative h-full w-full">
       <div className="relative z-0 h-full w-full">
@@ -280,13 +308,20 @@ export default function MapView({
           center={center}
           zoom={11}
           minZoom={3}
+          maxZoom={22}
           maxBounds={[[-90, -180], [90, 180]]}
           maxBoundsViscosity={1}
           scrollWheelZoom
           zoomControl={false}
           style={{ height: "100%", width: "100%" }}
         >
-          <TileLayer key={layer} attribution={active.attribution} url={active.url} />
+          <TileLayer
+            key={layer}
+            attribution={active.attribution}
+            url={active.url}
+            maxZoom={22}
+            maxNativeZoom={19}
+          />
           <MapResizer />
           <Recenter focus={target} />
           <LiveLocation onPosition={setMe} />
@@ -298,14 +333,7 @@ export default function MapView({
             </>
           )}
           {temp && <Marker position={temp} icon={tempIcon} />}
-          {pinned.map((r) => (
-            <Marker
-              key={r.id}
-              position={[r.latitude as number, r.longitude as number]}
-              icon={pinIcon}
-              eventHandlers={{ click: () => setSelected(r) }}
-            />
-          ))}
+          {markers}
         </MapContainer>
       </div>
 
