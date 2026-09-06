@@ -227,14 +227,16 @@ export function AppShell({
       </header>
 
       <main
+        key={pathname}
         className={cn(
-          "mx-auto w-full max-w-3xl flex-1",
+          "page-transition mx-auto w-full max-w-3xl flex-1",
           bare ? "min-h-0" : "px-4 pt-4",
           !bare && showTabs ? "pb-32" : !bare ? "pb-10" : "",
         )}
       >
         {children}
       </main>
+
 
       {onAdd && (
         <button
