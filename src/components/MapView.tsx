@@ -74,16 +74,27 @@ function LiveLocation({
 }: {
   onPosition: (p: { coords: [number, number]; accuracy: number } | null) => void;
 }) {
+  const map = useMap();
+  const hasCentered = useRef(false);
+
   useEffect(() => {
     if (typeof navigator === "undefined" || !navigator.geolocation) return;
     let warned = false;
     const id = navigator.geolocation.watchPosition(
       (pos) => {
         warned = false;
+        const coords: [number, number] = [pos.coords.latitude, pos.coords.longitude];
+
         onPosition({
-          coords: [pos.coords.latitude, pos.coords.longitude],
+          coords,
           accuracy: pos.coords.accuracy,
         });
+
+        // Automatically center the map on initial location load
+        if (!hasCentered.current) {
+          map.setView(coords, 15);
+          hasCentered.current = true;
+        }
       },
       () => {
         if (!warned) {
@@ -94,7 +105,8 @@ function LiveLocation({
       { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 },
     );
     return () => navigator.geolocation.clearWatch(id);
-  }, [onPosition]);
+  }, [onPosition, map]);
+
   return null;
 }
 
@@ -140,24 +152,32 @@ function LongPress({ onLongPress }: { onLongPress: (p: [number, number]) => void
   return null;
 }
 
-function MapResizer() {
+function MapResizer({ center }: { center: [number, number] | null }) {
   const map = useMap();
   useEffect(() => {
-    const invalidate = () => map.invalidateSize();
-    const t = setTimeout(invalidate, 0);
+    const invalidate = () => {
+      map.invalidateSize();
+      if (center) {
+        map.setView(center, map.getZoom(), { animate: false });
+      }
+    };
+    const t = setTimeout(invalidate, 100);
     window.addEventListener("resize", invalidate);
     window.addEventListener("orientationchange", invalidate);
+
     const container = map.getContainer();
     const ro =
       typeof ResizeObserver !== "undefined" ? new ResizeObserver(() => invalidate()) : null;
     ro?.observe(container);
+
     return () => {
       clearTimeout(t);
       window.removeEventListener("resize", invalidate);
       window.removeEventListener("orientationchange", invalidate);
       ro?.disconnect();
     };
-  }, [map]);
+  }, [map, center]);
+
   return null;
 }
 
@@ -322,7 +342,7 @@ export default function MapView({
             maxZoom={18}
             maxNativeZoom={active.maxNativeZoom}
           />
-          <MapResizer />
+          <MapResizer center={me?.coords || target || center} />
           <Recenter focus={target} />
           <LiveLocation onPosition={setMe} />
           <LongPress onLongPress={longPress} />
