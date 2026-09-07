@@ -322,6 +322,7 @@ export default function MapView({
             attribution={active.attribution}
             url={active.url}
             maxZoom={19}
+            maxNativeZoom={active.maxNativeZoom}
           />
           <MapResizer />
           <Recenter focus={target} />
