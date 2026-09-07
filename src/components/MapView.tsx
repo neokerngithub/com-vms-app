@@ -34,11 +34,13 @@ const LAYERS = {
     label: "Satellite",
     url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
     attribution: "Tiles &copy; Esri — Source: Esri, Maxar, Earthstar Geographics",
+    maxNativeZoom: 17,
   },
   standard: {
     label: "Standard Light",
     url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     attribution: "&copy; OpenStreetMap contributors",
+    maxNativeZoom: 18,
   },
 } as const;
 
