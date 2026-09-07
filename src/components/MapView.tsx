@@ -161,7 +161,6 @@ function MapResizer() {
   return null;
 }
 
-
 export function MapLocateButton({
   onLocate,
   className,
@@ -190,7 +189,6 @@ export function MapLocateButton({
     </button>
   );
 }
-
 
 export default function MapView({
   records,
@@ -308,7 +306,7 @@ export default function MapView({
       <div className="relative z-0 h-full w-full">
         <MapContainer
           center={center}
-          zoom={11}
+          zoom={16}
           minZoom={3}
           maxZoom={19}
           maxBounds={[[-90, -180], [90, 180]]}
@@ -342,7 +340,6 @@ export default function MapView({
       {/* Floating search bar */}
       <div className="pointer-events-none absolute inset-x-0 top-3 z-10 flex justify-center px-3">
         <div className="pointer-events-auto w-full max-w-md">
-
           <div className="flex items-center gap-2 rounded-2xl border border-border bg-background px-3 shadow-[var(--shadow-elegant)]">
             {searching ? (
               <Loader2 className="size-4 shrink-0 animate-spin text-muted-foreground" />
@@ -422,11 +419,9 @@ export default function MapView({
         )}
       </div>
 
-
       {/* Pin bottom sheet */}
       {selected && (
         <div className="absolute inset-0 z-30 flex items-end" onClick={() => setSelected(null)}>
-
           <div className="absolute inset-0 bg-black/60" />
           <div
             onClick={(e) => e.stopPropagation()}
