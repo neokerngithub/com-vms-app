@@ -308,7 +308,7 @@ export default function MapView({
           center={center}
           zoom={11}
           minZoom={3}
-          maxZoom={22}
+          maxZoom={19}
           maxBounds={[[-90, -180], [90, 180]]}
           maxBoundsViscosity={1}
           scrollWheelZoom
@@ -319,8 +319,7 @@ export default function MapView({
             key={layer}
             attribution={active.attribution}
             url={active.url}
-            maxZoom={22}
-            maxNativeZoom={19}
+            maxZoom={19}
           />
           <MapResizer />
           <Recenter focus={target} />
