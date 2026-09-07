@@ -64,7 +64,7 @@ function parseCoords(input: string): Suggestion | null {
 function Recenter({ focus }: { focus: [number, number] | null }) {
   const map = useMap();
   useEffect(() => {
-    if (focus) map.flyTo(focus, 16, { duration: 0.8 });
+    if (focus) map.flyTo(focus, 15, { duration: 0.8 });
   }, [focus, map]);
   return null;
 }
@@ -306,9 +306,9 @@ export default function MapView({
       <div className="relative z-0 h-full w-full">
         <MapContainer
           center={center}
-          zoom={16}
+          zoom={15}
           minZoom={3}
-          maxZoom={19}
+          maxZoom={18}
           maxBounds={[[-90, -180], [90, 180]]}
           maxBoundsViscosity={1}
           scrollWheelZoom
@@ -319,7 +319,7 @@ export default function MapView({
             key={layer}
             attribution={active.attribution}
             url={active.url}
-            maxZoom={19}
+            maxZoom={18}
             maxNativeZoom={active.maxNativeZoom}
           />
           <MapResizer />
