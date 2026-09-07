@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Eye, FileText, Link2, Pencil, Plus, Trash2, Upload, X } from "lucide-react";
-import { useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
-import { DocViewerModal } from "@/components/DocViewerModal";
+const DocViewerModal = lazy(() =>
+  import("@/components/DocViewerModal").then((m) => ({ default: m.DocViewerModal })),
+);
 import { toast } from "sonner";
 import { useAddGovRate, useDeleteGovRate, useGovRates, useUpdateGovRate } from "@/hooks/useRecords";
 import { useAuth } from "@/hooks/useAuth";
@@ -375,11 +377,15 @@ function RatesPage() {
         </div>
       </div>
 
-      <DocViewerModal
-        url={viewing?.url ?? null}
-        title={viewing?.title ?? "Publication"}
-        onOpenChange={(o) => !o && setViewing(null)}
-      />
+      {viewing && (
+        <Suspense fallback={null}>
+          <DocViewerModal
+            url={viewing.url}
+            title={viewing.title}
+            onOpenChange={(o) => !o && setViewing(null)}
+          />
+        </Suspense>
+      )}
     </AppShell>
   );
 }
