@@ -232,7 +232,7 @@ function CalculatorPage() {
               onValueChange={([v]) => setDistress(v ?? 0)}
               min={0}
               max={100}
-              step={1}
+              step={5}
               className="mt-3"
             />
           </div>
