@@ -49,8 +49,8 @@ function Landing() {
           {[
             { icon: MapPin, t: "Universal Map", d: "Every record as a live pin" },
             { icon: Repeat, t: "Converter", d: "Terai, Hilly and Metric units" },
-            { icon: Calculator, t: "Valuation", d: "Fair market & distress value" },
-            { icon: ShieldCheck, t: "Governed", d: "Owner edits, admin deletes" },
+            { icon: Calculator, t: "Calculator", d: "Fair market & distress value" },
+            { icon: ShieldCheck, t: "Governed", d: "Audit logs & role-based access" },
           ].map((f) => (
             <div key={f.t} className="surface-card tap p-4">
               <f.icon className="size-5 text-primary" />
