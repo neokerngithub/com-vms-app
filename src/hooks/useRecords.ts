@@ -14,6 +14,7 @@ export function useRecords() {
       const { data, error } = await supabase
         .from("records")
         .select("*")
+        .eq("is_deleted", false)
         .order("created_at", { ascending: false });
       if (error) throw error;
       const rows = (data ?? []) as unknown as VmsRecord[];
@@ -65,10 +66,95 @@ export function useDeleteRecord() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
+      const { data: auth } = await supabase.auth.getUser();
+      const { error } = await supabase
+        .from("records")
+        .update({
+          is_deleted: true,
+          deleted_at: new Date().toISOString(),
+          deleted_by: auth.user?.id ?? null,
+        } as never)
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["records"] });
+      qc.invalidateQueries({ queryKey: ["recycle_bin"] });
+    },
+  });
+}
+
+export function useRecycleBin(enabled: boolean) {
+  return useQuery({
+    queryKey: ["recycle_bin"],
+    enabled,
+    queryFn: async (): Promise<RecordWithCreator[]> => {
+      const { data, error } = await supabase
+        .from("records")
+        .select("*")
+        .eq("is_deleted", true)
+        .order("deleted_at", { ascending: false });
+      if (error) throw error;
+      return ((data ?? []) as unknown as VmsRecord[]).map((r) => ({
+        ...r,
+        creator_name: "",
+        creator_verified: false,
+      }));
+    },
+  });
+}
+
+export function useRestoreRecord() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from("records")
+        .update({ is_deleted: false, deleted_at: null, deleted_by: null } as never)
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["records"] });
+      qc.invalidateQueries({ queryKey: ["recycle_bin"] });
+    },
+  });
+}
+
+export function usePurgeRecord() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
       const { error } = await supabase.from("records").delete().eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["records"] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["recycle_bin"] }),
+  });
+}
+
+export interface AuditLog {
+  id: string;
+  user_id: string | null;
+  action_type: string;
+  entity_type: string;
+  entity_id: string | null;
+  details: string | null;
+  created_at: string;
+}
+
+export function useAuditLogs(enabled: boolean) {
+  return useQuery({
+    queryKey: ["audit_logs"],
+    enabled,
+    queryFn: async (): Promise<AuditLog[]> => {
+      const { data, error } = await supabase
+        .from("audit_logs")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(200);
+      if (error) throw error;
+      return (data ?? []) as AuditLog[];
+    },
   });
 }
 

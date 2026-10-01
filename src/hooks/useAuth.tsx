@@ -10,6 +10,7 @@ interface Profile {
   avatar_url: string | null;
   is_verified: boolean;
   nec_number?: string | null;
+  dean_number?: string | null;
 }
 
 interface AuthState {
@@ -63,7 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const loadProfile = async (id: string) => {
     const { data: p } = await supabase
       .from("profiles")
-      .select("id, full_name, email, avatar_url, is_verified, nec_number")
+      .select("id, full_name, email, avatar_url, is_verified, nec_number, dean_number")
       .eq("id", id)
       .maybeSingle();
     return (p as Profile) ?? null;

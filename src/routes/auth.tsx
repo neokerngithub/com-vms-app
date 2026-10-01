@@ -95,6 +95,7 @@ function AuthPage() {
               full_name: fullName,
               role: "valuator",
               nec_number: null,
+              dean_number: null,
               is_verified: false,
             },
           },

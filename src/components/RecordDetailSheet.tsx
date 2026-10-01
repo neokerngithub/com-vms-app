@@ -111,7 +111,7 @@ export function RecordDetailSheet({
                 By <span className="font-bold text-foreground">{record.creator_name}</span>
                 {record.creator_verified && (
                   <span className="inline-flex items-center gap-1 rounded-full bg-success/15 px-2 py-0.5 text-[10px] font-bold text-success">
-                    <BadgeCheck className="size-3" /> NEC Verified
+                    <BadgeCheck className="size-3" /> NEC / DEAN Verified
                   </span>
                 )}
                 · {new Date(record.data_entry_date).toLocaleDateString()}

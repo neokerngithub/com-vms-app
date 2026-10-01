@@ -159,7 +159,7 @@ export function RecordCard({
           <AlertDialogHeader>
             <AlertDialogTitle>Delete this record?</AlertDialogTitle>
             <AlertDialogDescription>
-              This permanently removes the valuation record for everyone.
+              This removes the record from public view. Admins can restore it from the Recycle Bin.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -169,7 +169,7 @@ export function RecordCard({
               onClick={async () => {
                 try {
                   await del.mutateAsync(record.id);
-                  toast.success("Record deleted");
+                  toast.success("Record moved to Recycle Bin");
                 } catch {
                   toast.error("Delete failed");
                 }

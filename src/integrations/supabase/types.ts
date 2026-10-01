@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      audit_logs: {
+        Row: {
+          action_type: string
+          created_at: string
+          details: string | null
+          entity_id: string | null
+          entity_type: string
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          action_type: string
+          created_at?: string
+          details?: string | null
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          action_type?: string
+          created_at?: string
+          details?: string | null
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       government_rates: {
         Row: {
           created_at: string
@@ -45,29 +75,35 @@ export type Database = {
         Row: {
           avatar_url: string | null
           created_at: string
+          dean_number: string | null
           email: string | null
           full_name: string | null
           id: string
           is_verified: boolean
           nec_number: string | null
+          verification_status: string
         }
         Insert: {
           avatar_url?: string | null
           created_at?: string
+          dean_number?: string | null
           email?: string | null
           full_name?: string | null
           id: string
           is_verified?: boolean
           nec_number?: string | null
+          verification_status?: string
         }
         Update: {
           avatar_url?: string | null
           created_at?: string
+          dean_number?: string | null
           email?: string | null
           full_name?: string | null
           id?: string
           is_verified?: boolean
           nec_number?: string | null
+          verification_status?: string
         }
         Relationships: []
       }
@@ -108,9 +144,12 @@ export type Database = {
           created_at: string
           created_by: string
           data_entry_date: string
+          deleted_at: string | null
+          deleted_by: string | null
           district: string
           id: string
           image_url: string | null
+          is_deleted: boolean
           latitude: number | null
           locality: Database["public"]["Enums"]["locality_type"] | null
           location_in_cadastral_map: string
@@ -128,9 +167,12 @@ export type Database = {
           created_at?: string
           created_by: string
           data_entry_date?: string
+          deleted_at?: string | null
+          deleted_by?: string | null
           district?: string
           id?: string
           image_url?: string | null
+          is_deleted?: boolean
           latitude?: number | null
           locality?: Database["public"]["Enums"]["locality_type"] | null
           location_in_cadastral_map?: string
@@ -148,9 +190,12 @@ export type Database = {
           created_at?: string
           created_by?: string
           data_entry_date?: string
+          deleted_at?: string | null
+          deleted_by?: string | null
           district?: string
           id?: string
           image_url?: string | null
+          is_deleted?: boolean
           latitude?: number | null
           locality?: Database["public"]["Enums"]["locality_type"] | null
           location_in_cadastral_map?: string
