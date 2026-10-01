@@ -11,6 +11,7 @@ interface Profile {
   is_verified: boolean;
   nec_number?: string | null;
   dean_number?: string | null;
+  dean_number?: string | null;
 }
 
 interface AuthState {

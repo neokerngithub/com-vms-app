@@ -1,11 +1,19 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
-import { BadgeCheck, ChevronDown, ShieldCheck, Users } from "lucide-react";
+import { BadgeCheck, ChevronDown, FileText, History, ShieldCheck, Trash2, UserCheck, Users } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
 import { RecordCard } from "@/components/RecordCard";
 import { useAuth } from "@/hooks/useAuth";
-import { useRecords } from "@/hooks/useRecords";
+import {
+  useAuditLogs,
+  useDeleteGovRate,
+  useGovRates,
+  usePurgeRecord,
+  useRecords,
+  useRecycleBin,
+  useRestoreRecord,
+} from "@/hooks/useRecords";
 import {
   useAdminUsers,
   useUpdateAdminUser,
@@ -21,7 +29,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
       { title: "Admin Management Console — VMS" },
       {
         name: "description",
-        content: "Moderate reported valuation records and approve NEC valuators.",
+        content: "Moderate reported valuation records and approve NEC / DEAN valuators.",
       },
       { property: "og:title", content: "Admin Management Console — VMS" },
       { property: "og:description", content: "Moderation tools for VMS administrators." },
@@ -85,6 +93,30 @@ function AdminPage() {
   const [openUsers, setOpenUsers] = useState(false);
   const [openCategory, setOpenCategory] = useState<AdminRole | null>(null);
   const [openUserId, setOpenUserId] = useState<string | null>(null);
+  const [deanDraft, setDeanDraft] = useState<Record<string, string>>({});
+  const [openPending, setOpenPending] = useState(false);
+  const [openRates, setOpenRates] = useState(false);
+  const [openAudit, setOpenAudit] = useState(false);
+  const [openBin, setOpenBin] = useState(false);
+  const { data: bin = [] } = useRecycleBin(isAdmin);
+  const { data: logs = [] } = useAuditLogs(isAdmin);
+  const { data: rates = [] } = useGovRates();
+  const restore = useRestoreRecord();
+  const purge = usePurgeRecord();
+  const delRate = useDeleteGovRate();
+  const nameOf = (id: string | null) =>
+    users.find((u) => u.id === id)?.full_name ?? users.find((u) => u.id === id)?.email ?? "System";
+  const pending = users.filter(
+    (u) => !u.is_verified && u.verification_status !== "rejected" && (u.nec_number || u.dean_number),
+  );
+  const run = async (fn: () => Promise<unknown>, ok: string) => {
+    try {
+      await fn();
+      toast.success(ok);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Action failed");
+    }
+  };
 
   useEffect(() => {
     if (!loading && !isAdmin) navigate({ to: "/map", replace: true });
@@ -111,7 +143,7 @@ function AdminPage() {
     <div className="space-y-3 border-t border-border p-3">
       <p className="truncate text-xs text-muted-foreground">{u.email ?? "—"}</p>
 
-      <div className="grid gap-2 sm:grid-cols-2">
+      <div className="grid gap-2 sm:grid-cols-3">
         <label className="space-y-1.5">
           <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
             NEC number
@@ -126,6 +158,24 @@ function AdminPage() {
               }
             }}
             placeholder="NEC-0000"
+            className="h-12 w-full rounded-xl border border-border bg-surface-2 px-4 text-sm text-foreground outline-none ring-ring focus:ring-2"
+          />
+        </label>
+
+        <label className="space-y-1.5">
+          <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+            DEAN number
+          </span>
+          <input
+            value={deanDraft[u.id] ?? u.dean_number ?? ""}
+            onChange={(e) => setDeanDraft((d) => ({ ...d, [u.id]: e.target.value }))}
+            onBlur={(e) => {
+              const next = e.target.value.trim();
+              if (next !== (u.dean_number ?? "")) {
+                void save({ id: u.id, dean_number: next || null });
+              }
+            }}
+            placeholder="DEAN-0000"
             className="h-12 w-full rounded-xl border border-border bg-surface-2 px-4 text-sm text-foreground outline-none ring-ring focus:ring-2"
           />
         </label>
@@ -178,6 +228,45 @@ function AdminPage() {
             <div className="space-y-3">
               {reported.map((r) => (
                 <RecordCard key={r.id} record={r} onEdit={() => {}} />
+              ))}
+            </div>
+          )}
+        </Accordion>
+
+        <Accordion
+          open={openPending}
+          onToggle={() => setOpenPending((v) => !v)}
+          icon={<UserCheck className="size-5 text-primary" />}
+          label="Unverified registrations (NEC / DEAN)"
+          count={pending.length}
+        >
+          {pending.length === 0 ? (
+            <p className="py-6 text-center text-sm text-muted-foreground">No pending registrations.</p>
+          ) : (
+            <div className="space-y-2">
+              {pending.map((u) => (
+                <div key={u.id} className="space-y-2 rounded-xl border border-border bg-surface-2 p-3">
+                  <p className="truncate text-sm font-bold text-foreground">{u.full_name ?? "Unnamed user"}</p>
+                  <p className="truncate text-xs text-muted-foreground">{u.email ?? "—"}</p>
+                  <p className="text-xs text-muted-foreground">
+                    NEC: <span className="font-semibold text-foreground">{u.nec_number ?? "—"}</span> · DEAN:{" "}
+                    <span className="font-semibold text-foreground">{u.dean_number ?? "—"}</span>
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => void save({ id: u.id, is_verified: true })}
+                      className="tap rounded-xl py-2.5 text-sm font-bold gradient-brand text-primary-foreground"
+                    >
+                      Verify
+                    </button>
+                    <button
+                      onClick={() => void save({ id: u.id, verification_status: "rejected" })}
+                      className="tap rounded-xl border border-border bg-background py-2.5 text-sm font-bold text-destructive"
+                    >
+                      Reject
+                    </button>
+                  </div>
+                </div>
               ))}
             </div>
           )}
@@ -249,6 +338,117 @@ function AdminPage() {
               );
             })}
           </div>
+        </Accordion>
+
+        <Accordion
+          open={openRates}
+          onToggle={() => setOpenRates((v) => !v)}
+          icon={<FileText className="size-5 text-primary" />}
+          label="Government rate contributions"
+          count={rates.length}
+        >
+          {rates.length === 0 ? (
+            <p className="py-6 text-center text-sm text-muted-foreground">No contributions yet.</p>
+          ) : (
+            <div className="space-y-2">
+              {rates.map((r) => (
+                <div key={r.id} className="flex items-center gap-2 rounded-xl border border-border bg-surface-2 p-3">
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-bold text-foreground">{r.district_office}</p>
+                    <p className="truncate text-xs text-muted-foreground">
+                      FY {r.fiscal_year} · {nameOf(r.created_by ?? null)}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      if (confirm("Remove this publication?"))
+                        void run(() => delRate.mutateAsync(r.id), "Publication removed");
+                    }}
+                    aria-label="Remove publication"
+                    className="tap grid size-10 place-items-center rounded-xl border border-border bg-background text-destructive"
+                  >
+                    <Trash2 className="size-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </Accordion>
+
+        <Accordion
+          open={openAudit}
+          onToggle={() => setOpenAudit((v) => !v)}
+          icon={<History className="size-5 text-primary" />}
+          label="Audit log"
+          count={logs.length}
+        >
+          {logs.length === 0 ? (
+            <p className="py-6 text-center text-sm text-muted-foreground">No activity recorded yet.</p>
+          ) : (
+            <div className="space-y-2">
+              {logs.map((l) => (
+                <div key={l.id} className="rounded-xl border border-border bg-surface-2 p-3">
+                  <div className="flex items-center gap-2">
+                    <p className="flex-1 text-sm font-bold capitalize text-foreground">
+                      {l.action_type.replace(/_/g, " ")}
+                    </p>
+                    <span className="text-[11px] text-muted-foreground">
+                      {new Date(l.created_at).toLocaleString()}
+                    </span>
+                  </div>
+                  <p className="truncate text-xs text-muted-foreground">
+                    {nameOf(l.user_id)} · {l.entity_type} · {l.entity_id?.slice(0, 8) ?? "—"}
+                  </p>
+                  {l.details && <p className="truncate text-xs text-muted-foreground">{l.details}</p>}
+                </div>
+              ))}
+            </div>
+          )}
+        </Accordion>
+
+        <Accordion
+          open={openBin}
+          onToggle={() => setOpenBin((v) => !v)}
+          icon={<Trash2 className="size-5 text-primary" />}
+          label="Recycle Bin"
+          count={bin.length}
+        >
+          {bin.length === 0 ? (
+            <p className="py-6 text-center text-sm text-muted-foreground">Recycle Bin is empty.</p>
+          ) : (
+            <div className="space-y-2">
+              {bin.map((r) => (
+                <div key={r.id} className="space-y-2 rounded-xl border border-border bg-surface-2 p-3">
+                  <p className="truncate text-sm font-bold text-foreground">
+                    {r.location_in_cadastral_map || r.district || "Untitled record"}
+                  </p>
+                  <p className="truncate text-xs text-muted-foreground">
+                    By {nameOf(r.created_by)} · Deleted{" "}
+                    {(r as { deleted_at?: string | null }).deleted_at
+                      ? new Date((r as { deleted_at?: string | null }).deleted_at!).toLocaleString()
+                      : ""}
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => void run(() => restore.mutateAsync(r.id), "Record restored")}
+                      className="tap rounded-xl py-2.5 text-sm font-bold gradient-brand text-primary-foreground"
+                    >
+                      Restore
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (confirm("Permanently delete this record? This cannot be undone."))
+                          void run(() => purge.mutateAsync(r.id), "Record permanently deleted");
+                      }}
+                      className="tap rounded-xl border border-border bg-background py-2.5 text-sm font-bold text-destructive"
+                    >
+                      Permanently Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </Accordion>
       </div>
     </AppShell>
