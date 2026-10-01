@@ -19,14 +19,14 @@ const DOCS: Record<LegalDoc, { title: string; body: string[] }> = {
     title: "Terms of Service",
     body: [
       "1. Acceptance: By accessing VMS, users agree to adhere to these terms.",
-      "2. Role Restrictions: Guest users receive read-only and calculation capabilities. Verified Valuator status requires valid Nepal Engineering Council (NEC) registration verified by system administrators.",
+      "2. Role Restrictions: Guest users receive read-only and calculation capabilities. Verified Valuator status requires valid Nepal Engineering Council (NEC) or Diploma Engineers Association Nepal (DEAN) registration verified by system administrators.",
       "3. Data Integrity: Valuators are sole authors of their published market entries and are responsible for data precision. System administrators reserve the right to moderate or delete fraudulent submissions.",
     ],
   },
   privacy: {
     title: "Privacy Policy",
     body: [
-      "1. Information Collection: We collect account registration details, NEC numbers for verification, and user-submitted property coordinates.",
+      "1. Information Collection: We collect account registration details, NEC / DEAN numbers for verification, and user-submitted property coordinates.",
       "2. Location Services: Live GPS coordinates are accessed strictly during active map interaction for pinpoint location targeting and pin creation.",
       "3. Data Protection: Personal credentials and uploaded government documents are stored securely with encrypted database access controls. We do not sell user data to third parties.",
     ],
