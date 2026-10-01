@@ -356,7 +356,7 @@ function AdminPage() {
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-bold text-foreground">{r.district_office}</p>
                     <p className="truncate text-xs text-muted-foreground">
-                      FY {r.fiscal_year} · {nameOf(r.created_by ?? null)}
+                      FY {r.fiscal_year} · {nameOf((r as { created_by?: string | null }).created_by ?? null)}
                     </p>
                   </div>
                   <button
