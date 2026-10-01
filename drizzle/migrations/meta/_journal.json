@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1790813602453,
+      "tag": "0000_soft_delete_audit_dean",
+      "breakpoints": true
+    }
+  ]
+}
