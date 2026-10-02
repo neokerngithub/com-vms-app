@@ -15,6 +15,13 @@
       "when": 1790903898863,
       "tag": "0001_profile_professional_verification",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790903977988,
+      "tag": "0002_revoke_verification_on_credential_change",
+      "breakpoints": true
     }
   ]
 }
