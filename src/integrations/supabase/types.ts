@@ -237,7 +237,24 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      profile_directory: {
+        Row: {
+          full_name: string | null
+          id: string | null
+          is_verified: boolean | null
+        }
+        Insert: {
+          full_name?: string | null
+          id?: string | null
+          is_verified?: boolean | null
+        }
+        Update: {
+          full_name?: string | null
+          id?: string | null
+          is_verified?: boolean | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {

@@ -29,6 +29,13 @@
       "when": 1790904019288,
       "tag": "0003_allow_verification_review_transition",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1790904037373,
+      "tag": "0004_keep_professional_numbers_private",
+      "breakpoints": true
     }
   ]
 }
