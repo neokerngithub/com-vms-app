@@ -285,7 +285,7 @@ function AdminPage() {
             {categories.map((c) => {
               const list = users.filter((u) => u.role === c.key);
               const visible = c.key === "valuator" && valuatorFilter !== "all"
-                ? list.filter((u) => u.is_verified && (u.verification_type === valuatorFilter || (!u.verification_type && (valuatorFilter === "NEC" ? Boolean(u.nec_number) : Boolean(u.dean_number))))
+                ? list.filter((u) => u.is_verified && (u.verification_type === valuatorFilter || (!u.verification_type && (valuatorFilter === "NEC" ? Boolean(u.nec_number) : Boolean(u.dean_number)))))
                 : list;
               return (
                 <Accordion
