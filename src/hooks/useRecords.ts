@@ -27,7 +27,8 @@ export function useRecords() {
           .select("id, full_name, is_verified")
           .in("id", ids);
         (profiles ?? []).forEach(
-          (p: { id: string; full_name: string | null; is_verified: boolean | null }) => {
+          (p) => {
+            if (!p.id) return;
             names.set(p.id, p.full_name ?? "Unknown");
             verified.set(p.id, Boolean(p.is_verified));
           },
