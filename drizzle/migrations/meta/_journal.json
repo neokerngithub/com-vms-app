@@ -8,6 +8,13 @@
       "when": 1790813602453,
       "tag": "0000_soft_delete_audit_dean",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790903898863,
+      "tag": "0001_profile_professional_verification",
+      "breakpoints": true
     }
   ]
 }
