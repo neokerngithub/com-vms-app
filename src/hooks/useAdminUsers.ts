@@ -9,6 +9,7 @@ export interface AdminUser {
   email: string | null;
   nec_number: string | null;
   dean_number: string | null;
+  verification_type: string | null;
   verification_status: string;
   is_verified: boolean;
   role: AdminRole;
@@ -22,7 +23,7 @@ export function useAdminUsers(enabled: boolean) {
       const [{ data: profiles, error }, { data: roles }] = await Promise.all([
         supabase
           .from("profiles")
-          .select("id, full_name, email, nec_number, dean_number, is_verified, verification_status")
+          .select("id, full_name, email, nec_number, dean_number, verification_type, is_verified, verification_status")
           .order("created_at", { ascending: false }),
         supabase.from("user_roles").select("user_id, role"),
       ]);
@@ -38,6 +39,7 @@ export function useAdminUsers(enabled: boolean) {
         email: p.email,
         nec_number: p.nec_number ?? null,
         dean_number: p.dean_number ?? null,
+        verification_type: p.verification_type ?? null,
         verification_status: p.verification_status ?? "none",
         is_verified: Boolean(p.is_verified),
         role: admins.has(p.id) ? "admin" : p.is_verified ? "valuator" : "guest",

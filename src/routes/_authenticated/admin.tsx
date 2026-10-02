@@ -92,6 +92,7 @@ function AdminPage() {
   const [openReported, setOpenReported] = useState(false);
   const [openUsers, setOpenUsers] = useState(false);
   const [openCategory, setOpenCategory] = useState<AdminRole | null>(null);
+  const [valuatorFilter, setValuatorFilter] = useState<"all" | "NEC" | "DEAN">("all");
   const [openUserId, setOpenUserId] = useState<string | null>(null);
   const [deanDraft, setDeanDraft] = useState<Record<string, string>>({});
   const [openPending, setOpenPending] = useState(false);
@@ -283,6 +284,9 @@ function AdminPage() {
           <div className="space-y-2">
             {categories.map((c) => {
               const list = users.filter((u) => u.role === c.key);
+              const visible = c.key === "valuator" && valuatorFilter !== "all"
+                ? list.filter((u) => u.is_verified && (u.verification_type === valuatorFilter || (!u.verification_type && (valuatorFilter === "NEC" ? Boolean(u.nec_number) : Boolean(u.dean_number)))))
+                : list;
               return (
                 <Accordion
                   key={c.key}
@@ -291,13 +295,20 @@ function AdminPage() {
                   label={c.label}
                   count={list.length}
                 >
-                  {list.length === 0 ? (
+                  {c.key === "valuator" && (
+                    <div role="tablist" aria-label="Registered Valuators filter" className="mb-3 flex gap-1 rounded-xl border border-border bg-surface-2 p-1">
+                      {([ ["all", "All"], ["NEC", "NEC Verified"], ["DEAN", "DEAN Verified"] ] as const).map(([key, label]) => (
+                        <button key={key} type="button" role="tab" aria-selected={valuatorFilter === key} onClick={() => setValuatorFilter(key)} className={cn("tap min-w-0 flex-1 rounded-xl px-2 py-2 text-xs font-bold", valuatorFilter === key ? "gradient-brand text-primary-foreground" : "text-muted-foreground")}>{label}</button>
+                      ))}
+                    </div>
+                  )}
+                  {visible.length === 0 ? (
                     <p className="py-4 text-center text-sm text-muted-foreground">
                       No users in this category.
                     </p>
                   ) : (
                     <div className="space-y-2">
-                      {list.map((u) => (
+                      {visible.map((u) => (
                         <div
                           key={u.id}
                           className="overflow-hidden rounded-xl border border-border bg-surface-2"

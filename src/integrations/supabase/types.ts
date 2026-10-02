@@ -81,7 +81,9 @@ export type Database = {
           id: string
           is_verified: boolean
           nec_number: string | null
+          passout_year: number | null
           verification_status: string
+          verification_type: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -92,7 +94,9 @@ export type Database = {
           id: string
           is_verified?: boolean
           nec_number?: string | null
+          passout_year?: number | null
           verification_status?: string
+          verification_type?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -103,7 +107,9 @@ export type Database = {
           id?: string
           is_verified?: boolean
           nec_number?: string | null
+          passout_year?: number | null
           verification_status?: string
+          verification_type?: string | null
         }
         Relationships: []
       }
@@ -231,7 +237,24 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      profile_directory: {
+        Row: {
+          full_name: string | null
+          id: string | null
+          is_verified: boolean | null
+        }
+        Insert: {
+          full_name?: string | null
+          id?: string | null
+          is_verified?: boolean | null
+        }
+        Update: {
+          full_name?: string | null
+          id?: string | null
+          is_verified?: boolean | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {

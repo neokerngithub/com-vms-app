@@ -8,6 +8,34 @@
       "when": 1790813602453,
       "tag": "0000_soft_delete_audit_dean",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790903898863,
+      "tag": "0001_profile_professional_verification",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790903977988,
+      "tag": "0002_revoke_verification_on_credential_change",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1790904019288,
+      "tag": "0003_allow_verification_review_transition",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1790904037373,
+      "tag": "0004_keep_professional_numbers_private",
+      "breakpoints": true
     }
   ]
 }

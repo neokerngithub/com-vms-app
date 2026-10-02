@@ -1,0 +1,3 @@
+- [x] Add editable User Profile and professional verification request in Settings.
+- [x] Filter registered valuators by NEC or DEAN verification in Admin Console.
+- [x] Remove property photo upload controls from Add/Edit Record.

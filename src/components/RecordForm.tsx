@@ -1,5 +1,4 @@
-import { useEffect, useRef, useState } from "react";
-import { ImagePlus, Loader2, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -16,8 +15,6 @@ import { AREA_UNITS } from "@/lib/units";
 import { LOCALITIES, ROAD_TYPES } from "@/lib/vms";
 import { useAuth } from "@/hooks/useAuth";
 import { useSaveRecord } from "@/hooks/useRecords";
-import { supabase } from "@/integrations/supabase/client";
-import { PROPERTY_PHOTOS_BUCKET, usePhotoUrl } from "@/lib/photos";
 import type { RecordWithCreator } from "@/hooks/useRecords";
 
 const empty = {
@@ -49,9 +46,6 @@ export function RecordForm({
   const { user, profile } = useAuth();
   const save = useSaveRecord();
   const [form, setForm] = useState({ ...empty });
-  const photoRef = useRef<HTMLInputElement>(null);
-  const [uploadingPhoto, setUploadingPhoto] = useState(false);
-  const photoPreview = usePhotoUrl(form.image_url || null);
 
   useEffect(() => {
     if (!open) return;
@@ -109,25 +103,6 @@ export function RecordForm({
       onOpenChange(false);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not save the record");
-    }
-  };
-
-  const uploadPhoto = async (file: File) => {
-    if (!user) return;
-    setUploadingPhoto(true);
-    try {
-      const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
-      const path = `${user.id}/${Date.now()}.${ext}`;
-      const { error } = await supabase.storage
-        .from(PROPERTY_PHOTOS_BUCKET)
-        .upload(path, file, { upsert: true, contentType: file.type });
-      if (error) throw error;
-      set("image_url", path);
-      toast.success("Photo attached");
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Could not upload the photo");
-    } finally {
-      setUploadingPhoto(false);
     }
   };
 
@@ -289,54 +264,6 @@ export function RecordForm({
           >
             Use my current location
           </button>
-
-          <div className="space-y-2">
-            <Label className="text-muted-foreground">Property photo (optional)</Label>
-            {form.image_url ? (
-              <div className="relative size-28 overflow-hidden rounded-xl border border-border bg-surface-2">
-                {photoPreview ? (
-                  <img src={photoPreview} alt="Selected property" className="size-full object-cover" />
-                ) : (
-                  <div className="grid size-full place-items-center">
-                    <Loader2 className="size-4 animate-spin text-muted-foreground" />
-                  </div>
-                )}
-                <button
-                  type="button"
-                  aria-label="Remove photo"
-                  onClick={() => set("image_url", "")}
-                  className="absolute right-1 top-1 grid size-7 place-items-center rounded-full bg-black/70 text-white"
-                >
-                  <X className="size-3.5" />
-                </button>
-              </div>
-            ) : (
-              <button
-                type="button"
-                disabled={uploadingPhoto}
-                onClick={() => photoRef.current?.click()}
-                className="tap flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-surface-2 py-3.5 text-sm font-semibold text-foreground disabled:opacity-60"
-              >
-                {uploadingPhoto ? (
-                  <Loader2 className="size-4 animate-spin" />
-                ) : (
-                  <ImagePlus className="size-4" />
-                )}
-                {uploadingPhoto ? "Uploading…" : "Attach image / Take photo"}
-              </button>
-            )}
-            <input
-              ref={photoRef}
-              type="file"
-              accept="image/*"
-              hidden
-              onChange={(e) => {
-                const f = e.target.files?.[0];
-                if (f) void uploadPhoto(f);
-                e.target.value = "";
-              }}
-            />
-          </div>
 
           <div className="space-y-2">
             <Label className="text-muted-foreground">Remarks</Label>
