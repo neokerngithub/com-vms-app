@@ -23,7 +23,7 @@ export function useRecords() {
       const verified = new Map<string, boolean>();
       if (ids.length) {
         const { data: profiles } = await supabase
-          .from("profiles")
+          .from("profile_directory")
           .select("id, full_name, is_verified")
           .in("id", ids);
         (profiles ?? []).forEach(
