@@ -1,11 +1,11 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { BadgeCheck, Flag, ImageIcon, MapPin, Navigation, Pencil } from "lucide-react";
-import { useState } from "react";
+import { BadgeCheck, Flag, MapPin, Navigation, Pencil } from "lucide-react";
+import { lazy, Suspense } from "react";
 import type { RecordWithCreator } from "@/hooks/useRecords";
 import { useAuth } from "@/hooks/useAuth";
 import { formatNPR } from "@/lib/units";
-import { usePhotoUrl } from "@/lib/photos";
+
+const RecordMiniMap = lazy(() => import("@/components/RecordMiniMap").then((m) => ({ default: m.RecordMiniMap })));
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
@@ -32,8 +32,6 @@ export function RecordDetailSheet({
   onLocate: (r: RecordWithCreator) => void;
 }) {
   const { user } = useAuth();
-  const [zoom, setZoom] = useState(false);
-  const photoUrl = usePhotoUrl(record?.image_url ?? null);
   const isOwner = record ? user?.id === record.created_by : false;
 
   return (
@@ -56,21 +54,15 @@ export function RecordDetailSheet({
                 </SheetDescription>
               </SheetHeader>
 
-              <button
-                onClick={() => photoUrl && setZoom(true)}
-                aria-label="Open property photo"
-                className="tap mt-4 grid h-48 w-full place-items-center overflow-hidden rounded-2xl border border-border bg-surface-2"
-              >
-                {photoUrl ? (
-                  <img
-                    src={photoUrl}
-                    alt={`Site at ${record.location_in_cadastral_map}`}
-                    className="size-full object-cover"
-                  />
+              <div aria-label="Property location map" className="mt-4 h-48 w-full overflow-hidden rounded-2xl border border-border bg-surface-2">
+                {record.latitude != null && record.longitude != null && Number.isFinite(record.latitude) && Number.isFinite(record.longitude) && Math.abs(record.latitude) <= 90 && Math.abs(record.longitude) <= 180 ? (
+                  <Suspense fallback={<div className="grid h-full place-items-center text-sm text-muted-foreground">Loading map…</div>}>
+                    <RecordMiniMap key={record.id} latitude={record.latitude} longitude={record.longitude} />
+                  </Suspense>
                 ) : (
-                  <ImageIcon className="size-8 text-muted-foreground" />
+                  <div className="grid h-full place-items-center text-sm text-muted-foreground">Coordinates not recorded</div>
                 )}
-              </button>
+              </div>
 
               <p className="mt-4 text-2xl font-extrabold">
                 <span className="gradient-text">{formatNPR(record.market_rate)}</span>
@@ -147,18 +139,6 @@ export function RecordDetailSheet({
         </SheetContent>
       </Sheet>
 
-      <Dialog open={zoom} onOpenChange={setZoom}>
-        <DialogContent className="max-w-3xl border-none bg-transparent p-0 shadow-none">
-          <DialogTitle className="sr-only">Property photo</DialogTitle>
-          {photoUrl && (
-            <img
-              src={photoUrl}
-              alt={`Site at ${record?.location_in_cadastral_map ?? "property"}`}
-              className="max-h-[80dvh] w-full rounded-2xl object-contain"
-            />
-          )}
-        </DialogContent>
-      </Dialog>
     </>
   );
 }

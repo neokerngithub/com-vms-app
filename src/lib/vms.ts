@@ -54,4 +54,6 @@ export interface GovRate {
   fiscal_year: string;
   district_office: string;
   pdf_url: string;
+  created_by: string | null;
+  approval_status: "pending_approval" | "published" | "declined";
 }
