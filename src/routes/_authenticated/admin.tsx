@@ -100,6 +100,7 @@ function AdminPage() {
   const [deanDraft, setDeanDraft] = useState<Record<string, string>>({});
   const [openPending, setOpenPending] = useState(false);
   const [openRates, setOpenRates] = useState(false);
+  const [openPublishedRates, setOpenPublishedRates] = useState(false);
   const [openAudit, setOpenAudit] = useState(false);
   const [openBin, setOpenBin] = useState(false);
   const { data: bin = [] } = useRecycleBin(isAdmin);
