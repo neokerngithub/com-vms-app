@@ -180,14 +180,16 @@ export function useReportRecord() {
   });
 }
 
-export function useGovRates() {
+export function useGovRates(includeModeration = false) {
   return useQuery({
-    queryKey: ["government_rates"],
+    queryKey: ["government_rates", includeModeration],
     queryFn: async (): Promise<GovRate[]> => {
-      const { data, error } = await supabase
+      let query = supabase
         .from("government_rates")
         .select("*")
         .order("fiscal_year", { ascending: false });
+      if (!includeModeration) query = query.eq("approval_status", "published");
+      const { data, error } = await query;
       if (error) throw error;
       return (data ?? []) as unknown as GovRate[];
     },
@@ -237,6 +239,7 @@ export function useUpdateGovRate() {
       fiscal_year?: string;
       district_office?: string;
       pdf_url?: string;
+      approval_status?: GovRate["approval_status"];
     }) => {
       const { error } = await supabase
         .from("government_rates")
