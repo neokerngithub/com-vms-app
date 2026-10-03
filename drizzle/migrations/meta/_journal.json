@@ -36,6 +36,13 @@
       "when": 1790904037373,
       "tag": "0004_keep_professional_numbers_private",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1790989839348,
+      "tag": "0005_moderate_government_rate_contributions",
+      "breakpoints": true
     }
   ]
 }

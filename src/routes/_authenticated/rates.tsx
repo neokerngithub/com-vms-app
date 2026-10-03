@@ -7,7 +7,7 @@ const DocViewerModal = lazy(() =>
   import("@/components/DocViewerModal").then((m) => ({ default: m.DocViewerModal })),
 );
 import { toast } from "sonner";
-import { useAddGovRate, useDeleteGovRate, useGovRates, useUpdateGovRate } from "@/hooks/useRecords";
+import { useAddGovRate, useDeleteGovRate, useGovRates, useMyRateContributions, useUpdateGovRate } from "@/hooks/useRecords";
 import { useAuth } from "@/hooks/useAuth";
 import { DEFAULT_FISCAL_YEAR, FISCAL_YEARS } from "@/lib/vms";
 
@@ -36,6 +36,8 @@ export const Route = createFileRoute("/_authenticated/rates")({
 
 function RatesPage() {
   const { data = [], isLoading } = useGovRates();
+  const { user, isAdmin } = useAuth();
+  const { data: myRates = [] } = useMyRateContributions(user?.id);
   const [year, setYear] = useState<string>(DEFAULT_FISCAL_YEAR);
   const [office, setOffice] = useState("All");
   const [adding, setAdding] = useState(false);
@@ -50,7 +52,6 @@ function RatesPage() {
   const addRate = useAddGovRate();
   const updateRate = useUpdateGovRate();
   const deleteRate = useDeleteGovRate();
-  const { isAdmin } = useAuth();
   const [editing, setEditing] = useState<string | null>(null);
   const [editFy, setEditFy] = useState<string>(DEFAULT_FISCAL_YEAR);
   const [editOffice, setEditOffice] = useState("");
@@ -107,7 +108,7 @@ function RatesPage() {
         district_office: officeName.trim(),
         pdf_url: location,
       });
-      toast.success("Publication added to the library.");
+      toast.success(isAdmin ? "Publication added to the library." : "Contribution submitted for approval.");
       resetForm();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not add publication");
@@ -243,6 +244,19 @@ function RatesPage() {
               {uploading ? "Uploading…" : addRate.isPending ? "Checking…" : "Add publication"}
             </button>
           </form>
+        )}
+
+        {!isAdmin && myRates.length > 0 && (
+          <div className="space-y-2">
+            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Your contributions</p>
+            {myRates.map((r) => (
+              <div key={r.id} className="surface-card flex items-center gap-3 p-4">
+                <FileText className="size-5 shrink-0 text-primary" />
+                <div className="min-w-0 flex-1"><p className="truncate text-sm font-bold text-foreground">{r.district_office}</p><p className="text-xs text-muted-foreground">FY {r.fiscal_year}</p></div>
+                <span className="text-xs font-bold text-muted-foreground">{r.approval_status === "declined" ? "Declined" : "Pending approval"}</span>
+              </div>
+            ))}
+          </div>
         )}
 
         <Field label="Fiscal year">

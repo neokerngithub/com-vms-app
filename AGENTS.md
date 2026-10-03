@@ -11,3 +11,4 @@
 
 - Keep professional verification identity fields on profiles and enforce status changes with database-side protections; self-service requests must not grant verified access.
 - Read public creator names and verification flags through the limited profile directory; professional numbers remain accessible only to their owner and administrators.
+- Enforce government rate approval transitions in the database and expose unpublished contributions only to their creator or administrators; client-side filters alone cannot protect moderation.

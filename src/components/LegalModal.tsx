@@ -19,16 +19,19 @@ const DOCS: Record<LegalDoc, { title: string; body: string[] }> = {
     title: "Terms of Service",
     body: [
       "1. Acceptance: By accessing VMS, users agree to adhere to these terms.",
-      "2. Role Restrictions: Guest users receive read-only and calculation capabilities. Verified Valuator status requires valid Nepal Engineering Council (NEC) or Diploma Engineers Association Nepal (DEAN) registration verified by system administrators.",
-      "3. Data Integrity: Valuators are sole authors of their published market entries and are responsible for data precision. System administrators reserve the right to moderate or delete fraudulent submissions.",
+      "2. Role Restrictions: Guest users receive read-only and calculation capabilities. Nepal Engineering Council (NEC) and Diploma Engineers Association Nepal (DEAN) credentials are reviewed under the same administrator-led verification standard. Submission alone does not grant verified valuator access.",
+      "3. Data Integrity: Creators are responsible for the accuracy of their market entries. Active records, including property locations and rates, are visible to all signed-in users. Non-admin government rate contributions require approval before publication.",
+      "4. Moderation and Deletion: Creators can edit and soft-delete their records. Soft-deleted entries are removed from the Records and Map views but retained in an administrator-only Recycle Bin until restored or permanently deleted by an administrator. Reported records may be reviewed and moderated.",
     ],
   },
   privacy: {
     title: "Privacy Policy",
     body: [
-      "1. Information Collection: We collect account registration details, NEC / DEAN numbers for verification, and user-submitted property coordinates.",
+      "1. Information Collection: We collect account details, NEC or DEAN registration or membership numbers and passout year for equal, administrator-reviewed professional verification, and user-submitted property coordinates. Professional numbers are available only to their owner and administrators, not in the public creator directory.",
       "2. Location Services: Live GPS coordinates are accessed strictly during active map interaction for pinpoint location targeting and pin creation.",
-      "3. Data Protection: Personal credentials and uploaded government documents are stored securely with encrypted database access controls. We do not sell user data to third parties.",
+      "3. Record Visibility: Active valuation records, creator names and verification flags, rates, and saved property coordinates are visible to signed-in users. Pending government rate contributions are not shown in the published library while administrators review them.",
+      "4. Retention and Deletion: Soft-deleted records leave the Records and Map views immediately but remain in an administrator-only Recycle Bin for restoration or permanent deletion. Administrators can view audit activity associated with record and rate changes.",
+      "5. Data Protection: Professional verification numbers remain private to their owner and administrators. Uploaded government documents are stored with access controls. We do not sell user data to third parties.",
     ],
   },
 };

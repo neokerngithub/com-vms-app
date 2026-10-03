@@ -215,10 +215,11 @@ function SettingsPage() {
             Secure Data Governance — Creator-managed edits with admin moderation
           </p>
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-            <li>• All records are viewable by every signed-in user.</li>
-            <li>• You can edit only records you created.</li>
-            <li>• Inaccurate records from others can be reported with a description.</li>
-            <li>• Only admins can delete records.</li>
+            <li>• Active records and their map locations are visible to every signed-in user. Soft-deleted records disappear from Records and Map and remain visible only to administrators in the Recycle Bin.</li>
+            <li>• Verified valuators may create records after an administrator reviews their Nepal Engineering Council (NEC) or Diploma Engineers Association Nepal (DEAN) credentials. NEC and DEAN follow the same verification standard; submitting a number does not grant access automatically.</li>
+            <li>• Creators can edit or soft-delete their own records. Administrators can restore or permanently delete records.</li>
+            <li>• Inaccurate records from others can be reported with a description for administrator review.</li>
+            <li>• Government rate contributions from non-admins require administrator approval before appearing in the library.</li>
           </ul>
           <p className="mt-3 border-t border-border pt-3 text-sm text-muted-foreground">
             Use the flag icon on any record you did not create and describe the issue in at
