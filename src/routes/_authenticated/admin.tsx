@@ -3,7 +3,9 @@ import { useEffect, useState, type ReactNode } from "react";
 import { BadgeCheck, ChevronDown, FileText, History, ShieldCheck, Trash2, UserCheck, Users } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
+import { Button } from "@/components/ui/button";
 import { RecordCard } from "@/components/RecordCard";
+import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import {
   useAuditLogs,
@@ -13,6 +15,7 @@ import {
   useRecords,
   useRecycleBin,
   useRestoreRecord,
+  useUpdateGovRate,
 } from "@/hooks/useRecords";
 import {
   useAdminUsers,
@@ -101,7 +104,15 @@ function AdminPage() {
   const [openBin, setOpenBin] = useState(false);
   const { data: bin = [] } = useRecycleBin(isAdmin);
   const { data: logs = [] } = useAuditLogs(isAdmin);
-  const { data: rates = [] } = useGovRates();
+  const { data: rates = [] } = useGovRates(isAdmin);
+  const pendingRates = rates.filter((r) => r.approval_status === "pending_approval");
+  const publishedRates = rates.filter((r) => r.approval_status === "published");
+  const updateRate = useUpdateGovRate();
+  const [editingRateId, setEditingRateId] = useState<string | null>(null);
+  const [rateOffice, setRateOffice] = useState("");
+  const [rateYear, setRateYear] = useState("");
+  const [rateUrl, setRateUrl] = useState("");
+  const [reviewingRateId, setReviewingRateId] = useState<string | null>(null);
   const restore = useRestoreRecord();
   const purge = usePurgeRecord();
   const delRate = useDeleteGovRate();
@@ -116,6 +127,33 @@ function AdminPage() {
       toast.success(ok);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Action failed");
+    }
+  };
+
+  const reviewRate = async (id: string, status: "published" | "declined") => {
+    if (reviewingRateId) return;
+    setReviewingRateId(id);
+    try {
+      await updateRate.mutateAsync({ id, approval_status: status });
+      toast.success(status === "published" ? "Publication approved" : "Contribution declined");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not review contribution");
+    } finally {
+      setReviewingRateId(null);
+    }
+  };
+
+  const previewRate = async (pdfUrl: string) => {
+    try {
+      if (/^https:\/\//i.test(pdfUrl)) {
+        window.open(pdfUrl, "_blank", "noopener,noreferrer");
+        return;
+      }
+      const { data, error } = await supabase.storage.from("rates").createSignedUrl(pdfUrl, 3600);
+      if (error) throw error;
+      window.open(data.signedUrl, "_blank", "noopener,noreferrer");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not open document");
     }
   };
 
@@ -355,34 +393,53 @@ function AdminPage() {
           open={openRates}
           onToggle={() => setOpenRates((v) => !v)}
           icon={<FileText className="size-5 text-primary" />}
-          label="Government rate contributions"
-          count={rates.length}
+          label="Government rate contributions awaiting approval"
+          count={pendingRates.length}
         >
-          {rates.length === 0 ? (
-            <p className="py-6 text-center text-sm text-muted-foreground">No contributions yet.</p>
+          {pendingRates.length === 0 ? (
+            <p className="py-6 text-center text-sm text-muted-foreground">No pending contributions.</p>
           ) : (
             <div className="space-y-2">
-              {rates.map((r) => (
-                <div key={r.id} className="flex items-center gap-2 rounded-xl border border-border bg-surface-2 p-3">
-                  <div className="min-w-0 flex-1">
+              {pendingRates.map((r) => (
+                <div key={r.id} className="space-y-3 rounded-xl border border-border bg-surface-2 p-3">
+                  <div className="min-w-0">
                     <p className="truncate text-sm font-bold text-foreground">{r.district_office}</p>
                     <p className="truncate text-xs text-muted-foreground">
-                      FY {r.fiscal_year} · {nameOf((r as { created_by?: string | null }).created_by ?? null)}
+                      FY {r.fiscal_year} · {nameOf(r.created_by)}
                     </p>
                   </div>
-                  <button
-                    onClick={() => {
-                      if (confirm("Remove this publication?"))
-                        void run(() => delRate.mutateAsync(r.id), "Publication removed");
-                    }}
-                    aria-label="Remove publication"
-                    className="tap grid size-10 place-items-center rounded-xl border border-border bg-background text-destructive"
-                  >
-                    <Trash2 className="size-4" />
-                  </button>
+                  {editingRateId === r.id ? (
+                    <div className="space-y-2">
+                      <label className="block text-xs text-muted-foreground">Fiscal year<input value={rateYear} onChange={(e) => setRateYear(e.target.value)} maxLength={30} className="mt-1 h-12 w-full rounded-xl border border-border bg-background px-4 text-sm text-foreground" /></label>
+                      <label className="block text-xs text-muted-foreground">District / Office<input value={rateOffice} onChange={(e) => setRateOffice(e.target.value)} maxLength={120} className="mt-1 h-12 w-full rounded-xl border border-border bg-background px-4 text-sm text-foreground" /></label>
+                      <label className="block text-xs text-muted-foreground">Document link or uploaded PDF path<input value={rateUrl} onChange={(e) => setRateUrl(e.target.value)} maxLength={500} className="mt-1 h-12 w-full rounded-xl border border-border bg-background px-4 text-sm text-foreground" /></label>
+                      <div className="grid grid-cols-2 gap-2">
+                        <Button variant="outline" onClick={() => setEditingRateId(null)} className="tap rounded-xl">Cancel</Button>
+                        <Button disabled={updateRate.isPending || !rateOffice.trim() || !rateYear.trim() || !rateUrl.trim()} onClick={() => void run(async () => { await updateRate.mutateAsync({ id: r.id, district_office: rateOffice.trim(), fiscal_year: rateYear.trim(), pdf_url: rateUrl.trim() }); setEditingRateId(null); }, "Contribution updated")} className="tap gradient-brand rounded-xl text-primary-foreground">Save changes</Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button variant="outline" onClick={() => void previewRate(r.pdf_url)} className="tap rounded-xl">View document</Button>
+                      <Button variant="outline" onClick={() => { setEditingRateId(r.id); setRateOffice(r.district_office); setRateYear(r.fiscal_year); setRateUrl(r.pdf_url); }} className="tap rounded-xl">Edit details</Button>
+                      <Button disabled={Boolean(reviewingRateId)} onClick={() => void reviewRate(r.id, "published")} className="tap gradient-brand rounded-xl text-primary-foreground">Approve</Button>
+                      <Button disabled={Boolean(reviewingRateId)} variant="outline" onClick={() => void reviewRate(r.id, "declined")} className="tap rounded-xl text-destructive">Decline</Button>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
+          )}
+        </Accordion>
+
+        <Accordion open={openPublishedRates} onToggle={() => setOpenPublishedRates((v) => !v)} icon={<FileText className="size-5 text-primary" />} label="Published government rates" count={publishedRates.length}>
+          {publishedRates.length === 0 ? <p className="py-6 text-center text-sm text-muted-foreground">No published contributions.</p> : (
+            <div className="space-y-2">{publishedRates.map((r) => (
+              <div key={r.id} className="flex items-center gap-2 rounded-xl border border-border bg-surface-2 p-3">
+                <div className="min-w-0 flex-1"><p className="truncate text-sm font-bold text-foreground">{r.district_office}</p><p className="truncate text-xs text-muted-foreground">FY {r.fiscal_year} · {nameOf(r.created_by)}</p></div>
+                <Button variant="ghost" size="icon" aria-label="Remove publication" onClick={() => { if (confirm("Remove this publication?")) void run(() => delRate.mutateAsync(r.id), "Publication removed"); }} className="tap size-10 rounded-xl border border-border bg-background text-destructive"><Trash2 className="size-4" /></Button>
+              </div>
+            ))}</div>
           )}
         </Accordion>
 
