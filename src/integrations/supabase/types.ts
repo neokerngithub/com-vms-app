@@ -46,6 +46,7 @@ export type Database = {
       }
       government_rates: {
         Row: {
+          approval_status: string
           created_at: string
           created_by: string | null
           district_office: string
@@ -54,6 +55,7 @@ export type Database = {
           pdf_url: string
         }
         Insert: {
+          approval_status?: string
           created_at?: string
           created_by?: string | null
           district_office: string
@@ -62,6 +64,7 @@ export type Database = {
           pdf_url: string
         }
         Update: {
+          approval_status?: string
           created_at?: string
           created_by?: string | null
           district_office?: string
