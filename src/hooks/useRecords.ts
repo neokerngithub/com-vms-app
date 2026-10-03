@@ -196,6 +196,23 @@ export function useGovRates(includeModeration = false) {
   });
 }
 
+export function useMyRateContributions(userId: string | undefined) {
+  return useQuery({
+    queryKey: ["government_rates", "mine", userId],
+    enabled: Boolean(userId),
+    queryFn: async (): Promise<GovRate[]> => {
+      const { data, error } = await supabase
+        .from("government_rates")
+        .select("*")
+        .eq("created_by", userId ?? "")
+        .neq("approval_status", "published")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return (data ?? []) as GovRate[];
+    },
+  });
+}
+
 export function useAddGovRate() {
   const qc = useQueryClient();
   return useMutation({

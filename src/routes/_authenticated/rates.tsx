@@ -7,7 +7,7 @@ const DocViewerModal = lazy(() =>
   import("@/components/DocViewerModal").then((m) => ({ default: m.DocViewerModal })),
 );
 import { toast } from "sonner";
-import { useAddGovRate, useDeleteGovRate, useGovRates, useUpdateGovRate } from "@/hooks/useRecords";
+import { useAddGovRate, useDeleteGovRate, useGovRates, useMyRateContributions, useUpdateGovRate } from "@/hooks/useRecords";
 import { useAuth } from "@/hooks/useAuth";
 import { DEFAULT_FISCAL_YEAR, FISCAL_YEARS } from "@/lib/vms";
 
@@ -36,7 +36,8 @@ export const Route = createFileRoute("/_authenticated/rates")({
 
 function RatesPage() {
   const { data = [], isLoading } = useGovRates();
-  const { data: myRates = [] } = useMyRateContributions();
+  const { user, isAdmin } = useAuth();
+  const { data: myRates = [] } = useMyRateContributions(user?.id);
   const [year, setYear] = useState<string>(DEFAULT_FISCAL_YEAR);
   const [office, setOffice] = useState("All");
   const [adding, setAdding] = useState(false);
@@ -51,7 +52,6 @@ function RatesPage() {
   const addRate = useAddGovRate();
   const updateRate = useUpdateGovRate();
   const deleteRate = useDeleteGovRate();
-  const { isAdmin, user } = useAuth();
   const [editing, setEditing] = useState<string | null>(null);
   const [editFy, setEditFy] = useState<string>(DEFAULT_FISCAL_YEAR);
   const [editOffice, setEditOffice] = useState("");
