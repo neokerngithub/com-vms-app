@@ -18,6 +18,8 @@ export const Route = createFileRoute("/auth")({
         content: "Sign in or create an account to access shared land valuation records.",
       },
       { property: "og:title", content: "Sign in — VMS" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { property: "og:description", content: "Access shared land valuation records." },
     ],
   }),

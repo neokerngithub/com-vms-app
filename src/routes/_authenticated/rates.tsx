@@ -25,6 +25,8 @@ export const Route = createFileRoute("/_authenticated/rates")({
           "Official government land rate publications by fiscal year and district land revenue office.",
       },
       { property: "og:title", content: "Government Rates Library — VMS" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       {
         property: "og:description",
         content: "Government land rate PDFs by fiscal year and district office.",

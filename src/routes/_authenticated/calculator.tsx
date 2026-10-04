@@ -27,6 +27,8 @@ export const Route = createFileRoute("/_authenticated/calculator")({
           "Compute commercial, government, fair market and distress value from area, rates and weighting.",
       },
       { property: "og:title", content: "Advanced Valuation Calculator — VMS" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       {
         property: "og:description",
         content: "Fair market and distress value in real-time NPR.",

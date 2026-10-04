@@ -17,6 +17,8 @@ export const Route = createFileRoute("/_authenticated/map")({
         content: "Every land valuation record plotted as an interactive pin across Nepal.",
       },
       { property: "og:title", content: "Map — VMS" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { property: "og:description", content: "Interactive map of land market rates." },
     ],
   }),

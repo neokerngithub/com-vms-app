@@ -29,6 +29,8 @@ export const Route = createFileRoute("/_authenticated/records")({
         content: "Search and filter every shared land market valuation record.",
       },
       { property: "og:title", content: "Universal Records — VMS" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { property: "og:description", content: "Shared land market valuation records." },
     ],
   }),
