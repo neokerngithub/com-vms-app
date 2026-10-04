@@ -13,6 +13,8 @@ export const Route = createFileRoute("/")({
           "Collect field valuation records, map market rates, convert Nepalese land units and compute fair market and distress values.",
       },
       { property: "og:title", content: "VMS — Land Valuation Management for Nepal" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       {
         property: "og:description",
         content:

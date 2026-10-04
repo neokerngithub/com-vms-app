@@ -15,6 +15,8 @@ export const Route = createFileRoute("/reset-password")({
         content: "Choose a new password for your VMS valuation account.",
       },
       { property: "og:title", content: "Set a new password — VMS" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { property: "og:description", content: "Choose a new VMS account password." },
     ],
   }),

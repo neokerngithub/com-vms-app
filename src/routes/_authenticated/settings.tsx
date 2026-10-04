@@ -46,6 +46,8 @@ export const Route = createFileRoute("/_authenticated/settings")({
         content: "App preferences and record permission rules in VMS.",
       },
       { property: "og:title", content: "Settings — VMS" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { property: "og:description", content: "App preferences and permissions for VMS." },
     ],
   }),

@@ -12,6 +12,8 @@ export const Route = createFileRoute("/_authenticated/support")({
         content: "Reach the VMS team for help with records, valuation data or access.",
       },
       { property: "og:title", content: "Support & Contact — VMS" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { property: "og:description", content: "Get help with VMS records and valuations." },
     ],
   }),

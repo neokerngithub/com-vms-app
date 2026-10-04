@@ -35,6 +35,8 @@ export const Route = createFileRoute("/_authenticated/admin")({
         content: "Moderate reported valuation records and approve NEC / DEAN valuators.",
       },
       { property: "og:title", content: "Admin Management Console — VMS" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { property: "og:description", content: "Moderation tools for VMS administrators." },
     ],
   }),

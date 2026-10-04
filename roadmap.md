@@ -1,6 +1,6 @@
 - [x] Add editable User Profile and professional verification request in Settings.
 - [x] Filter registered valuators by NEC or DEAN verification in Admin Console.
 - [x] Remove property photo upload controls from Add/Edit Record.
-- [ ] Replace property detail photo placeholder with a pinned mini-map.
-- [ ] Moderate non-admin government rate contributions before publication.
-- [ ] Update Settings permissions and legal text for verification, deletion, and visibility.
+- [x] Replace property detail photo placeholder with a pinned mini-map.
+- [x] Moderate non-admin government rate contributions before publication.
+- [x] Update Settings permissions and legal text for verification, deletion, and visibility.
