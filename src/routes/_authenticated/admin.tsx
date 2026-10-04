@@ -124,6 +124,13 @@ function AdminPage() {
   const pending = users.filter(
     (u) => !u.is_verified && u.verification_status !== "rejected" && (u.nec_number || u.dean_number),
   );
+  const [tab, setTab] = useState<"dashboard" | "moderation">("dashboard");
+  const valuators = users.filter((u) => u.role === "valuator");
+  const necVerified = users.filter((u) => u.is_verified && u.verification_type === "NEC").length;
+  const deanVerified = users.filter((u) => u.is_verified && u.verification_type === "DEAN").length;
+  const recentRecords = [...data]
+    .sort((a, b) => b.updated_at.localeCompare(a.updated_at))
+    .slice(0, 5);
   const run = async (fn: () => Promise<unknown>, ok: string) => {
     try {
       await fn();
@@ -254,7 +261,98 @@ function AdminPage() {
 
   return (
     <AppShell title="Admin Console" back>
-      <div className="space-y-3 pb-8">
+      {isAdmin && (
+        <div className="mb-3 flex rounded-2xl border border-border bg-surface p-1">
+          {(["dashboard", "moderation"] as const).map((t) => (
+            <button
+              key={t}
+              onClick={() => setTab(t)}
+              className={cn(
+                "tap flex-1 rounded-xl py-2.5 text-xs font-bold capitalize transition-colors",
+                tab === t ? "gradient-brand text-primary-foreground" : "text-muted-foreground",
+              )}
+            >
+              {t === "dashboard" ? "Dashboard" : "Moderation"}
+            </button>
+          ))}
+        </div>
+      )}
+      {isAdmin && tab === "dashboard" && (
+        <div className="space-y-3 pb-8">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <div className="surface-card p-4">
+              <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Total records</p>
+              <p className="mt-1 text-2xl font-bold text-foreground">{data.length + bin.length}</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {data.length} active · {bin.length} in Recycle Bin
+              </p>
+            </div>
+            <div className="surface-card p-4">
+              <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Valuators</p>
+              <p className="mt-1 text-2xl font-bold text-foreground">{usersLoading ? "…" : valuators.length}</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {necVerified} NEC verified · {deanVerified} DEAN verified
+              </p>
+            </div>
+            <div className="surface-card p-4">
+              <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Pending moderation</p>
+              <p className="mt-1 text-2xl font-bold text-foreground">{pending.length + pendingRates.length}</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {pending.length} verifications · {pendingRates.length} rate contributions
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              onClick={() => {
+                setTab("moderation");
+                setOpenPending(true);
+              }}
+              className="tap gradient-brand flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold text-primary-foreground"
+            >
+              <UserCheck className="size-4" /> Verify Users
+            </button>
+            <button
+              onClick={() => {
+                setTab("moderation");
+                setOpenRates(true);
+              }}
+              className="tap flex items-center justify-center gap-2 rounded-xl border border-border bg-surface-2 py-3 text-sm font-bold text-foreground"
+            >
+              <FileText className="size-4" /> Review Pending Submissions
+            </button>
+          </div>
+
+          <div className="surface-card p-4">
+            <p className="mb-2 flex items-center gap-2 text-sm font-semibold text-foreground">
+              <History className="size-4 text-primary" /> Recent activity
+            </p>
+            {recentRecords.length === 0 ? (
+              <p className="text-xs text-muted-foreground">No records yet.</p>
+            ) : (
+              <ul className="divide-y divide-border">
+                {recentRecords.map((r) => (
+                  <li key={r.id} className="flex items-center justify-between gap-3 py-2">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium text-foreground">
+                        {r.location_in_cadastral_map || r.district || "Untitled record"}
+                      </p>
+                      <p className="truncate text-xs text-muted-foreground">
+                        {r.creator_name} · {r.updated_at !== r.created_at ? "Updated" : "Added"}
+                      </p>
+                    </div>
+                    <span className="shrink-0 text-[11px] text-muted-foreground">
+                      {new Date(r.updated_at).toLocaleDateString()}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+      )}
+      <div className={cn("space-y-3 pb-8", isAdmin && tab !== "moderation" && "hidden")}>
         <Accordion
           open={openReported}
           onToggle={() => setOpenReported((v) => !v)}
