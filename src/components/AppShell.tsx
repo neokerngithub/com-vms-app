@@ -11,7 +11,10 @@ import {
   Plus,
   ShieldCheck,
 } from "lucide-react";
-import { useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+
+/** False while a kept-alive tab is hidden, so it ignores drawer/back side-effects. */
+export const TabActiveContext = createContext(true);
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { LegalModal, type LegalDoc } from "@/components/LegalModal";
 import { ProfileModal } from "@/components/ProfileModal";
@@ -81,22 +84,23 @@ export function AppShell({
   const avatarUrl = useAvatarUrl(profile?.avatar_url);
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isActive = useContext(TabActiveContext);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined" || !isActive) return;
     if (TABS.some((t) => t.to === pathname)) {
       window.sessionStorage.setItem(LAST_TAB_KEY, pathname);
     }
-  }, [pathname]);
+  }, [pathname, isActive]);
 
   // Returning from a drawer screen reopens the drawer where the user left off.
   useEffect(() => {
-    if (typeof window === "undefined" || back) return;
+    if (typeof window === "undefined" || back || !isActive) return;
     if (window.sessionStorage.getItem(REOPEN_DRAWER_KEY) === "1") {
       window.sessionStorage.removeItem(REOPEN_DRAWER_KEY);
       setOpen(true);
     }
-  }, [back, pathname]);
+  }, [back, pathname, isActive]);
 
   const handleBack = () => {
     if (typeof window !== "undefined") {
@@ -227,7 +231,6 @@ export function AppShell({
       </header>
 
       <main
-        key={pathname}
         className={cn(
           "page-transition mx-auto w-full max-w-3xl flex-1",
           bare ? "min-h-0" : "px-4 pt-4",
