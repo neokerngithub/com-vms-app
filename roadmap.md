@@ -4,3 +4,5 @@
 - [x] Replace property detail photo placeholder with a pinned mini-map.
 - [x] Moderate non-admin government rate contributions before publication.
 - [x] Update Settings permissions and legal text for verification, deletion, and visibility.
+- [x] Section 4: Admin dashboard (metrics, recent activity, quick actions)
+- [x] Section 5: Keep-alive tabs, map persistence, no black frames
