@@ -152,14 +152,12 @@ function LongPress({ onLongPress }: { onLongPress: (p: [number, number]) => void
   return null;
 }
 
-function MapResizer({ center }: { center: [number, number] | null }) {
+function MapResizer() {
   const map = useMap();
   useEffect(() => {
+    // Only recompute size — never move the view, so panning is never snapped back.
     const invalidate = () => {
-      map.invalidateSize();
-      if (center) {
-        map.setView(center, map.getZoom(), { animate: false });
-      }
+      map.invalidateSize({ pan: false });
     };
     const t = setTimeout(invalidate, 100);
     window.addEventListener("resize", invalidate);
@@ -176,7 +174,7 @@ function MapResizer({ center }: { center: [number, number] | null }) {
       window.removeEventListener("orientationchange", invalidate);
       ro?.disconnect();
     };
-  }, [map, center]);
+  }, [map]);
 
   return null;
 }
@@ -342,7 +340,7 @@ export default function MapView({
             maxZoom={18}
             maxNativeZoom={active.maxNativeZoom}
           />
-          <MapResizer center={me?.coords || target || center} />
+          <MapResizer />
           <Recenter focus={target} />
           <LiveLocation onPosition={setMe} />
           <LongPress onLongPress={longPress} />
