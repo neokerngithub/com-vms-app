@@ -196,7 +196,7 @@ export function AppShell({
                       ))}
                     </div>
                     <p className="pt-2 text-center text-[11px] text-muted-foreground/70">
-                      VMS v1.2.0 (Build 2026.08)
+                      VMS v1.5.0 (Build 2026.10)
                     </p>
                   </div>
                 </div>
