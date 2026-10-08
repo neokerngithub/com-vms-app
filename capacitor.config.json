@@ -3,10 +3,8 @@
   "appName": "Valuation Management System",
   "webDir": "dist",
   "server": {
-    "url": "https://com-vms-app.lovable.app",
     "androidScheme": "https",
-    "cleartext": false,
-    "allowNavigation": ["com-vms-app.lovable.app", "*.supabase.co", "*.tile.openstreetmap.org", "server.arcgisonline.com", "nominatim.openstreetmap.org"]
+    "cleartext": false
   },
   "android": { "allowMixedContent": false }
 }
