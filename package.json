@@ -10,8 +10,9 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "cap:build": "vite build && npx cap sync android",
-    "cap:open": "npx cap open android"
+    "cap:build": "npm run build:spa && npx cap sync android",
+    "cap:open": "npx cap open android",
+    "build:spa": "vite build --config vite.spa.config.ts"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.2",
