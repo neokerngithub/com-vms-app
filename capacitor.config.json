@@ -1,13 +1,10 @@
 {
   "appId": "com.vms.app",
-  "appName": "VMS",
+  "appName": "Valuation Management System",
   "webDir": "dist",
   "server": {
     "androidScheme": "https",
     "cleartext": false
   },
-  "android": {
-    "allowMixedContent": false,
-    "adjustMarginsForEdgeToEdge": "force"
-  }
+  "android": { "allowMixedContent": false }
 }
