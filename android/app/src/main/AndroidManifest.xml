@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://android.com">
 
     <application
         android:allowBackup="true"
@@ -35,7 +35,11 @@
         </provider>
     </application>
 
-    <!-- Permissions -->
-
+    <!-- Base Network Permission -->
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Native GPS & Location Access Permissions -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-feature android:name="android.hardware.location.gps" android:required="true" />
 </manifest>
