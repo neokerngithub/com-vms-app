@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://android.com">
+<manifest xmlns:android="http://android.com"
+    xmlns:tools="http://android.com">
 
-    <!-- Native System & Hardware Permissions (Must be outside the application block) -->
+    <!-- Explicitly instructed automatic tag merger overrides -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-feature android:name="android.hardware.location.gps" android:required="true" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" tools:node="merge" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" tools:node="merge" />
+    <uses-feature android:name="android.hardware.location.gps" android:required="true" tools:node="merge" />
 
     <application
         android:allowBackup="true"
