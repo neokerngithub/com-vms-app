@@ -199,7 +199,7 @@ export function MapLocateButton({
         }
       }}
       className={cn(
-        "tap fixed bottom-40 right-4 z-10 grid size-12 place-items-center rounded-2xl border border-border bg-background text-primary shadow-[var(--shadow-elegant)] sm:right-[max(1rem,calc(50vw-22rem))]",
+        "tap fixed bottom-24 right-6 z-10 grid size-12 place-items-center rounded-2xl border border-border bg-background text-primary shadow-[var(--shadow-elegant)]",
         className,
       )}
     >

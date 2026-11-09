@@ -30,7 +30,7 @@ function Landing() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading && session) navigate({ to: "/map", replace: true });
+    if (!loading && session) navigate({ to: "/overview", replace: true });
   }, [loading, session, navigate]);
 
   return (

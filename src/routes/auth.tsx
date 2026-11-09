@@ -59,7 +59,7 @@ function AuthPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (session) navigate({ to: "/map", replace: true });
+    if (session) navigate({ to: "/overview", replace: true });
   }, [session, navigate]);
 
   const google = async () => {

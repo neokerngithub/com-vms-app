@@ -17,3 +17,4 @@
 - The Admin Dashboard derives its metrics from the already-cached admin queries instead of issuing extra requests, so opening it does not delay navigation.
 
 - The Android app bundles a separate client-only build (vite.spa.config.ts + spa/, hash history, output dist/) that reuses src/routes; the web build stays TanStack Start because Lovable preview/hosting depends on it. Keep app code free of server functions so both builds work.
+- Signed-in screens use a collapsible left sidebar (AppShell) with /overview as the default home; no bottom tab bar, so the app reads as a browser dashboard.

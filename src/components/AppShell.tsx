@@ -1,7 +1,9 @@
-import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import {
-  ArrowLeft,
   Calculator,
+  LayoutDashboard,
+  PanelLeftClose,
+  PanelLeftOpen,
   FileText,
   Map as MapIcon,
   Menu,
@@ -11,7 +13,7 @@ import {
   Plus,
   ShieldCheck,
 } from "lucide-react";
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useEffect, useState, type ReactNode } from "react";
 
 /** False while a kept-alive tab is hidden, so it ignores drawer/back side-effects. */
 export const TabActiveContext = createContext(true);
@@ -22,19 +24,17 @@ import { useAuth } from "@/hooks/useAuth";
 import { useAvatarUrl } from "@/lib/avatar";
 import { cn } from "@/lib/utils";
 
-const TABS = [
-  { to: "/map", label: "Map", icon: MapIcon },
+const NAV_LINKS = [
+  { to: "/overview", label: "Overview", icon: LayoutDashboard },
+  { to: "/map", label: "Universal Map", icon: MapIcon },
   { to: "/records", label: "Records", icon: FileText },
-  { to: "/converter", label: "Converter", icon: Repeat },
-] as const;
-
-type TabPath = (typeof TABS)[number]["to"];
-
-const MAIN_LINKS = [
+  { to: "/converter", label: "Unit Converter", icon: Repeat },
   { to: "/calculator", label: "Advanced Calculator", icon: Calculator },
   { to: "/rates", label: "Government Rates", icon: Landmark },
   { to: "/settings", label: "Settings", icon: Settings },
 ] as const;
+
+const COLLAPSE_KEY = "vms-sidebar-collapsed";
 
 const ADMIN_LINK = {
   to: "/admin",
@@ -47,16 +47,6 @@ const LEGAL_LINKS: { doc: LegalDoc; label: string }[] = [
   { doc: "privacy", label: "Privacy Policy" },
   { doc: "about", label: "About VMS" },
 ];
-
-const LAST_TAB_KEY = "vms-last-tab";
-/** Set when a screen was opened from the drawer, so Back reopens the drawer. */
-const REOPEN_DRAWER_KEY = "vms-reopen-drawer";
-
-function readLastTab(): TabPath {
-  if (typeof window === "undefined") return "/map";
-  const v = window.sessionStorage.getItem(LAST_TAB_KEY);
-  return (TABS.some((t) => t.to === v) ? v : "/map") as TabPath;
-}
 
 export function AppShell({
   title,
@@ -80,172 +70,157 @@ export function AppShell({
   const [open, setOpen] = useState(false);
   const [legal, setLegal] = useState<LegalDoc | null>(null);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   const { profile, isAdmin } = useAuth();
   const avatarUrl = useAvatarUrl(profile?.avatar_url);
-  const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const isActive = useContext(TabActiveContext);
+  void showTabs;
+  void back;
 
   useEffect(() => {
-    if (typeof window === "undefined" || !isActive) return;
-    if (TABS.some((t) => t.to === pathname)) {
-      window.sessionStorage.setItem(LAST_TAB_KEY, pathname);
-    }
-  }, [pathname, isActive]);
+    setCollapsed(window.localStorage.getItem(COLLAPSE_KEY) === "1");
+  }, []);
 
-  // Returning from a drawer screen reopens the drawer where the user left off.
-  useEffect(() => {
-    if (typeof window === "undefined" || back || !isActive) return;
-    if (window.sessionStorage.getItem(REOPEN_DRAWER_KEY) === "1") {
-      window.sessionStorage.removeItem(REOPEN_DRAWER_KEY);
-      setOpen(true);
-    }
-  }, [back, pathname, isActive]);
-
-  const handleBack = () => {
-    if (typeof window !== "undefined") {
-      window.sessionStorage.setItem(REOPEN_DRAWER_KEY, "1");
-      if (window.history.length > 1) {
-        window.history.back();
-        return;
-      }
-    }
-    navigate({ to: readLastTab() });
+  const toggleCollapsed = () => {
+    setCollapsed((c) => {
+      window.localStorage.setItem(COLLAPSE_KEY, c ? "0" : "1");
+      window.dispatchEvent(new Event("resize"));
+      return !c;
+    });
   };
 
+  const navItem = (to: string, label: string, Icon: typeof MapIcon, onClick?: () => void) => {
+    const active = pathname === to;
+    return (
+      <Link
+        key={to}
+        to={to}
+        onClick={onClick}
+        title={collapsed ? label : undefined}
+        className={cn(
+          "tap flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium",
+          active
+            ? "gradient-brand text-primary-foreground shadow-[var(--shadow-glow)]"
+            : "text-muted-foreground hover:bg-surface-2 hover:text-foreground",
+          collapsed && !onClick && "justify-center px-0",
+        )}
+      >
+        <Icon className="size-5 shrink-0" />
+        {(!collapsed || onClick) && <span className="truncate">{label}</span>}
+      </Link>
+    );
+  };
+
+  const navContent = (mobile: boolean) => {
+    const close = mobile ? () => setOpen(false) : undefined;
+    const showText = mobile || !collapsed;
+    return (
+      <div className="flex h-full flex-col">
+        <div className={cn("flex items-center gap-3 border-b border-border px-4 py-4", !showText && "justify-center px-2")}>
+          <img src="/branding/vms-emblem-white.png" alt="VMS emblem" className="logo-adaptive h-8 w-auto shrink-0" />
+          {showText && (
+            <div className="min-w-0">
+              <p className="truncate text-sm font-bold text-foreground">Valuation Management</p>
+              <p className="truncate text-[11px] text-muted-foreground">Nepal land valuation toolkit</p>
+            </div>
+          )}
+        </div>
+        <nav className="flex-1 space-y-1 overflow-y-auto p-3">
+          {showText && <p className="px-3 pb-1 pt-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70">Workspace</p>}
+          {NAV_LINKS.map((l) => navItem(l.to, l.label, l.icon, close))}
+          {isAdmin && (
+            <>
+              {showText && <p className="px-3 pb-1 pt-4 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70">Administration</p>}
+              {navItem(ADMIN_LINK.to, ADMIN_LINK.label, ADMIN_LINK.icon, close)}
+            </>
+          )}
+        </nav>
+        <div className="border-t border-border p-3">
+          <button
+            onClick={() => setProfileOpen(true)}
+            className={cn("tap flex w-full items-center gap-3 rounded-xl p-2 text-left hover:bg-surface-2", !showText && "justify-center")}
+          >
+            <span className="grid size-9 shrink-0 place-items-center overflow-hidden rounded-full bg-surface-2 ring-2 ring-border">
+              <img src={avatarUrl ?? "/branding/Round_Logo.png"} alt={profile?.full_name ?? "Profile photo"} className="size-full object-cover" />
+            </span>
+            {showText && (
+              <span className="min-w-0">
+                <span className="block truncate text-sm font-semibold text-foreground">{profile?.full_name || "My profile"}</span>
+                <span className="block truncate text-[11px] text-muted-foreground">{isAdmin ? "Administrator" : "View profile"}</span>
+              </span>
+            )}
+          </button>
+          {showText && (
+            <div className="pt-3 text-center">
+              <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
+                {LEGAL_LINKS.map((l) => (
+                  <button
+                    key={l.doc}
+                    onClick={() => { setOpen(false); setLegal(l.doc); }}
+                    className="text-[11px] font-medium text-muted-foreground/70 underline-offset-2 hover:text-foreground hover:underline"
+                  >
+                    {l.label}
+                  </button>
+                ))}
+              </div>
+              <p className="pt-2 text-[11px] text-muted-foreground/70">VMS v1.5.0 (Build 2026.10)</p>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
 
   return (
-    <div className={cn("flex flex-col bg-background", bare ? "h-[100dvh] overflow-hidden" : "min-h-[100dvh]")}>
-      <header className="safe-top sticky top-0 z-40 border-b border-border bg-surface">
-        <div className="mx-auto grid w-full max-w-3xl grid-cols-[auto_auto_minmax(0,1fr)_auto] items-center gap-3 px-4 py-3">
-          {back ? (
+    <div className="flex h-[100dvh] w-full overflow-hidden bg-background">
+      <aside
+        className={cn(
+          "hidden shrink-0 border-r border-border bg-sidebar transition-[width] duration-200 md:block",
+          collapsed ? "w-[72px]" : "w-64",
+        )}
+      >
+        {navContent(false)}
+      </aside>
+
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="z-40 shrink-0 border-b border-border bg-surface">
+          <div className="flex items-center gap-3 px-4 py-3">
             <button
-              aria-label="Go back"
-              onClick={handleBack}
-              className="tap grid size-11 shrink-0 place-items-center rounded-xl border border-border bg-surface text-foreground"
+              aria-label="Toggle menu"
+              onClick={toggleCollapsed}
+              className="tap hidden size-10 shrink-0 place-items-center rounded-xl border border-border bg-surface text-foreground md:grid"
             >
-              <ArrowLeft className="size-5" />
+              {collapsed ? <PanelLeftOpen className="size-5" /> : <PanelLeftClose className="size-5" />}
             </button>
-          ) : (
             <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger asChild>
-                <button
-                  aria-label="Open menu"
-                  className="tap grid size-11 shrink-0 place-items-center rounded-xl border border-border bg-surface text-foreground"
-                >
+                <button aria-label="Open menu" className="tap grid size-10 shrink-0 place-items-center rounded-xl border border-border bg-surface text-foreground md:hidden">
                   <Menu className="size-5" />
                 </button>
               </SheetTrigger>
               <SheetContent side="left" className="w-[85vw] max-w-xs border-border bg-sidebar p-0">
-                <div className="safe-top flex h-full flex-col">
-                  <div className="border-b border-border bg-surface px-5 py-6">
-                    <img
-                      src="/branding/vms-emblem-white.png"
-                      alt="VMS emblem"
-                      className="logo-adaptive h-12 w-auto"
-                    />
-                    <p className="mt-3 text-base font-bold text-foreground">
-                      Valuation Management System
-                    </p>
-                    <p className="text-xs text-muted-foreground">Nepal land valuation toolkit</p>
-                  </div>
-
-                  <nav className="flex-1 space-y-1 overflow-y-auto p-3">
-                    {MAIN_LINKS.map((l) => (
-                      <Link
-                        key={l.to}
-                        to={l.to}
-                        onClick={() => setOpen(false)}
-                        className={cn(
-                          "tap flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-muted-foreground hover:bg-surface-2 hover:text-foreground",
-                          pathname === l.to && "bg-surface-2 text-foreground",
-                        )}
-                      >
-                        <l.icon className="size-5 shrink-0" />
-                        <span className="truncate">{l.label}</span>
-                      </Link>
-                    ))}
-                    {isAdmin && (
-                      <Link
-                        to={ADMIN_LINK.to}
-                        onClick={() => setOpen(false)}
-                        className={cn(
-                          "tap flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-muted-foreground hover:bg-surface-2 hover:text-foreground",
-                          pathname === ADMIN_LINK.to && "bg-surface-2 text-foreground",
-                        )}
-                      >
-                        <ADMIN_LINK.icon className="size-5 shrink-0" />
-                        <span className="truncate">{ADMIN_LINK.label}</span>
-                      </Link>
-                    )}
-                  </nav>
-
-                  <div className="safe-bottom border-t border-border px-4 py-4 text-center">
-                    <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
-                      {LEGAL_LINKS.map((l) => (
-                        <button
-                          key={l.doc}
-                          onClick={() => {
-                            setOpen(false);
-                            setLegal(l.doc);
-                          }}
-                          className="text-[11px] font-medium text-muted-foreground/70 underline-offset-2 hover:text-foreground hover:underline"
-                        >
-                          {l.label}
-                        </button>
-                      ))}
-                    </div>
-                    <p className="pt-2 text-center text-[11px] text-muted-foreground/70">
-                      VMS v1.5.0 (Build 2026.10)
-                    </p>
-                  </div>
-                </div>
+                {navContent(true)}
               </SheetContent>
             </Sheet>
-          )}
+            <h1 className="min-w-0 flex-1 truncate text-lg font-bold tracking-tight text-foreground">{title}</h1>
+            <button aria-label="Open profile" onClick={() => setProfileOpen(true)} className="tap grid size-10 shrink-0 place-items-center rounded-full">
+              <span className="grid size-9 place-items-center overflow-hidden rounded-full bg-surface-2 ring-2 ring-border">
+                <img src={avatarUrl ?? "/branding/Round_Logo.png"} alt={profile?.full_name ?? "Profile photo"} className="size-full object-cover" />
+              </span>
+            </button>
+          </div>
+        </header>
 
-          <img
-            src="/branding/vms-emblem-white.png"
-            alt="VMS emblem"
-            className="logo-adaptive h-7 w-auto shrink-0"
-          />
-
-          <h1 className="truncate text-lg font-bold tracking-tight text-foreground">
-            {title}
-          </h1>
-
-          <button
-            aria-label="Open profile"
-            onClick={() => setProfileOpen(true)}
-            className="tap grid size-11 shrink-0 place-items-center rounded-full"
-          >
-            <span className="grid size-10 place-items-center overflow-hidden rounded-full bg-surface-2 ring-2 ring-border">
-              <img
-                src={avatarUrl ?? "/branding/Round_Logo.png"}
-                alt={profile?.full_name ?? "Profile photo"}
-                className="size-full object-cover"
-              />
-            </span>
-          </button>
-        </div>
-      </header>
-
-      <main
-        className={cn(
-          "page-transition mx-auto w-full max-w-3xl flex-1",
-          bare ? "min-h-0" : "px-4 pt-4",
-          !bare && showTabs ? "pb-32" : !bare ? "pb-10" : "",
-        )}
-      >
-        {children}
-      </main>
-
+        <main className={cn("page-transition relative min-h-0 flex-1", bare ? "overflow-hidden" : "overflow-y-auto")}>
+          {bare ? children : <div className="mx-auto w-full max-w-6xl px-4 pb-16 pt-6 md:px-8">{children}</div>}
+        </main>
+      </div>
 
       {onAdd && (
         <button
           onClick={onAdd}
           aria-label="Add Record"
-          className="tap gradient-brand fixed bottom-24 right-4 z-10 flex items-center gap-2 rounded-full px-5 py-3.5 text-sm font-bold text-primary-foreground shadow-[var(--shadow-glow)] sm:right-[max(1rem,calc(50vw-22rem))]"
+          className="tap gradient-brand fixed bottom-6 right-6 z-10 flex items-center gap-2 rounded-full px-5 py-3.5 text-sm font-bold text-primary-foreground shadow-[var(--shadow-glow)]"
         >
           <Plus className="size-5" />
           Add Record
@@ -253,32 +228,6 @@ export function AppShell({
       )}
 
       {extraFloatingActions}
-
-
-      {showTabs && (
-        <nav className="safe-bottom fixed inset-x-0 bottom-0 z-40 border-t border-border/70 bg-background">
-          <div className="mx-auto flex w-full max-w-3xl items-center justify-around gap-2 px-4 py-2">
-            {TABS.map((t) => {
-              const active = pathname === t.to;
-              return (
-                <Link
-                  key={t.to}
-                  to={t.to}
-                  className={cn(
-                    "tap flex min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-2xl px-3 py-2 text-xs font-semibold",
-                    active
-                      ? "gradient-brand text-primary-foreground shadow-[var(--shadow-glow)]"
-                      : "text-muted-foreground",
-                  )}
-                >
-                  <t.icon className="size-5 shrink-0" />
-                  <span className="truncate">{t.label}</span>
-                </Link>
-              );
-            })}
-          </div>
-        </nav>
-      )}
 
       <ProfileModal open={profileOpen} onOpenChange={setProfileOpen} />
       <LegalModal doc={legal} onOpenChange={(o) => !o && setLegal(null)} />
