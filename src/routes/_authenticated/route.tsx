@@ -34,7 +34,7 @@ function AuthenticatedLayout() {
   return (
     <>
       {mounted.map((path) => (
-        <div key={path} className={path === pathname ? undefined : "hidden"}>
+        <div key={path} className={path === pathname ? "page-transition h-full" : "hidden"}>
           <TabActiveContext.Provider value={path === pathname}>
             {KEEP_ALIVE[path]!()}
           </TabActiveContext.Provider>

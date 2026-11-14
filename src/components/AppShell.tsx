@@ -164,7 +164,7 @@ export function AppShell({
         </header>
 
         <main className={cn("page-transition relative min-h-0 flex-1", bare ? "overflow-hidden" : "overflow-y-auto")}>
-          {bare ? children : <div className="mx-auto w-full max-w-6xl px-4 pb-16 pt-6 md:px-8">{children}</div>}
+          {bare ? children : <div className="mx-auto w-full max-w-[1400px] px-4 pb-12 pt-4 md:px-6">{children}</div>}
         </main>
       </div>
 

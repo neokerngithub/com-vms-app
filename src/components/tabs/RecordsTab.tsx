@@ -132,9 +132,9 @@ export function RecordsTab() {
         Secure Data Governance — Creator-managed edits with admin moderation
       </p>
 
-      <div className="mt-3 space-y-3">
+      <div className="page-transition mt-3 grid grid-cols-1 gap-3 lg:grid-cols-2 2xl:grid-cols-3" key={scope}>
         {guestBlocked && (
-          <div className="surface-card p-8 text-center">
+          <div className="surface-card col-span-full p-8 text-center">
             <p className="text-sm font-semibold text-foreground">Sign in to see your records</p>
             <button
               onClick={() => navigate({ to: "/auth" })}
@@ -148,7 +148,7 @@ export function RecordsTab() {
           <p className="text-sm text-muted-foreground">Loading records…</p>
         )}
         {!guestBlocked && !isLoading && list.length === 0 && (
-          <div className="surface-card p-8 text-center">
+          <div className="surface-card col-span-full p-8 text-center">
             <p className="text-sm font-semibold text-foreground">No records yet</p>
             <p className="mt-1 text-xs text-muted-foreground">
               Tap “Add Record” to log your first site visit.

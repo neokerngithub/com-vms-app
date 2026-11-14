@@ -41,7 +41,7 @@ export function ConverterTab() {
         ))}
       </div>
 
-      <div className="mt-4 pb-8">
+      <div key={mode} className="page-transition mt-3 pb-8">
         {mode === "Convert" && <ConvertMode />}
         {mode === "Combined" && <CombinedMode />}
         {mode === "Arithmetic" && <ArithmeticMode />}

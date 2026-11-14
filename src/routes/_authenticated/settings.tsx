@@ -136,8 +136,8 @@ function SettingsPage() {
 
   return (
     <AppShell title="Settings" back>
-      <div className="grid gap-4 pb-8 lg:grid-cols-2 lg:items-start">
-        <form onSubmit={saveProfile} className="surface-card lg:row-span-3 space-y-4 p-4">
+      <div className="gap-4 pb-8 lg:columns-2 [&>*]:mb-4 [&>*]:break-inside-avoid">
+        <form onSubmit={saveProfile} className="surface-card space-y-4 p-4">
           <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">User Profile</p>
           <div className="flex items-center gap-3">
             <Button type="button" variant="ghost" size="icon" onClick={() => fileRef.current?.click()} aria-label="Update profile picture" className="relative size-16 shrink-0 overflow-hidden rounded-full bg-surface-2 p-0 ring-2 ring-border">

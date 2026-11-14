@@ -277,7 +277,7 @@ function RatesPage() {
         <Pills label="District / Office" options={offices} value={office} onChange={setOffice} />
 
 
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 2xl:grid-cols-3">
           {isLoading && <p className="text-sm text-muted-foreground">Loading…</p>}
           {!isLoading && list.length === 0 && (
             <div className="surface-card p-8 text-center text-sm text-muted-foreground">

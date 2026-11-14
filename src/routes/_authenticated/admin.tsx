@@ -278,7 +278,7 @@ function AdminPage() {
         </div>
       )}
       {isAdmin && tab === "dashboard" && (
-        <div className="space-y-3 pb-8">
+        <div className="page-transition space-y-3 pb-8">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <div className="surface-card p-4">
               <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Total records</p>
