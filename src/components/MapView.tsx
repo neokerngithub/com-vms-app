@@ -10,14 +10,14 @@ import { usePhotoUrl } from "@/lib/photos";
 
 const pinIcon = L.divIcon({
   className: "",
-  html: `<div style="width:26px;height:26px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:linear-gradient(135deg,#C8102E,#002B7F);box-shadow:0 6px 14px rgba(0,0,0,.5);border:2px solid rgba(255,255,255,.85)"></div>`,
+  html: `<div style="width:26px;height:26px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:#004aad;box-shadow:0 6px 14px rgba(0,0,0,.5);border:2px solid rgba(255,255,255,.85)"></div>`,
   iconSize: [26, 26],
   iconAnchor: [13, 26],
 });
 
 const tempIcon = L.divIcon({
   className: "",
-  html: `<div style="width:22px;height:22px;border-radius:50%;background:#0EA5E9;border:3px solid #fff;box-shadow:0 6px 14px rgba(0,0,0,.5)"></div>`,
+  html: `<div style="width:22px;height:22px;border-radius:50%;background:#004aad;border:3px solid #fff;box-shadow:0 6px 14px rgba(0,0,0,.5)"></div>`,
   iconSize: [22, 22],
   iconAnchor: [11, 11],
 });
@@ -115,9 +115,9 @@ function AccuracyAura({ center, accuracy }: { center: [number, number]; accuracy
   useEffect(() => {
     const circle = L.circle(center, {
       radius: Math.min(Math.max(accuracy, 8), 400),
-      color: "#3B82F6",
+      color: "#004aad",
       weight: 1,
-      fillColor: "#3B82F6",
+      fillColor: "#004aad",
       fillOpacity: 0.12,
     }).addTo(map);
     return () => {

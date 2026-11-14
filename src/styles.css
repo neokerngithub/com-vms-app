@@ -56,50 +56,45 @@
 }
 
 :root {
-  --radius: 1rem;
-  /* Midnight Emerald & Slate */
-  --background: #10151e;
-  --foreground: #f0f6fc;
-  --surface: #1a2029;
-  --surface-2: #232b36;
-  --card: #1a2029;
-  --card-foreground: #f0f6fc;
-  --popover: #1a2029;
-  --popover-foreground: #f0f6fc;
-  --primary: #dc143c;
-  --primary-foreground: #fff5f7;
-  --brand-pink: #dc143c;
-  --brand-indigo: #003893;
-  --brand-indigo-soft: #4b83e8;
-  --secondary: #232b36;
-  --secondary-foreground: #f0f6fc;
-  --muted: #232b36;
-  --muted-foreground: #8b949e;
-  --accent: #4b83e8;
-  --accent-foreground: #06101f;
-  --destructive: #f0553d;
-  --destructive-foreground: #fff5f3;
-  --success: #10b981;
-  --border: #2a323d;
-  --input: #333c48;
-  --ring: #dc143c;
-  --sidebar: #1a2029;
-  --sidebar-foreground: #f0f6fc;
-  --sidebar-primary: #dc143c;
-  --sidebar-primary-foreground: #fff5f7;
-  --sidebar-accent: #232b36;
-  --sidebar-accent-foreground: #f0f6fc;
-  --sidebar-border: #2a323d;
-  --sidebar-ring: #dc143c;
-
-  --gradient-brand: linear-gradient(135deg, #c8102e 0%, #002b7f 100%);
-  --gradient-brand-text: linear-gradient(
-    135deg,
-    var(--brand-pink) 0%,
-    var(--brand-indigo-soft) 100%
-  );
-  --shadow-elegant: 0 18px 40px -20px oklch(0 0 0 / 0.75);
-  --shadow-glow: 0 8px 30px -12px color-mix(in oklab, var(--brand-pink) 55%, transparent);
+  --radius: 0.625rem;
+  /* Solid palette: black shades, white shades, brand blue #004aad. No gradients. */
+  --background: #000000;
+  --foreground: #ffffff;
+  --surface: #0b0b0b;
+  --surface-2: #161616;
+  --card: #0b0b0b;
+  --card-foreground: #ffffff;
+  --popover: #111111;
+  --popover-foreground: #ffffff;
+  --primary: #004aad;
+  --primary-foreground: #ffffff;
+  --brand-pink: #004aad;
+  --brand-indigo: #004aad;
+  --brand-indigo-soft: #4d86d1;
+  --secondary: #161616;
+  --secondary-foreground: #ffffff;
+  --muted: #161616;
+  --muted-foreground: #a3a3a3;
+  --accent: #004aad;
+  --accent-foreground: #ffffff;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --success: #16a34a;
+  --border: #262626;
+  --input: #2e2e2e;
+  --ring: #004aad;
+  --sidebar: #050505;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #004aad;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #161616;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #262626;
+  --sidebar-ring: #004aad;
+  --gradient-brand: none;
+  --gradient-brand-text: none;
+  --shadow-elegant: none;
+  --shadow-glow: none;
 }
 
 
@@ -128,13 +123,12 @@
 }
 
 @utility gradient-brand {
-  background-image: var(--gradient-brand);
+  background-color: var(--primary);
+  color: var(--primary-foreground);
 }
 
 @utility gradient-text {
-  background-image: var(--gradient-brand-text);
-  background-clip: text;
-  color: transparent;
+  color: var(--foreground);
 }
 
 @utility surface-card {
@@ -185,26 +179,27 @@
 
 /* Light theme — opt-in via the Profile screen toggle. */
 html.light {
-  --background: oklch(0.984 0.003 247);
-  --foreground: oklch(0.208 0.042 265);
-  --surface: oklch(1 0 0);
-  --surface-2: oklch(0.968 0.007 247);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.208 0.042 265);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.208 0.042 265);
-  --secondary: oklch(0.968 0.007 247);
-  --secondary-foreground: oklch(0.208 0.042 265);
-  --muted: oklch(0.968 0.007 247);
-  --muted-foreground: oklch(0.554 0.041 257);
-  --border: oklch(0.208 0.042 265 / 12%);
-  --input: oklch(0.208 0.042 265 / 16%);
-  --sidebar: oklch(1 0 0);
-  --sidebar-foreground: oklch(0.208 0.042 265);
-  --sidebar-accent: oklch(0.968 0.007 247);
-  --sidebar-accent-foreground: oklch(0.208 0.042 265);
-  --sidebar-border: oklch(0.208 0.042 265 / 12%);
-  --shadow-elegant: 0 14px 34px -22px oklch(0.208 0.042 265 / 0.35);
+  --background: #ffffff;
+  --foreground: #000000;
+  --surface: #ffffff;
+  --surface-2: #f4f4f5;
+  --card: #ffffff;
+  --card-foreground: #000000;
+  --popover: #ffffff;
+  --popover-foreground: #000000;
+  --secondary: #f4f4f5;
+  --secondary-foreground: #000000;
+  --muted: #f4f4f5;
+  --muted-foreground: #5c5c5c;
+  --brand-indigo-soft: #004aad;
+  --border: #e4e4e7;
+  --input: #d4d4d8;
+  --sidebar: #fafafa;
+  --sidebar-foreground: #000000;
+  --sidebar-accent: #f0f0f0;
+  --sidebar-accent-foreground: #000000;
+  --sidebar-border: #e4e4e7;
+  --shadow-elegant: none;
 }
 
 /* Live GPS location marker */
@@ -212,27 +207,27 @@ html.light {
   width: 16px;
   height: 16px;
   border-radius: 9999px;
-  background: oklch(0.62 0.19 250);
+  background: rgb(0 74 173);
   border: 2px solid oklch(1 0 0);
-  box-shadow: 0 0 0 0 oklch(0.62 0.19 250 / 0.55);
+  box-shadow: 0 0 0 0 rgb(0 74 173 / 0.55);
   animation: vms-pulse 2s ease-out infinite;
 }
 
 @keyframes vms-pulse {
   0% {
-    box-shadow: 0 0 0 0 oklch(0.62 0.19 250 / 0.55);
+    box-shadow: 0 0 0 0 rgb(0 74 173 / 0.55);
   }
   70% {
-    box-shadow: 0 0 0 18px oklch(0.62 0.19 250 / 0);
+    box-shadow: 0 0 0 18px rgb(0 74 173 / 0);
   }
   100% {
-    box-shadow: 0 0 0 0 oklch(0.62 0.19 250 / 0);
+    box-shadow: 0 0 0 0 rgb(0 74 173 / 0);
   }
 }
 
 /* Brand gradients — Nepal flag */
 @utility gradient-flag-vertical {
-  background-image: linear-gradient(180deg, #C8102E 0%, #002B7F 50%, #E2E8F0 100%);
+  background-color: var(--primary);
 }
 
 /* VMS emblem visibility — white asset inverts to dark in light mode */

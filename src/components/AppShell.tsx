@@ -18,10 +18,7 @@ import { createContext, useEffect, useState, type ReactNode } from "react";
 /** False while a kept-alive tab is hidden, so it ignores drawer/back side-effects. */
 export const TabActiveContext = createContext(true);
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { LegalModal, type LegalDoc } from "@/components/LegalModal";
-import { ProfileModal } from "@/components/ProfileModal";
 import { useAuth } from "@/hooks/useAuth";
-import { useAvatarUrl } from "@/lib/avatar";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
@@ -42,11 +39,6 @@ const ADMIN_LINK = {
   icon: ShieldCheck,
 } as const;
 
-const LEGAL_LINKS: { doc: LegalDoc; label: string }[] = [
-  { doc: "terms", label: "Terms of Service" },
-  { doc: "privacy", label: "Privacy Policy" },
-  { doc: "about", label: "About VMS" },
-];
 
 export function AppShell({
   title,
@@ -68,11 +60,8 @@ export function AppShell({
 }) {
 
   const [open, setOpen] = useState(false);
-  const [legal, setLegal] = useState<LegalDoc | null>(null);
-  const [profileOpen, setProfileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
-  const { profile, isAdmin } = useAuth();
-  const avatarUrl = useAvatarUrl(profile?.avatar_url);
+  const { isAdmin } = useAuth();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   void showTabs;
   void back;
@@ -98,9 +87,9 @@ export function AppShell({
         onClick={onClick}
         title={collapsed ? label : undefined}
         className={cn(
-          "tap flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium",
+          "tap flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium",
           active
-            ? "gradient-brand text-primary-foreground shadow-[var(--shadow-glow)]"
+            ? "bg-primary text-primary-foreground"
             : "text-muted-foreground hover:bg-surface-2 hover:text-foreground",
           collapsed && !onClick && "justify-center px-0",
         )}
@@ -116,8 +105,8 @@ export function AppShell({
     const showText = mobile || !collapsed;
     return (
       <div className="flex h-full flex-col">
-        <div className={cn("flex items-center gap-3 border-b border-border px-4 py-4", !showText && "justify-center px-2")}>
-          <img src="/branding/vms-emblem-white.png" alt="VMS emblem" className="logo-adaptive h-8 w-auto shrink-0" />
+        <div className={cn("flex items-center gap-3 border-b border-border h-12 px-4", !showText && "justify-center px-2")}>
+          <img src="/branding/vms-emblem-white.png" alt="VMS emblem" className="logo-adaptive h-6 w-auto shrink-0" />
           {showText && (
             <div className="min-w-0">
               <p className="truncate text-sm font-bold text-foreground">Valuation Management</p>
@@ -135,38 +124,6 @@ export function AppShell({
             </>
           )}
         </nav>
-        <div className="border-t border-border p-3">
-          <button
-            onClick={() => setProfileOpen(true)}
-            className={cn("tap flex w-full items-center gap-3 rounded-xl p-2 text-left hover:bg-surface-2", !showText && "justify-center")}
-          >
-            <span className="grid size-9 shrink-0 place-items-center overflow-hidden rounded-full bg-surface-2 ring-2 ring-border">
-              <img src={avatarUrl ?? "/branding/Round_Logo.png"} alt={profile?.full_name ?? "Profile photo"} className="size-full object-cover" />
-            </span>
-            {showText && (
-              <span className="min-w-0">
-                <span className="block truncate text-sm font-semibold text-foreground">{profile?.full_name || "My profile"}</span>
-                <span className="block truncate text-[11px] text-muted-foreground">{isAdmin ? "Administrator" : "View profile"}</span>
-              </span>
-            )}
-          </button>
-          {showText && (
-            <div className="pt-3 text-center">
-              <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
-                {LEGAL_LINKS.map((l) => (
-                  <button
-                    key={l.doc}
-                    onClick={() => { setOpen(false); setLegal(l.doc); }}
-                    className="text-[11px] font-medium text-muted-foreground/70 underline-offset-2 hover:text-foreground hover:underline"
-                  >
-                    {l.label}
-                  </button>
-                ))}
-              </div>
-              <p className="pt-2 text-[11px] text-muted-foreground/70">VMS v1.5.0 (Build 2026.10)</p>
-            </div>
-          )}
-        </div>
       </div>
     );
   };
@@ -184,17 +141,17 @@ export function AppShell({
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="z-40 shrink-0 border-b border-border bg-surface">
-          <div className="flex items-center gap-3 px-4 py-3">
+          <div className="flex h-12 items-center gap-2 px-3">
             <button
               aria-label="Toggle menu"
               onClick={toggleCollapsed}
-              className="tap hidden size-10 shrink-0 place-items-center rounded-xl border border-border bg-surface text-foreground md:grid"
+              className="hidden size-8 shrink-0 place-items-center rounded-xl border border-border bg-surface text-foreground md:grid"
             >
               {collapsed ? <PanelLeftOpen className="size-5" /> : <PanelLeftClose className="size-5" />}
             </button>
             <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger asChild>
-                <button aria-label="Open menu" className="tap grid size-10 shrink-0 place-items-center rounded-xl border border-border bg-surface text-foreground md:hidden">
+                <button aria-label="Open menu" className="grid size-8 shrink-0 place-items-center rounded-xl border border-border bg-surface text-foreground md:hidden">
                   <Menu className="size-5" />
                 </button>
               </SheetTrigger>
@@ -202,12 +159,7 @@ export function AppShell({
                 {navContent(true)}
               </SheetContent>
             </Sheet>
-            <h1 className="min-w-0 flex-1 truncate text-lg font-bold tracking-tight text-foreground">{title}</h1>
-            <button aria-label="Open profile" onClick={() => setProfileOpen(true)} className="tap grid size-10 shrink-0 place-items-center rounded-full">
-              <span className="grid size-9 place-items-center overflow-hidden rounded-full bg-surface-2 ring-2 ring-border">
-                <img src={avatarUrl ?? "/branding/Round_Logo.png"} alt={profile?.full_name ?? "Profile photo"} className="size-full object-cover" />
-              </span>
-            </button>
+            <h1 className="min-w-0 flex-1 truncate text-sm font-semibold text-foreground">{title}</h1>
           </div>
         </header>
 
@@ -229,8 +181,6 @@ export function AppShell({
 
       {extraFloatingActions}
 
-      <ProfileModal open={profileOpen} onOpenChange={setProfileOpen} />
-      <LegalModal doc={legal} onOpenChange={(o) => !o && setLegal(null)} />
     </div>
   );
 }

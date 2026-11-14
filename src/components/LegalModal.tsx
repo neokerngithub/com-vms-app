@@ -57,7 +57,7 @@ export function LegalModal({
           {content?.body.map((p) => <p key={p}>{p}</p>)}
         </div>
         <p className="border-t border-border pt-3 text-[11px] text-muted-foreground">
-          VMS v1.5.0 (Build 2026.10) • Package: com.vmsnepal.app
+          Valuation Management System — web edition
         </p>
       </DialogContent>
     </Dialog>

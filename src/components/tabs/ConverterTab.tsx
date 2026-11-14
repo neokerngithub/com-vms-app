@@ -81,7 +81,7 @@ function ConvertMode() {
   };
 
   return (
-    <div className="space-y-3">
+    <div className="grid gap-4 lg:grid-cols-2 lg:items-start">
       <div className="surface-card space-y-3 p-4">
         <div className="flex items-center justify-between gap-3">
           <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
@@ -99,6 +99,7 @@ function ConvertMode() {
         />
         <UnitSelect label="Unit" value={unit} onChange={setUnit} />
       </div>
+      <div className="space-y-3">
 
       <div
         className={cn(
@@ -121,6 +122,7 @@ function ConvertMode() {
       </div>
 
       <BreakdownCards sqft={sqft} faded={!touched} />
+      </div>
     </div>
   );
 }
@@ -170,7 +172,7 @@ function CombinedMode() {
   const sqft = parseCombined(touched ? input : COMBINED_EXAMPLES[system], units);
 
   return (
-    <div className="space-y-3">
+    <div className="grid gap-4 lg:grid-cols-2 lg:items-start">
       <div className="surface-card space-y-3 p-4">
         <div className="flex items-center gap-3">
           <div className="flex flex-1 rounded-xl border border-border bg-surface-2 p-1">
@@ -299,6 +301,7 @@ function ArithmeticMode() {
     setRows((rs) => rs.map((r) => (r.id === id ? { ...r, ...patch } : r)));
 
   return (
+    <div className="grid gap-4 lg:grid-cols-2 lg:items-start">
     <div className="space-y-3">
       <div className="surface-card flex items-center justify-between gap-3 p-4">
         <div className="min-w-0">
@@ -397,7 +400,8 @@ function ArithmeticMode() {
         <Plus className="size-4" />
         Add land parcel
       </button>
-
+    </div>
+      <div className="space-y-3">
       <div
         className={cn(
           "surface-card p-5 transition-opacity",
@@ -419,6 +423,7 @@ function ArithmeticMode() {
       </div>
 
       <BreakdownCards sqft={total} faded={!touched} />
+      </div>
     </div>
   );
 }

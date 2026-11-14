@@ -33,6 +33,9 @@ const CONTACTS = [
   },
 ] as const;
 import { AppShell } from "@/components/AppShell";
+import { LegalModal, type LegalDoc } from "@/components/LegalModal";
+import { useNavigate } from "@tanstack/react-router";
+import { FileText, Info, LogOut, Lock } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
 import { cn } from "@/lib/utils";
 
@@ -56,7 +59,10 @@ export const Route = createFileRoute("/_authenticated/settings")({
 
 function SettingsPage() {
   const { theme, setTheme } = useTheme();
-  const { user, profile, refreshProfile } = useAuth();
+  const { user, profile, refreshProfile, isAdmin, signOut } = useAuth();
+  const navigate = useNavigate();
+  const [legal, setLegal] = useState<LegalDoc | null>(null);
+  const role = isAdmin ? "Administrator" : profile?.is_verified ? "Verified Valuator" : "Guest";
   const avatarUrl = useAvatarUrl(profile?.avatar_url);
   const fileRef = useRef<HTMLInputElement>(null);
   const [photo, setPhoto] = useState<File | null>(null);
@@ -130,15 +136,15 @@ function SettingsPage() {
 
   return (
     <AppShell title="Settings" back>
-      <div className="space-y-4 pb-8">
-        <form onSubmit={saveProfile} className="surface-card space-y-4 p-4">
+      <div className="grid gap-4 pb-8 lg:grid-cols-2 lg:items-start">
+        <form onSubmit={saveProfile} className="surface-card lg:row-span-3 space-y-4 p-4">
           <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">User Profile</p>
           <div className="flex items-center gap-3">
             <Button type="button" variant="ghost" size="icon" onClick={() => fileRef.current?.click()} aria-label="Update profile picture" className="relative size-16 shrink-0 overflow-hidden rounded-full bg-surface-2 p-0 ring-2 ring-border">
               <img src={preview ?? avatarUrl ?? "/branding/Round_Logo.png"} alt="Profile picture" className="size-full object-cover" />
               <span className="absolute inset-x-0 bottom-0 grid h-5 place-items-center bg-background/75"><Camera className="size-3 text-foreground" /></span>
             </Button>
-            <div className="min-w-0"><p className="text-sm font-bold text-foreground">Profile Picture</p><p className="truncate text-xs text-muted-foreground">{profile?.email ?? ""}</p></div>
+            <div className="min-w-0 flex-1"><p className="truncate text-sm font-bold text-foreground">{profile?.full_name || "Your profile"}</p><p className="truncate text-xs text-muted-foreground">{profile?.email ?? user?.email ?? ""}</p><span className="mt-1 inline-block rounded-md bg-primary px-2 py-0.5 text-[11px] font-semibold text-primary-foreground">{role}</span></div><Button type="button" variant="outline" onClick={async () => { await signOut(); navigate({ to: "/auth" }); }} className="shrink-0"><LogOut className="size-4" /> Log out</Button>
             <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => { setPhoto(e.target.files?.[0] ?? null); e.target.value = ""; }} />
           </div>
           <label className="block space-y-1.5"><span className="text-xs font-bold text-muted-foreground">Full Name</span><input value={fullName} onChange={(e) => setFullName(e.target.value)} maxLength={120} required className="h-12 w-full rounded-xl border border-border bg-surface-2 px-4 text-sm text-foreground outline-none ring-ring focus:ring-2" /></label>
@@ -228,7 +234,18 @@ function SettingsPage() {
             least 10 characters. Flagged records are reviewed by administrators.
           </p>
         </div>
+        <div id="legal" className="surface-card p-4">
+          <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Legal & About</p>
+          <div className="mt-3 grid gap-2 sm:grid-cols-3">
+            {([["terms","Terms of Service",FileText],["privacy","Privacy Policy",Lock],["about","About VMS",Info]] as const).map(([doc,label,Icon]) => (
+              <button key={doc} type="button" onClick={() => setLegal(doc)} className="flex items-center gap-2 rounded-lg border border-border bg-surface-2 px-3 py-2.5 text-sm font-semibold text-foreground hover:border-primary">
+                <Icon className="size-4 text-primary" /> {label}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
+      <LegalModal doc={legal} onOpenChange={(o) => !o && setLegal(null)} />
     </AppShell>
   );
 }

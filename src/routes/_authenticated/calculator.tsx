@@ -126,7 +126,8 @@ function CalculatorPage() {
 
   return (
     <AppShell title="Advanced Calculator" back>
-      <div className="space-y-4 pb-8">
+      <div className="grid gap-4 pb-8 lg:grid-cols-12 lg:items-start">
+        <div className="space-y-4 lg:col-span-7">
         <section className="surface-card space-y-4 p-4">
           <div className="flex items-center justify-between gap-3">
             <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
@@ -240,6 +241,8 @@ function CalculatorPage() {
           </div>
         </section>
 
+        </div>
+        <div className="space-y-4 lg:sticky lg:top-4 lg:col-span-5">
         <section className={"surface-card overflow-hidden p-0" + (touched ? "" : " opacity-40")}>
           <div className="gradient-brand px-5 py-4">
             <p className="text-xs font-bold uppercase tracking-widest text-primary-foreground/80">
@@ -259,6 +262,7 @@ function CalculatorPage() {
             />
           </div>
         </section>
+        </div>
       </div>
     </AppShell>
   );
