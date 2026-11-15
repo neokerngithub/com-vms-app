@@ -262,7 +262,7 @@ function AdminPage() {
   return (
     <AppShell title="Admin Console" back>
       {isAdmin && (
-        <div className="mb-3 flex rounded-2xl border border-border bg-surface p-1">
+        <div className="mb-3 flex rounded-xl border border-border bg-surface p-1">
           {(["dashboard", "moderation"] as const).map((t) => (
             <button
               key={t}

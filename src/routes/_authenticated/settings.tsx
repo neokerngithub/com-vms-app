@@ -166,7 +166,7 @@ function SettingsPage() {
                 {theme === "dark" ? "Dark mode" : "Light mode"}
               </p>
             </div>
-            <div className="flex shrink-0 rounded-2xl border border-border bg-surface-2 p-1">
+            <div className="flex shrink-0 rounded-xl border border-border bg-surface-2 p-1">
               {(
                 [
                   { key: "dark", label: "Dark", Icon: Moon },

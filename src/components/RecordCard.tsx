@@ -77,7 +77,7 @@ export function RecordCard({
       className="surface-card tap overflow-hidden p-4"
     >
       <div className="flex gap-4">
-        <div className="size-16 shrink-0 overflow-hidden rounded-2xl border border-border bg-surface-2">
+        <div className="size-16 shrink-0 overflow-hidden rounded-xl border border-border bg-surface-2">
           {photoUrl ? (
             <img
               src={photoUrl}
@@ -155,7 +155,7 @@ export function RecordCard({
       </div>
 
       <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
-        <AlertDialogContent className="rounded-2xl border-border bg-popover">
+        <AlertDialogContent className="rounded-xl border-border bg-popover">
           <AlertDialogHeader>
             <AlertDialogTitle>Delete this record?</AlertDialogTitle>
             <AlertDialogDescription>

@@ -26,7 +26,7 @@ export function ConverterTab() {
 
   return (
     <AppShell title="Converter">
-      <div className="flex rounded-2xl border border-border bg-surface p-1">
+      <div className="flex rounded-xl border border-border bg-surface p-1">
         {MODES.map((m) => (
           <button
             key={m}
@@ -395,7 +395,7 @@ function ArithmeticMode() {
 
       <button
         onClick={() => setRows((rs) => [...rs, newRow("+")])}
-        className="tap flex w-full items-center justify-center gap-2 rounded-2xl border border-border bg-surface py-3.5 text-sm font-bold text-foreground"
+        className="tap flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-surface py-3.5 text-sm font-bold text-foreground"
       >
         <Plus className="size-4" />
         Add land parcel

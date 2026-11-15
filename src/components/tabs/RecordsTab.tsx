@@ -75,14 +75,14 @@ export function RecordsTab() {
       {focusId && (
         <button
           onClick={() => navigate({ to: "/records", search: {} })}
-          className="tap mb-3 flex w-full items-center justify-between rounded-2xl border border-border bg-surface px-4 py-3 text-xs font-bold text-muted-foreground"
+          className="tap mb-3 flex w-full items-center justify-between rounded-xl border border-border bg-surface px-4 py-3 text-xs font-bold text-muted-foreground"
         >
           Showing one record from the map
           <span className="gradient-text">Show all</span>
         </button>
       )}
 
-      <div className="mb-3 flex rounded-2xl border border-border bg-surface p-1">
+      <div className="mb-3 flex rounded-xl border border-border bg-surface p-1">
         {SCOPES.map((s) => (
           <button
             key={s}
@@ -107,7 +107,7 @@ export function RecordsTab() {
           onChange={(e) => setQ(e.target.value)}
           placeholder="Search location, address, ward..."
           maxLength={120}
-          className="h-12 w-full rounded-2xl border border-border bg-surface pl-11 pr-4 text-sm text-foreground outline-none ring-ring placeholder:text-muted-foreground focus:ring-2"
+          className="h-12 w-full rounded-xl border border-border bg-surface pl-11 pr-4 text-sm text-foreground outline-none ring-ring placeholder:text-muted-foreground focus:ring-2"
         />
       </div>
 
@@ -138,7 +138,7 @@ export function RecordsTab() {
             <p className="text-sm font-semibold text-foreground">Sign in to see your records</p>
             <button
               onClick={() => navigate({ to: "/auth" })}
-              className="tap gradient-brand mt-4 rounded-2xl px-5 py-3 text-sm font-bold text-primary-foreground"
+              className="tap gradient-brand mt-4 rounded-xl px-5 py-3 text-sm font-bold text-primary-foreground"
             >
               Sign in
             </button>

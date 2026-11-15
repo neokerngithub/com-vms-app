@@ -118,7 +118,7 @@ function AuthPage() {
   return (
     <div className="flex min-h-[100dvh] items-center justify-center bg-background px-5 py-10">
       <div className="w-full max-w-sm">
-        <div className="gradient-brand mx-auto grid size-14 place-items-center rounded-2xl text-xl font-black text-primary-foreground shadow-[var(--shadow-glow)]">
+        <div className="gradient-brand mx-auto grid size-14 place-items-center rounded-xl text-xl font-black text-primary-foreground shadow-[var(--shadow-glow)]">
           V
         </div>
         <h1 className="mt-6 text-center text-2xl font-extrabold text-foreground">

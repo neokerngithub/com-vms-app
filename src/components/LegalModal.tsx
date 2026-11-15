@@ -46,7 +46,7 @@ export function LegalModal({
   const content = doc ? DOCS[doc] : null;
   return (
     <Dialog open={Boolean(doc)} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[85dvh] overflow-y-auto rounded-3xl border-border bg-popover sm:max-w-lg">
+      <DialogContent className="max-h-[85dvh] overflow-y-auto rounded-xl border-border bg-popover sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="text-left text-lg font-bold">
             {content?.title}

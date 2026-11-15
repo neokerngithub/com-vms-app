@@ -125,7 +125,7 @@ export function RecordForm({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90dvh] max-w-lg overflow-y-auto rounded-2xl border-border bg-popover">
+      <DialogContent className="max-h-[90dvh] max-w-lg overflow-y-auto rounded-xl border-border bg-popover">
         <DialogHeader>
           <DialogTitle className="text-lg font-bold">
             {editing ? "Edit record" : "Add record"}

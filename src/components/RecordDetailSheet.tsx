@@ -54,7 +54,7 @@ export function RecordDetailSheet({
                 </SheetDescription>
               </SheetHeader>
 
-              <div aria-label="Property location map" className="mt-4 h-48 w-full overflow-hidden rounded-2xl border border-border bg-surface-2">
+              <div aria-label="Property location map" className="mt-4 h-48 w-full overflow-hidden rounded-xl border border-border bg-surface-2">
                 {record.latitude != null && record.longitude != null && Number.isFinite(record.latitude) && Number.isFinite(record.longitude) && Math.abs(record.latitude) <= 90 && Math.abs(record.longitude) <= 180 ? (
                   <Suspense fallback={<div className="grid h-full place-items-center text-sm text-muted-foreground">Loading map…</div>}>
                     <RecordMiniMap key={record.id} latitude={record.latitude} longitude={record.longitude} />
@@ -99,7 +99,7 @@ export function RecordDetailSheet({
                 </div>
               )}
 
-              <div className="mt-4 flex flex-wrap items-center gap-2 rounded-2xl border border-border bg-surface-2 p-3 text-xs text-muted-foreground">
+              <div className="mt-4 flex flex-wrap items-center gap-2 rounded-xl border border-border bg-surface-2 p-3 text-xs text-muted-foreground">
                 By <span className="font-bold text-foreground">{record.creator_name}</span>
                 {record.creator_verified && (
                   <span className="inline-flex items-center gap-1 rounded-full bg-success/15 px-2 py-0.5 text-[10px] font-bold text-success">
@@ -113,7 +113,7 @@ export function RecordDetailSheet({
                 {record.latitude != null && (
                   <button
                     onClick={() => onLocate(record)}
-                    className="tap flex items-center justify-center gap-2 rounded-2xl border border-border bg-surface-2 py-3.5 text-sm font-bold text-foreground"
+                    className="tap flex items-center justify-center gap-2 rounded-xl border border-border bg-surface-2 py-3.5 text-sm font-bold text-foreground"
                   >
                     <Navigation className="size-4" /> View on Map
                   </button>
@@ -121,14 +121,14 @@ export function RecordDetailSheet({
                 {isOwner ? (
                   <button
                     onClick={() => onEdit(record)}
-                    className="tap gradient-brand flex items-center justify-center gap-2 rounded-2xl py-3.5 text-sm font-bold text-primary-foreground"
+                    className="tap gradient-brand flex items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold text-primary-foreground"
                   >
                     <Pencil className="size-4" /> Edit record
                   </button>
                 ) : (
                   <button
                     onClick={() => onReport(record)}
-                    className="tap flex items-center justify-center gap-2 rounded-2xl border border-destructive/40 bg-surface-2 py-3.5 text-sm font-bold text-destructive"
+                    className="tap flex items-center justify-center gap-2 rounded-xl border border-destructive/40 bg-surface-2 py-3.5 text-sm font-bold text-destructive"
                   >
                     <Flag className="size-4" /> Report record
                   </button>

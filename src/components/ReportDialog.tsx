@@ -48,7 +48,7 @@ export function ReportDialog({
 
   return (
     <Dialog open={open} onOpenChange={close}>
-      <DialogContent className="rounded-3xl border-border bg-popover sm:max-w-md">
+      <DialogContent className="rounded-xl border-border bg-popover sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-left text-lg font-bold">Report this record</DialogTitle>
           <DialogDescription className="text-left text-sm text-muted-foreground">
@@ -61,7 +61,7 @@ export function ReportDialog({
           rows={4}
           maxLength={500}
           placeholder="e.g. The market rate is far above the actual transacted rate in this ward."
-          className="w-full rounded-2xl border border-border bg-surface-2 p-4 text-sm text-foreground outline-none ring-ring placeholder:text-muted-foreground focus:ring-2"
+          className="w-full rounded-xl border border-border bg-surface-2 p-4 text-sm text-foreground outline-none ring-ring placeholder:text-muted-foreground focus:ring-2"
         />
         <p className="text-xs text-muted-foreground">
           {reason.trim().length}/{MIN} characters minimum
@@ -69,7 +69,7 @@ export function ReportDialog({
         <button
           onClick={submit}
           disabled={!valid || report.isPending}
-          className="tap gradient-brand w-full rounded-2xl py-3.5 text-sm font-bold text-primary-foreground disabled:opacity-40"
+          className="tap gradient-brand w-full rounded-xl py-3.5 text-sm font-bold text-primary-foreground disabled:opacity-40"
         >
           {report.isPending ? "Submitting…" : "Submit Report"}
         </button>

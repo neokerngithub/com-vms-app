@@ -36,7 +36,7 @@ function Landing() {
   return (
     <div className="flex min-h-[100dvh] flex-col bg-background">
       <div className="safe-top mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center px-6 py-12">
-        <div className="gradient-brand grid size-14 place-items-center rounded-2xl text-xl font-black text-primary-foreground shadow-[var(--shadow-glow)]">
+        <div className="gradient-brand grid size-14 place-items-center rounded-xl text-xl font-black text-primary-foreground shadow-[var(--shadow-glow)]">
           V
         </div>
         <h1 className="mt-8 text-4xl font-extrabold leading-tight tracking-tight text-foreground sm:text-5xl">
@@ -64,7 +64,7 @@ function Landing() {
 
         <Link
           to="/auth"
-          className="tap gradient-brand mt-10 inline-flex items-center justify-center rounded-2xl px-6 py-4 text-base font-bold text-primary-foreground shadow-[var(--shadow-glow)]"
+          className="tap gradient-brand mt-10 inline-flex items-center justify-center rounded-xl px-6 py-4 text-base font-bold text-primary-foreground shadow-[var(--shadow-glow)]"
         >
           Sign in to continue
         </Link>

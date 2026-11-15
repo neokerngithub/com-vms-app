@@ -137,7 +137,7 @@ function RatesPage() {
       <div className="space-y-4 pb-8">
         <button
           onClick={() => setAdding((v) => !v)}
-          className="tap flex w-full items-center justify-center gap-2 rounded-2xl border border-border bg-surface py-3.5 text-sm font-bold text-foreground"
+          className="tap flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-surface py-3.5 text-sm font-bold text-foreground"
         >
           {adding ? <X className="size-4" /> : <Plus className="size-4" />}
           {adding ? "Cancel" : "Contribute a publication"}

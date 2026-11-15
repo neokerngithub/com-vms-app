@@ -124,7 +124,7 @@ export function ProfileModal({
                 await signOut();
                 navigate({ to: "/auth", replace: true });
               }}
-              className="tap mt-6 flex w-full items-center justify-center gap-2 rounded-2xl border border-destructive/40 bg-surface-2 py-3.5 text-sm font-bold text-destructive"
+              className="tap mt-6 flex w-full items-center justify-center gap-2 rounded-xl border border-destructive/40 bg-surface-2 py-3.5 text-sm font-bold text-destructive"
             >
               <LogOut className="size-4" />
               Log out

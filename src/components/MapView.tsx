@@ -199,7 +199,7 @@ export function MapLocateButton({
         }
       }}
       className={cn(
-        "tap fixed bottom-24 right-6 z-10 grid size-12 place-items-center rounded-2xl border border-border bg-background text-primary shadow-[var(--shadow-elegant)]",
+        "tap fixed bottom-24 right-6 z-10 grid size-12 place-items-center rounded-xl border border-border bg-background text-primary shadow-[var(--shadow-elegant)]",
         className,
       )}
     >
@@ -358,7 +358,7 @@ export default function MapView({
       {/* Floating search bar */}
       <div className="pointer-events-none absolute inset-x-0 top-3 z-10 flex justify-center px-3">
         <div className="pointer-events-auto w-full max-w-md">
-          <div className="flex items-center gap-2 rounded-2xl border border-border bg-background px-3 shadow-[var(--shadow-elegant)]">
+          <div className="flex items-center gap-2 rounded-xl border border-border bg-background px-3 shadow-[var(--shadow-elegant)]">
             {searching ? (
               <Loader2 className="size-4 shrink-0 animate-spin text-muted-foreground" />
             ) : (
@@ -390,7 +390,7 @@ export default function MapView({
             )}
           </div>
           {openList && results.length > 0 && (
-            <ul className="mt-2 max-h-64 overflow-y-auto rounded-2xl border border-border bg-background p-1 shadow-[var(--shadow-elegant)]">
+            <ul className="mt-2 max-h-64 overflow-y-auto rounded-xl border border-border bg-background p-1 shadow-[var(--shadow-elegant)]">
               {results.map((r) => (
                 <li key={`${r.lat}-${r.lng}-${r.label}`}>
                   <button
@@ -412,12 +412,12 @@ export default function MapView({
         <button
           aria-label="Map layers"
           onClick={() => setLayerOpen((v) => !v)}
-          className="tap grid size-12 place-items-center rounded-2xl border border-border bg-background text-foreground shadow-[var(--shadow-elegant)]"
+          className="tap grid size-12 place-items-center rounded-xl border border-border bg-background text-foreground shadow-[var(--shadow-elegant)]"
         >
           <Layers className="size-5" />
         </button>
         {layerOpen && (
-          <div className="flex flex-col gap-1 rounded-2xl border border-border bg-background p-1 shadow-[var(--shadow-elegant)]">
+          <div className="flex flex-col gap-1 rounded-xl border border-border bg-background p-1 shadow-[var(--shadow-elegant)]">
             {(Object.keys(LAYERS) as LayerKey[]).map((k) => (
               <button
                 key={k}
@@ -443,7 +443,7 @@ export default function MapView({
           <div className="absolute inset-0 bg-black/60" />
           <div
             onClick={(e) => e.stopPropagation()}
-            className="surface-card animate-in slide-in-from-bottom relative m-2 w-full rounded-3xl p-4 duration-200"
+            className="surface-card animate-in slide-in-from-bottom relative m-2 w-full rounded-xl p-4 duration-200"
           >
             <button
               aria-label="Close"
@@ -453,7 +453,7 @@ export default function MapView({
               <X className="size-4" />
             </button>
             <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-3">
-              <div className="size-16 shrink-0 overflow-hidden rounded-2xl border border-border bg-surface-2">
+              <div className="size-16 shrink-0 overflow-hidden rounded-xl border border-border bg-surface-2">
                 {selectedPhoto ? (
                   <img
                     src={selectedPhoto}
@@ -494,7 +494,7 @@ export default function MapView({
             </p>
             <button
               onClick={() => onViewRecord?.(selected)}
-              className="tap gradient-brand mt-4 w-full rounded-2xl py-3.5 text-sm font-bold text-primary-foreground"
+              className="tap gradient-brand mt-4 w-full rounded-xl py-3.5 text-sm font-bold text-primary-foreground"
             >
               View Full Record
             </button>

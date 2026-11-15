@@ -87,14 +87,14 @@ export function AppShell({
         onClick={onClick}
         title={collapsed ? label : undefined}
         className={cn(
-          "tap flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium",
+          "tap flex items-center gap-3 rounded-md px-3 py-1.5 text-[13px] font-medium",
           active
-            ? "bg-primary text-primary-foreground"
-            : "text-muted-foreground hover:bg-surface-2 hover:text-foreground",
+            ? "nav-active bg-surface-2 text-foreground"
+            : "text-muted-foreground hover:bg-surface-2/60 hover:text-foreground",
           collapsed && !onClick && "justify-center px-0",
         )}
       >
-        <Icon className="size-5 shrink-0" />
+        <Icon className={cn("size-[18px] shrink-0", active && "text-brand-indigo-soft")} strokeWidth={1.75} />
         {(!collapsed || onClick) && <span className="truncate">{label}</span>}
       </Link>
     );
@@ -105,21 +105,21 @@ export function AppShell({
     const showText = mobile || !collapsed;
     return (
       <div className="flex h-full flex-col">
-        <div className={cn("flex items-center gap-3 border-b border-border h-12 px-4", !showText && "justify-center px-2")}>
+        <div className={cn("flex items-center gap-3 border-b border-sidebar-border h-14 px-4", !showText && "justify-center px-2")}>
           <img src="/branding/vms-emblem-white.png" alt="VMS emblem" className="logo-adaptive h-6 w-auto shrink-0" />
           {showText && (
             <div className="min-w-0">
-              <p className="truncate text-sm font-bold text-foreground">Valuation Management</p>
+              <p className="truncate text-[13px] font-semibold tracking-tight text-foreground">Valuation Management</p>
               <p className="truncate text-[11px] text-muted-foreground">Nepal land valuation toolkit</p>
             </div>
           )}
         </div>
-        <nav className="flex-1 space-y-1 overflow-y-auto p-3">
-          {showText && <p className="px-3 pb-1 pt-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70">Workspace</p>}
+        <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-4">
+          {showText && <p className="px-3 pb-1 pt-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground/60">Workspace</p>}
           {NAV_LINKS.map((l) => navItem(l.to, l.label, l.icon, close))}
           {isAdmin && (
             <>
-              {showText && <p className="px-3 pb-1 pt-4 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70">Administration</p>}
+              {showText && <p className="px-3 pb-1 pt-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground/60">Administration</p>}
               {navItem(ADMIN_LINK.to, ADMIN_LINK.label, ADMIN_LINK.icon, close)}
             </>
           )}
@@ -132,20 +132,20 @@ export function AppShell({
     <div className="flex h-[100dvh] w-full overflow-hidden bg-background">
       <aside
         className={cn(
-          "hidden shrink-0 border-r border-border bg-sidebar transition-[width] duration-200 md:block",
-          collapsed ? "w-[72px]" : "w-64",
+          "hidden shrink-0 border-r border-sidebar-border bg-sidebar transition-[width] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] md:block",
+          collapsed ? "w-[68px]" : "w-60",
         )}
       >
         {navContent(false)}
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="z-40 shrink-0 border-b border-border bg-surface">
-          <div className="flex h-12 items-center gap-2 px-3">
+        <header className="z-40 shrink-0 border-b border-border bg-background">
+          <div className="flex h-14 items-center gap-3 px-4 md:px-6">
             <button
               aria-label="Toggle menu"
               onClick={toggleCollapsed}
-              className="hidden size-8 shrink-0 place-items-center rounded-xl border border-border bg-surface text-foreground md:grid"
+              className="hidden size-8 shrink-0 place-items-center rounded-md text-muted-foreground hover:bg-surface-2 hover:text-foreground md:grid"
             >
               {collapsed ? <PanelLeftOpen className="size-5" /> : <PanelLeftClose className="size-5" />}
             </button>
@@ -159,12 +159,12 @@ export function AppShell({
                 {navContent(true)}
               </SheetContent>
             </Sheet>
-            <h1 className="min-w-0 flex-1 truncate text-sm font-semibold text-foreground">{title}</h1>
+            <div className="h-4 w-px bg-border hidden md:block" /><div className="min-w-0 flex-1"><p className="hidden text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground md:block">VMS Workspace</p><h1 className="truncate text-[15px] font-semibold leading-tight text-foreground">{title}</h1></div>
           </div>
         </header>
 
         <main className={cn("page-transition relative min-h-0 flex-1", bare ? "overflow-hidden" : "overflow-y-auto")}>
-          {bare ? children : <div className="mx-auto w-full max-w-[1400px] px-4 pb-12 pt-4 md:px-6">{children}</div>}
+          {bare ? children : <div className="mx-auto w-full max-w-[1320px] px-4 pb-16 pt-5 md:px-8 md:pt-6">{children}</div>}
         </main>
       </div>
 
@@ -172,7 +172,7 @@ export function AppShell({
         <button
           onClick={onAdd}
           aria-label="Add Record"
-          className="tap gradient-brand fixed bottom-6 right-6 z-10 flex items-center gap-2 rounded-full px-5 py-3.5 text-sm font-bold text-primary-foreground shadow-[var(--shadow-glow)]"
+          className="tap gradient-brand fixed bottom-6 right-6 z-10 flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-glow)]"
         >
           <Plus className="size-5" />
           Add Record
