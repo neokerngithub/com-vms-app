@@ -51,13 +51,13 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  --font-mono: "Geist Mono", ui-monospace, monospace;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
   --font-sans:
-    "Geist", ui-sans-serif, system-ui, -apple-system, sans-serif;
+    "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
 }
 
 :root {
-  --radius: 0.5rem;
+  --radius: 0.25rem;
   /* Solid palette: black shades, white shades, brand blue #004aad. No gradients. */
   --background: #000000;
   --foreground: #ffffff;
@@ -81,7 +81,7 @@
   --destructive: #dc2626;
   --destructive-foreground: #ffffff;
   --success: #16a34a;
-  --border: #1f1f1f;
+  --border: #222222;
   --input: #2e2e2e;
   --ring: #004aad;
   --sidebar: #050505;
@@ -94,8 +94,8 @@
   --sidebar-ring: #004aad;
   --gradient-brand: none;
   --gradient-brand-text: none;
-  --shadow-elegant: 0 1px 0 0 rgb(255 255 255 / 0.03) inset, 0 8px 24px -12px rgb(0 0 0 / 0.6);
-  --shadow-glow: 0 6px 20px -6px rgb(0 74 173 / 0.55);
+  --shadow-elegant: none;
+  --shadow-glow: none;
 }
 
 
@@ -114,10 +114,10 @@
 
   body {
     font-family: var(--font-sans);
-    font-feature-settings: "ss01", "cv11";
+    
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    letter-spacing: -0.005em;
+    letter-spacing: 0;
   }
   h1, h2, h3 { letter-spacing: -0.02em; }
   ::selection { background: rgb(0 74 173 / 0.45); color: #fff; }
@@ -299,3 +299,29 @@ html.light .logo-adaptive {
   content: ""; position: absolute; left: -12px; top: 8px; bottom: 8px; width: 3px;
   border-radius: 0 3px 3px 0; background: var(--primary);
 }
+
+/* ===== Cadastral workstation layer ===== */
+.survey-grid {
+  background-color: var(--background);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Cpath d='M48 0H0V48' fill='none' stroke='%23ffffff' stroke-opacity='0.045'/%3E%3C/svg%3E");
+}
+html.light .survey-grid {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Cpath d='M48 0H0V48' fill='none' stroke='%23000000' stroke-opacity='0.06'/%3E%3C/svg%3E");
+}
+/* corner registration ticks on cards */
+.surface-card { position: relative; }
+.surface-card::after {
+  content: ""; position: absolute; top: -1px; left: -1px; width: 8px; height: 8px;
+  border-top: 1px solid var(--primary); border-left: 1px solid var(--primary); pointer-events: none;
+  opacity: 0; transition: opacity 200ms ease;
+}
+.surface-card:hover::after { opacity: 1; }
+@utility mono-label {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+.nav-active::before { left: 0; top: 0; bottom: 0; width: 2px; border-radius: 0; }

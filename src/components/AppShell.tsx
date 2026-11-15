@@ -78,8 +78,9 @@ export function AppShell({
     });
   };
 
-  const navItem = (to: string, label: string, Icon: typeof MapIcon, onClick?: () => void) => {
+  const navItem = (to: string, label: string, Icon: typeof MapIcon, index: number, onClick?: () => void) => {
     const active = pathname === to;
+    const expanded = !collapsed || !!onClick;
     return (
       <Link
         key={to}
@@ -87,15 +88,18 @@ export function AppShell({
         onClick={onClick}
         title={collapsed ? label : undefined}
         className={cn(
-          "tap flex items-center gap-3 rounded-md px-3 py-1.5 text-[13px] font-medium",
-          active
-            ? "nav-active bg-surface-2 text-foreground"
-            : "text-muted-foreground hover:bg-surface-2/60 hover:text-foreground",
-          collapsed && !onClick && "justify-center px-0",
+          "tap group relative flex items-center gap-3 px-4 py-2 text-[13px] font-medium",
+          active ? "nav-active bg-surface-2 text-foreground" : "text-muted-foreground hover:bg-surface hover:text-foreground",
+          !expanded && "justify-center px-0",
         )}
       >
-        <Icon className={cn("size-[18px] shrink-0", active && "text-brand-indigo-soft")} strokeWidth={1.75} />
-        {(!collapsed || onClick) && <span className="truncate">{label}</span>}
+        {expanded && (
+          <span className={cn("w-5 font-mono text-[10px]", active ? "text-primary" : "text-muted-foreground/50")}>
+            {String(index).padStart(2, "0")}
+          </span>
+        )}
+        <Icon className={cn("size-4 shrink-0", active && "text-brand-indigo-soft")} strokeWidth={1.75} />
+        {expanded && <span className="truncate">{label}</span>}
       </Link>
     );
   };
@@ -105,25 +109,31 @@ export function AppShell({
     const showText = mobile || !collapsed;
     return (
       <div className="flex h-full flex-col">
-        <div className={cn("flex items-center gap-3 border-b border-sidebar-border h-14 px-4", !showText && "justify-center px-2")}>
-          <img src="/branding/vms-emblem-white.png" alt="VMS emblem" className="logo-adaptive h-6 w-auto shrink-0" />
+        <div className={cn("flex h-12 items-center gap-3 border-b border-sidebar-border px-4", !showText && "justify-center px-2")}>
+          <img src="/branding/vms-emblem-white.png" alt="VMS emblem" className="logo-adaptive h-5 w-auto shrink-0" />
           {showText && (
-            <div className="min-w-0">
-              <p className="truncate text-[13px] font-semibold tracking-tight text-foreground">Valuation Management</p>
-              <p className="truncate text-[11px] text-muted-foreground">Nepal land valuation toolkit</p>
+            <div className="min-w-0 leading-none">
+              <p className="truncate font-mono text-[12px] font-semibold tracking-[0.18em] text-foreground">VMS</p>
+              <p className="mt-1 truncate font-mono text-[9.5px] uppercase tracking-[0.14em] text-muted-foreground">Cadastral Workstation</p>
             </div>
           )}
         </div>
-        <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-4">
-          {showText && <p className="px-3 pb-1 pt-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground/60">Workspace</p>}
-          {NAV_LINKS.map((l) => navItem(l.to, l.label, l.icon, close))}
+        <nav className="flex-1 overflow-y-auto py-3">
+          {showText && <p className="mono-label px-4 pb-2">Modules</p>}
+          {NAV_LINKS.map((l, i) => navItem(l.to, l.label, l.icon, i + 1, close))}
           {isAdmin && (
             <>
-              {showText && <p className="px-3 pb-1 pt-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground/60">Administration</p>}
-              {navItem(ADMIN_LINK.to, ADMIN_LINK.label, ADMIN_LINK.icon, close)}
+              {showText && <p className="mono-label px-4 pb-2 pt-5">Administration</p>}
+              {navItem(ADMIN_LINK.to, ADMIN_LINK.label, ADMIN_LINK.icon, NAV_LINKS.length + 1, close)}
             </>
           )}
         </nav>
+        {showText && (
+          <div className="border-t border-sidebar-border px-4 py-3">
+            <p className="mono-label">Datum</p>
+            <p className="mt-1 font-mono text-[11px] text-foreground">WGS 84 · Nepal</p>
+          </div>
+        )}
       </div>
     );
   };
@@ -141,30 +151,37 @@ export function AppShell({
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="z-40 shrink-0 border-b border-border bg-background">
-          <div className="flex h-14 items-center gap-3 px-4 md:px-6">
+          <div className="flex h-12 items-center gap-3 px-3 md:px-5">
             <button
               aria-label="Toggle menu"
               onClick={toggleCollapsed}
-              className="hidden size-8 shrink-0 place-items-center rounded-md text-muted-foreground hover:bg-surface-2 hover:text-foreground md:grid"
+              className="hidden size-8 shrink-0 place-items-center rounded-sm text-muted-foreground hover:bg-surface-2 hover:text-foreground md:grid"
             >
-              {collapsed ? <PanelLeftOpen className="size-5" /> : <PanelLeftClose className="size-5" />}
+              {collapsed ? <PanelLeftOpen className="size-4" /> : <PanelLeftClose className="size-4" />}
             </button>
             <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger asChild>
-                <button aria-label="Open menu" className="grid size-8 shrink-0 place-items-center rounded-xl border border-border bg-surface text-foreground md:hidden">
-                  <Menu className="size-5" />
+                <button aria-label="Open menu" className="grid size-8 shrink-0 place-items-center rounded-sm border border-border bg-surface text-foreground md:hidden">
+                  <Menu className="size-4" />
                 </button>
               </SheetTrigger>
               <SheetContent side="left" className="w-[85vw] max-w-xs border-border bg-sidebar p-0">
                 {navContent(true)}
               </SheetContent>
             </Sheet>
-            <div className="h-4 w-px bg-border hidden md:block" /><div className="min-w-0 flex-1"><p className="hidden text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground md:block">VMS Workspace</p><h1 className="truncate text-[15px] font-semibold leading-tight text-foreground">{title}</h1></div>
+            <div className="hidden h-5 w-px bg-border md:block" />
+            <div className="flex min-w-0 flex-1 items-baseline gap-2">
+              <span className="hidden font-mono text-[11px] text-muted-foreground sm:inline">VMS /</span>
+              <h1 className="truncate text-[14px] font-semibold text-foreground">{title}</h1>
+            </div>
+            <span className="hidden items-center gap-2 border border-border px-2 py-1 font-mono text-[10.5px] uppercase tracking-[0.1em] text-muted-foreground lg:flex">
+              <span className="size-1.5 bg-success" /> Live
+            </span>
           </div>
         </header>
 
-        <main className={cn("page-transition relative min-h-0 flex-1", bare ? "overflow-hidden" : "overflow-y-auto")}>
-          {bare ? children : <div className="mx-auto w-full max-w-[1320px] px-4 pb-16 pt-5 md:px-8 md:pt-6">{children}</div>}
+        <main className={cn("page-transition relative min-h-0 flex-1 survey-grid", bare ? "overflow-hidden" : "overflow-y-auto")}>
+          {bare ? children : <div className="mx-auto w-full max-w-[1360px] px-4 pb-16 pt-5 md:px-6">{children}</div>}
         </main>
       </div>
 
@@ -172,7 +189,7 @@ export function AppShell({
         <button
           onClick={onAdd}
           aria-label="Add Record"
-          className="tap gradient-brand fixed bottom-6 right-6 z-10 flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-glow)]"
+          className="tap gradient-brand fixed bottom-6 right-6 z-10 flex items-center gap-2 rounded-sm px-4 py-2.5 font-mono text-[12px] font-semibold uppercase tracking-[0.1em] text-primary-foreground shadow-[var(--shadow-glow)]"
         >
           <Plus className="size-5" />
           Add Record
