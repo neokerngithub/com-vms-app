@@ -40,10 +40,10 @@ function Landing() {
     { icon: ShieldCheck, code: "M-04", t: "Governed Records", d: "NEC / DEAN verification, audit logs, moderation." },
   ];
   const units = [
-    ["1 Ropani", "16 Aana", "508.7369 m²"],
-    ["1 Aana", "4 Paisa", "31.7961 m²"],
-    ["1 Bigha", "20 Kattha", "6,772.6315 m²"],
-    ["1 Kattha", "20 Dhur", "338.6316 m²"],
+    ["1 Ropani", "16 Aana", "5,476.0000 sq ft"],
+    ["1 Aana", "4 Paisa", "342.2500 sq ft"],
+    ["1 Bigha", "20 Kattha", "72,900.0000 sq ft"],
+    ["1 Kattha", "20 Dhur", "3,645.0000 sq ft"],
   ];
 
   return (
