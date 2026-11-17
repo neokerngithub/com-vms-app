@@ -14,7 +14,7 @@ const ThemeContext = createContext<ThemeState>({
   toggle: () => {},
 });
 
-const STORAGE_KEY = "vms-theme";
+const STORAGE_KEY = "vms-theme-v2";
 
 function apply(theme: Theme) {
   if (typeof document === "undefined") return;
@@ -24,14 +24,14 @@ function apply(theme: Theme) {
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("dark");
+  const [theme, setThemeState] = useState<Theme>("light");
 
   useEffect(() => {
     const stored =
       typeof window !== "undefined"
         ? (window.localStorage.getItem(STORAGE_KEY) as Theme | null)
         : null;
-    const next: Theme = stored === "light" ? "light" : "dark";
+    const next: Theme = stored === "dark" ? "dark" : "light";
     setThemeState(next);
     apply(next);
   }, []);

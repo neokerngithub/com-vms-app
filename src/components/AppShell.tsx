@@ -78,7 +78,7 @@ export function AppShell({
     });
   };
 
-  const navItem = (to: string, label: string, Icon: typeof MapIcon, index: number, onClick?: () => void) => {
+  const navItem = (to: string, label: string, Icon: typeof MapIcon, _index: number, onClick?: () => void) => {
     const active = pathname === to;
     const expanded = !collapsed || !!onClick;
     return (
@@ -88,17 +88,12 @@ export function AppShell({
         onClick={onClick}
         title={collapsed ? label : undefined}
         className={cn(
-          "tap group relative flex items-center gap-3 px-4 py-2 text-[13px] font-medium",
-          active ? "nav-active bg-surface-2 text-foreground" : "text-muted-foreground hover:bg-surface hover:text-foreground",
+          "nav-link tap flex items-center gap-3 rounded-lg px-3 py-2 text-[13.5px] font-semibold",
+          active && "is-active",
           !expanded && "justify-center px-0",
         )}
       >
-        {expanded && (
-          <span className={cn("w-5 font-mono text-[10px]", active ? "text-primary" : "text-muted-foreground/50")}>
-            {String(index).padStart(2, "0")}
-          </span>
-        )}
-        <Icon className={cn("size-4 shrink-0", active && "text-brand-indigo-soft")} strokeWidth={1.75} />
+        <Icon className="size-[18px] shrink-0" strokeWidth={2} />
         {expanded && <span className="truncate">{label}</span>}
       </Link>
     );
@@ -108,30 +103,32 @@ export function AppShell({
     const close = mobile ? () => setOpen(false) : undefined;
     const showText = mobile || !collapsed;
     return (
-      <div className="flex h-full flex-col">
-        <div className={cn("flex h-12 items-center gap-3 border-b border-sidebar-border px-4", !showText && "justify-center px-2")}>
-          <img src="/branding/vms-emblem-white.png" alt="VMS emblem" className="logo-adaptive h-5 w-auto shrink-0" />
+      <div className="sidebar-dark flex h-full flex-col">
+        <div className={cn("flex h-16 items-center gap-3 px-5", !showText && "justify-center px-2")}>
+          <div className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary">
+            <img src="/branding/vms-emblem-white.png" alt="VMS emblem" className="h-5 w-auto" />
+          </div>
           {showText && (
-            <div className="min-w-0 leading-none">
-              <p className="truncate font-mono text-[12px] font-semibold tracking-[0.18em] text-foreground">VMS</p>
-              <p className="mt-1 truncate font-mono text-[9.5px] uppercase tracking-[0.14em] text-muted-foreground">Cadastral Workstation</p>
+            <div className="min-w-0 leading-tight">
+              <p className="truncate text-[15px] font-extrabold tracking-tight">VMS</p>
+              <p className="truncate text-[11px] font-medium text-[#8a8a8a]">Valuation Management</p>
             </div>
           )}
         </div>
-        <nav className="flex-1 overflow-y-auto py-3">
-          {showText && <p className="mono-label px-4 pb-2">Modules</p>}
+        <nav className={cn("flex-1 space-y-1 overflow-y-auto px-3 py-4", !showText && "px-2")}>
+          {showText && <p className="mono-label px-3 pb-2">Workspace</p>}
           {NAV_LINKS.map((l, i) => navItem(l.to, l.label, l.icon, i + 1, close))}
           {isAdmin && (
             <>
-              {showText && <p className="mono-label px-4 pb-2 pt-5">Administration</p>}
+              {showText && <p className="mono-label px-3 pb-2 pt-6">Administration</p>}
               {navItem(ADMIN_LINK.to, ADMIN_LINK.label, ADMIN_LINK.icon, NAV_LINKS.length + 1, close)}
             </>
           )}
         </nav>
         {showText && (
-          <div className="border-t border-sidebar-border px-4 py-3">
-            <p className="mono-label">Datum</p>
-            <p className="mt-1 font-mono text-[11px] text-foreground">WGS 84 · Nepal</p>
+          <div className="m-3 rounded-xl border border-sidebar-border bg-sidebar-accent p-4">
+            <p className="text-[12.5px] font-bold">Nepal Valuation Suite</p>
+            <p className="mt-1 text-[11.5px] leading-relaxed text-[#8a8a8a]">Ropani · Bigha · Govt. rates, in one workspace.</p>
           </div>
         )}
       </div>
@@ -142,16 +139,16 @@ export function AppShell({
     <div className="flex h-[100dvh] w-full overflow-hidden bg-background">
       <aside
         className={cn(
-          "hidden shrink-0 border-r border-sidebar-border bg-sidebar transition-[width] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] md:block",
-          collapsed ? "w-[68px]" : "w-60",
+          "hidden shrink-0 bg-sidebar transition-[width] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] md:block",
+          collapsed ? "w-[72px]" : "w-64",
         )}
       >
         {navContent(false)}
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="z-40 shrink-0 border-b border-border bg-background">
-          <div className="flex h-12 items-center gap-3 px-3 md:px-5">
+        <header className="z-40 shrink-0 border-b border-border bg-card">
+          <div className="flex h-16 items-center gap-3 px-3 md:px-5">
             <button
               aria-label="Toggle menu"
               onClick={toggleCollapsed}
@@ -171,17 +168,16 @@ export function AppShell({
             </Sheet>
             <div className="hidden h-5 w-px bg-border md:block" />
             <div className="flex min-w-0 flex-1 items-baseline gap-2">
-              <span className="hidden font-mono text-[11px] text-muted-foreground sm:inline">VMS /</span>
-              <h1 className="truncate text-[14px] font-semibold text-foreground">{title}</h1>
+              <h1 className="truncate text-[18px] font-extrabold tracking-tight text-foreground">{title}</h1>
             </div>
-            <span className="hidden items-center gap-2 border border-border px-2 py-1 font-mono text-[10.5px] uppercase tracking-[0.1em] text-muted-foreground lg:flex">
-              <span className="size-1.5 bg-success" /> Live
+            <span className="hidden items-center gap-2 rounded-full border border-border bg-background px-3 py-1 text-[12px] font-semibold text-muted-foreground lg:flex">
+              <span className="size-2 rounded-full bg-success" /> All systems operational
             </span>
           </div>
         </header>
 
         <main className={cn("page-transition relative min-h-0 flex-1 survey-grid", bare ? "overflow-hidden" : "overflow-y-auto")}>
-          {bare ? children : <div className="mx-auto w-full max-w-[1360px] px-4 pb-16 pt-5 md:px-6">{children}</div>}
+          {bare ? children : <div className="mx-auto w-full max-w-[1320px] px-4 pb-16 pt-6 md:px-8">{children}</div>}
         </main>
       </div>
 
@@ -189,7 +185,7 @@ export function AppShell({
         <button
           onClick={onAdd}
           aria-label="Add Record"
-          className="tap gradient-brand fixed bottom-6 right-6 z-10 flex items-center gap-2 rounded-sm px-4 py-2.5 font-mono text-[12px] font-semibold uppercase tracking-[0.1em] text-primary-foreground shadow-[var(--shadow-glow)]"
+          className="tap gradient-brand fixed bottom-6 right-6 z-10 flex items-center gap-2 rounded-full px-5 py-3 text-[13.5px] font-bold text-primary-foreground shadow-[var(--shadow-glow)]"
         >
           <Plus className="size-5" />
           Add Record
