@@ -261,15 +261,16 @@ function AdminPage() {
 
   return (
     <AppShell title="Admin Console" back>
+      <div className="mx-auto max-w-5xl">
       {isAdmin && (
-        <div className="mb-3 flex rounded-xl border border-border bg-surface p-1">
+        <div className="mb-4 inline-flex w-fit gap-0.5 rounded-lg border border-border bg-surface p-0.5">
           {(["dashboard", "moderation"] as const).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
               className={cn(
-                "tap flex-1 rounded-xl py-2.5 text-xs font-bold capitalize transition-colors",
-                tab === t ? "gradient-brand text-primary-foreground" : "text-muted-foreground",
+                "tap rounded-md px-4 py-1.5 text-xs font-semibold capitalize transition-colors",
+                tab === t ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground",
               )}
             >
               {t === "dashboard" ? "Dashboard" : "Moderation"}
@@ -303,13 +304,13 @@ function AdminPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="flex flex-wrap gap-2">
             <button
               onClick={() => {
                 setTab("moderation");
                 setOpenPending(true);
               }}
-              className="tap gradient-brand flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold text-primary-foreground"
+              className="tap gradient-brand inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold text-primary-foreground"
             >
               <UserCheck className="size-4" /> Verify Users
             </button>
@@ -318,7 +319,7 @@ function AdminPage() {
                 setTab("moderation");
                 setOpenRates(true);
               }}
-              className="tap flex items-center justify-center gap-2 rounded-xl border border-border bg-surface-2 py-3 text-sm font-bold text-foreground"
+              className="tap inline-flex items-center gap-2 rounded-md border border-border bg-surface-2 px-4 py-2 text-sm font-semibold text-foreground"
             >
               <FileText className="size-4" /> Review Pending Submissions
             </button>
@@ -619,6 +620,7 @@ function AdminPage() {
             </div>
           )}
         </Accordion>
+      </div>
       </div>
     </AppShell>
   );

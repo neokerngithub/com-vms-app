@@ -26,13 +26,13 @@ export function ConverterTab() {
 
   return (
     <AppShell title="Converter">
-      <div className="flex rounded-xl border border-border bg-surface p-1">
+      <div className="inline-flex w-fit gap-0.5 rounded-lg border border-border bg-surface p-0.5">
         {MODES.map((m) => (
           <button
             key={m}
             onClick={() => setMode(m)}
             className={cn(
-              "tap flex-1 rounded-xl py-2.5 text-xs font-bold transition-colors",
+              "tap rounded-md px-4 py-1.5 text-xs font-semibold transition-colors",
               mode === m ? "gradient-brand text-primary-foreground" : "text-muted-foreground",
             )}
           >

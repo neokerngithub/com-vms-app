@@ -303,10 +303,10 @@ html.light .logo-adaptive {
 /* ===== Cadastral workstation layer ===== */
 .survey-grid {
   background-color: var(--background);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Cpath d='M48 0H0V48' fill='none' stroke='%23ffffff' stroke-opacity='0.045'/%3E%3C/svg%3E");
+  background-image: none;
 }
 html.light .survey-grid {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Cpath d='M48 0H0V48' fill='none' stroke='%23000000' stroke-opacity='0.06'/%3E%3C/svg%3E");
+  background-image: none;
 }
 /* corner registration ticks on cards */
 .surface-card { position: relative; }

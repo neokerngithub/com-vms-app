@@ -135,13 +135,7 @@ function RatesPage() {
   return (
     <AppShell title="Government Rates" back>
       <div className="space-y-4 pb-8">
-        <button
-          onClick={() => setAdding((v) => !v)}
-          className="tap flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-surface py-3.5 text-sm font-bold text-foreground"
-        >
-          {adding ? <X className="size-4" /> : <Plus className="size-4" />}
-          {adding ? "Cancel" : "Contribute a publication"}
-        </button>
+
 
         {adding && (
           <form onSubmit={submit} className="surface-card space-y-3 p-4">
@@ -261,11 +255,12 @@ function RatesPage() {
           </div>
         )}
 
-        <Field label="Fiscal year">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+  <div className="w-full max-w-xs">        <Field label="Fiscal year">
           <select
             value={year}
             onChange={(e) => setYear(e.target.value)}
-            className="h-12 w-full rounded-xl border border-border bg-surface px-4 text-sm font-semibold text-foreground outline-none ring-ring focus:ring-2"
+            className="h-10 w-full max-w-xs rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground outline-none ring-ring focus:ring-2"
           >
             {years.map((y) => (
               <option key={y} value={y}>
@@ -273,11 +268,19 @@ function RatesPage() {
               </option>
             ))}
           </select>
-        </Field>
+        </Field></div>
+        <button
+          onClick={() => setAdding((v) => !v)}
+          className="tap inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
+        >
+          {adding ? <X className="size-4" /> : <Plus className="size-4" />}
+          {adding ? "Cancel" : "Contribute a publication"}
+        </button>
+        </div>
         <Pills label="District / Office" options={offices} value={office} onChange={setOffice} />
 
 
-        <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 2xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
           {isLoading && <p className="text-sm text-muted-foreground">Loading…</p>}
           {!isLoading && list.length === 0 && (
             <div className="surface-card p-8 text-center text-sm text-muted-foreground">

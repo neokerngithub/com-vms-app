@@ -82,17 +82,17 @@ export function RecordsTab() {
         </button>
       )}
 
-      <div className="mb-3 flex rounded-xl border border-border bg-surface p-1">
+      <div className="mb-4 inline-flex w-fit gap-0.5 rounded-lg border border-border bg-surface p-0.5">
         {SCOPES.map((s) => (
           <button
             key={s}
             onClick={() => setScope(s)}
             aria-pressed={scope === s}
             className={cn(
-              "tap flex-1 rounded-xl px-3 py-2.5 text-xs font-bold",
+              "tap rounded-md px-4 py-1.5 text-xs font-semibold",
               scope === s
-                ? "gradient-brand text-primary-foreground"
-                : "text-muted-foreground",
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:text-foreground",
             )}
           >
             {s}
@@ -132,7 +132,7 @@ export function RecordsTab() {
         Secure Data Governance — Creator-managed edits with admin moderation
       </p>
 
-      <div className="page-transition mt-3 grid grid-cols-1 gap-3 lg:grid-cols-2 2xl:grid-cols-3" key={scope}>
+      <div className="page-transition mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3" key={scope}>
         {guestBlocked && (
           <div className="surface-card col-span-full p-8 text-center">
             <p className="text-sm font-semibold text-foreground">Sign in to see your records</p>
